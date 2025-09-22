@@ -69,6 +69,9 @@ export class BerkeService {
     }
   }
 
+
+  //methods to load the courses list and the tags list from the backend and update the cache
+
   loadCourses() {
     this.http.get<Course[]>(this.apiUrl + 'courses', { observe: 'response' })
       .pipe(
@@ -103,7 +106,7 @@ export class BerkeService {
       .subscribe();
   }
 
-  //methods to load the courses list and the tags list from the backend and update the cache
+  
   loadTags() {
     this.http.get<Tag[]>(this.apiUrl + 'tags', { observe: 'response' })
       .pipe(
@@ -119,7 +122,7 @@ export class BerkeService {
         }),
         catchError(err => {
           if (err.status === 304) {
-            console.log('err 304')
+            console.log('e4r 304')
             const cached = this.getTags();
             if (cached) {
               this._tags.set(cached);
