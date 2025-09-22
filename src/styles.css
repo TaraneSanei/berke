@@ -1,1 +1,48 @@
 /* You can add global styles to this file, and also import other style files */
+
+@import "tailwindcss";
+
+html {
+  direction: rtl;
+  background-image: var(--p--root---app-background);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 0;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;
+  background-position: center;
+}
+
+@font-face {
+  font-family: 'Sahel';
+  src: url('/assets/fonts/Sahel.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+body {
+  font-family: 'Sahel', sans-serif;
+  unicode-bidi: bidi-override;
+  direction: rtl;
+  font-feature-settings: "tnum";
+  font-variant-numeric: normal;
+  font-feature-settings: "locl";
+}
+
+
+.p-button.p-button-text.p-button-secondary:hover,
+.p-button.p-button-text.p-button-secondary:hover .p-button-label,
+.p-button.p-button-text.p-button-secondary:hover .p-button-icon {
+  color: var(--p-primary-600) !important;
+}
+
+.p-button.p-button-outlined.p-button-secondary:hover,
+.p-button.p-button-outlined.p-button-secondary:hover .p-button-label,
+.p-button.p-button-outlined.p-button-secondary:hover .p-button-icon {
+  color: var(--p-primary-600) !important;
+}

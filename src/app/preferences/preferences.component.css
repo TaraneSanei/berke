@@ -1,0 +1,38 @@
+
+.slide-in-up {
+    animation: slideInUp 0.7s ease-out forwards, fadeIn 0.7s ease-in forwards;
+}
+
+.slide-in-down {
+    animation: slideInDown 0.7s ease-out forwards, fadeIn 0.7s ease-in forwards;
+}
+
+
+@keyframes slideInUp {
+    from {
+        transform: translateY(20%);
+    }
+
+    to {
+        transform: translateY(0);
+    }
+}
+@keyframes slideInDown {
+    from {
+        transform: translateY(-20%);
+    }
+
+    to {
+        transform: translateY(0);
+    }
+}
+
+.active-button {
+    background-color: var(--p-primary-600);
+    border-radius: 6px;
+    color: var(--p-primary-200) !important;
+}
+
+:host ::ng-deep .active-button .p-button-label {
+  color: var(--p-primary-200) !important;
+}

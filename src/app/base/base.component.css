@@ -1,0 +1,3 @@
+html {
+  background-image: linear-gradient(var(--p-primary-color), var(--p-secondary-color));
+}

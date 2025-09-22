@@ -1,0 +1,32 @@
+
+.slide-in-right {
+    animation: slideInRight 0.7s ease-out forwards, fadeIn 0.7s ease-in forwards;
+}
+
+.slide-in-left {
+    animation: slideInLeft 0.7s ease-out forwards, fadeIn 0.7s ease-in forwards;
+}
+
+::ng-deep .p-button-label {
+    transform: translateY(-2px);
+}
+
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(20%);
+    }
+
+    to {
+        transform: translateX(0);
+    }
+}
+@keyframes slideInLeft {
+    from {
+        transform: translateX(-20%);
+    }
+
+    to {
+        transform: translateX(0);
+    }
+}

@@ -1,0 +1,22 @@
+<div class="grid grid-cols-1 grid-rows-10 md:grid-rows-1 md:grid-cols-12 h-screen">
+    <!-- add overflow-y-hidden -->
+    <div class="row-span-9 md:col-span-11">
+        
+        <router-outlet></router-outlet>
+    </div>
+    <div appWindow [opacity]="0.85" class="row-span-1 flex flex-row w-full md:flex-col md:col-span-1 md:h-full">
+        <!-- add overflow-y-auto -->
+                 <p-button class="w-1/4 md:w-auto md:h-1/4 flex justify-center items-center" routerLink="berke"
+            routerLinkActive="font-bold md:border-r-2 border-blue-500" variant="text" severity="secondary"> <span
+                class="rounded-full border-2 w-10 h-10 inline-flex items-center justify-center">
+                <img src="assets/logo/berke-g.png" class="w-6" />
+            </span></p-button>
+
+        <p-button class="w-1/4 md:w-auto md:h-1/4 flex justify-center items-center" routerLink="profile" variant="text"
+            routerLinkActive="font-bold md:border-r-2 border-t-2 border-blue-500" severity="secondary">
+            <span class="rounded-full border-2 w-10 h-10 inline-flex items-center justify-center">
+                <i class="pi pi-user"></i>
+            </span>
+        </p-button>
+    </div>
+</div>
