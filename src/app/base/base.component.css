@@ -1,3 +1,10 @@
-html {
-  background-image: linear-gradient(var(--p-primary-color), var(--p-secondary-color));
+.active-button {
+    background-color: var(--p-primary-600);
+    border-radius: 6px;
+    color: var(--p-primary-200) !important;
+}
+
+::ng-deep .p-button{
+    width: 100%;
+    height: 100%;
 }

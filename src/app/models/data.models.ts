@@ -10,3 +10,14 @@ export interface User {
     preferences?: string[];
     theme: string;
 }
+
+export interface Course {
+    id: number;
+    title: string;
+    tags: number[];
+}
+
+export interface Tag {
+    id: number;
+    title: string;
+}

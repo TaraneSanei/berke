@@ -16,12 +16,11 @@ import { AppState } from '../state/app.state';
 import { Store } from '@ngrx/store';
 import { setPreferences, updateProfile } from '../state/user/user.actions';
 import { Router } from '@angular/router';
+import { NotificationService } from '../notification.service';
 
 @Component({
   selector: 'app-preferences',
   imports: [
-    CalendarModule,
-    PersianDigitsPipe,
     PersianDigitsDirective,
     WindowDirective,
     ButtonModule,
@@ -38,6 +37,7 @@ import { Router } from '@angular/router';
 })
 export class PreferencesComponent {
 
+  notificationTime = new Date()
 
   activeStep: number = 1;
   direction: 'up' | 'down' = 'up'; //stepper direction
@@ -47,11 +47,11 @@ export class PreferencesComponent {
   goals: [] as string[],
   theme: '',
   notifications: true,
-  notificationTime: new Date(),
+  notificationTime: '',
   subscription: false
 };
 
-  constructor(private berkeservice: BerkeService, private store: Store<AppState>, private router: Router) {}
+  constructor(private berkeservice: BerkeService, private store: Store<AppState>, private router: Router, private notificationservice: NotificationService) {}
 
   goToStep(step: number) {
     if (step === this.activeStep) return;
@@ -76,6 +76,9 @@ export class PreferencesComponent {
     this.preferences.notifications = false;
   }
 
+  setNotifications(){
+    this.notificationservice.requestPermission()
+  }
 
   toPersianDigits(value: string): string {
   return value ? value.replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[+d]) : '';
@@ -87,14 +90,17 @@ export class PreferencesComponent {
   }
 
   subscribe(){
+    this.router.navigate(['/subscribe']);
 
   }
 
   start() {
-    this.router.navigate(['/signup']);
+    this.router.navigate(['/']);
 }
 
   updatePreferences (){
+    this.preferences.notificationTime = this.notificationTime.getHours().toString() +":"+ this.notificationTime.getMinutes().toString() + ':00'
+    console.log(this.preferences.notificationTime)
     this.store.dispatch((setPreferences({preferences: this.preferences})))
   }
 
