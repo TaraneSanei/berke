@@ -440,6 +440,16 @@ export const mountain = definePreset(
             },
         },
         components: {
+            accordion:{
+                header:{
+                    background: 'transparent',
+                    hoverBackground: 'transparent'
+                },
+                content: {
+                    background: 'transparent',
+                    hoverBackground: 'transparent'
+                }
+            },
             stepper: {
                 steppanel: {
                     background: 'transparent',

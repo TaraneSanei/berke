@@ -5,7 +5,7 @@ import { AbstractControl, FormBuilder, FormControl, FormGroup, ReactiveFormsModu
 import { Router } from '@angular/router';
 import { AppState } from '../state/app.state';
 import { Store } from '@ngrx/store';
-import { BerkeService } from '../berke.service';
+import { BerkeService } from '../services/berke.service';
 import { MessageService } from 'primeng/api';
 import { signup } from '../state/user/user.actions';
 import { requestOtp, verifyOtp } from '../state/otp/otp.actions';

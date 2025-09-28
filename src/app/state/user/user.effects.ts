@@ -3,7 +3,7 @@ import { AuthService } from "../../auth/auth.service";
 import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { mergeMap, catchError, of, map } from "rxjs";
 import { signup, signupSuccess, login, signupFailure, getProfile, loginFailure, loginSuccess, getProfileFailure, getProfileSuccess, setPreferences, setPreferencesFailure, setPreferencesSuccess } from "./user.actions";
-import { BerkeService } from "../../berke.service";
+import { BerkeService } from "../../services/berke.service";
 
 
 

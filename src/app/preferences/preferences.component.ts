@@ -11,12 +11,12 @@ import { DatePickerModule } from 'primeng/datepicker';
 import { PersianDigitsDirective } from '../directives/persian-digits.directive';
 import { PersianDigitsPipe } from '../pipes/persian-digits.pipe';
 import { CalendarModule } from 'primeng/calendar';
-import { BerkeService } from '../berke.service';
+import { BerkeService } from '../services/berke.service';
 import { AppState } from '../state/app.state';
 import { Store } from '@ngrx/store';
 import { setPreferences, updateProfile } from '../state/user/user.actions';
 import { Router } from '@angular/router';
-import { NotificationService } from '../notification.service';
+import { NotificationService } from '../services/notification.service';
 
 @Component({
   selector: 'app-preferences',

@@ -16,6 +16,8 @@ import { OtpReducer } from './state/otp/otp.reducer';
 import { OTPEffects } from './state/otp/otp.effects';
 import { loadingInterceptor } from './loading/loading.interceptor';
 import { uiReducer } from './state/UI/ui.reducer';
+import { SessionsReducer } from './state/sessions/sessions.reducer';
+import { SessionsEffects } from './state/sessions/sessions.effects';
 
 
 const chosenThemeKey = (localStorage?.getItem('user-theme') || 'sunrise') as 'sunrise' | 'sunset' | 'forest' | 'aurora' | 'mountain' | 'morning';
@@ -52,11 +54,13 @@ export const appConfig: ApplicationConfig = {
     provideStore({
       user: UserReducer,
       otp: OtpReducer,
-      ui: uiReducer
+      ui: uiReducer,
+      sessions : SessionsReducer
     }),
     provideEffects([
       UserEffects,
-      OTPEffects
+      OTPEffects,
+      SessionsEffects
     ]),
     provideStoreDevtools({
       maxAge: 25,

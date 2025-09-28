@@ -15,7 +15,7 @@ import { AppState } from '../state/app.state';
 import { Store } from '@ngrx/store';
 import { selectAuthenticated, selectUser, selectUserError, selectUserStatus } from '../state/user/user.selector';
 import { MessageService } from 'primeng/api';
-import { BerkeService } from '../berke.service';
+import { BerkeService } from '../services/berke.service';
 import { ToastModule } from 'primeng/toast';
 import { selectOtpError, selectOtpStatus, selectOtpTimer } from '../state/otp/otp.selector';
 import { requestOtp, verifyOtp } from '../state/otp/otp.actions';

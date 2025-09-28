@@ -1,5 +1,5 @@
 import { HttpInterceptorFn } from '@angular/common/http';
-import { BerkeService } from '../berke.service';
+import { BerkeService } from '../services/berke.service';
 import { inject } from '@angular/core';
 
 export const cacheInterceptor: HttpInterceptorFn = (req, next) => {

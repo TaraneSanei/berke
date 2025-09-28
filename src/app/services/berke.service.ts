@@ -1,9 +1,9 @@
 import { Injectable, signal } from '@angular/core';
 import { usePreset } from '@primeng/themes';
-import { aurora, morning, forest, mountain, sunrise, sunset } from '../mypresets';
+import { aurora, morning, forest, mountain, sunrise, sunset } from '../../mypresets';
 import { HttpClient } from '@angular/common/http';
-import { environment } from '../environments/environment.development';
-import { Course, Tag } from './models/data.models';
+import { environment } from '../../environments/environment.development';
+import { Course, Tag } from '../models/data.models';
 import { catchError, EMPTY, tap } from 'rxjs';
 
 @Injectable({

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { BerkeService } from '../berke.service';
+import { BerkeService } from '../services/berke.service';
 import { CommonModule } from '@angular/common';
 import { WindowDirective } from "../directives/window.directive";
 

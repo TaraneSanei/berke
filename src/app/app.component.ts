@@ -4,7 +4,7 @@ import { RouterOutlet } from '@angular/router';
 import { AppState } from './state/app.state';
 import { Store } from '@ngrx/store';
 import { selectLoading } from './state/UI/ui.selectors';
-import { BerkeService } from './berke.service';
+import { BerkeService } from './services/berke.service';
 import { selectUser } from './state/user/user.selector';
 
 @Component({

@@ -7,6 +7,7 @@ import { PreferencesComponent } from './preferences/preferences.component';
 import { BerkeComponent } from './berke/berke.component';
 import { SubscriptionComponent } from './subscription/subscription.component';
 import { JourneysComponent } from './journeys/journeys.component';
+import { JournalComponent } from './journal/journal.component';
 
 export const routes: Routes = [
     { path: 'login', component: LoginComponent, title:'login' },
@@ -14,10 +15,9 @@ export const routes: Routes = [
     { path: 'preferences', component: PreferencesComponent, title:'preferences' },
     { path: 'subscribe', component: SubscriptionComponent, title:'subscribe' },
     { path: '', component: BaseComponent, title:'base', children:[
-    
     {path: 'berke', component: BerkeComponent, title:'berke'},
     {path: 'journeys', component: JourneysComponent, title:'journeys'},
+    {path: 'journal', component: JournalComponent, title:'journal'},
     {path: 'profile', component: ProfileComponent, title:'profile'},
 ]},
-
 ]
