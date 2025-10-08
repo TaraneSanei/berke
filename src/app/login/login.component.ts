@@ -1,5 +1,5 @@
 import { Component, computed, effect } from '@angular/core';
-import { WindowDirective } from "../directives/window.directive";
+import { WindowDirective } from "../shared/directives/window.directive";
 import { StepperModule } from 'primeng/stepper';
 import { CommonModule } from '@angular/common';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -15,12 +15,12 @@ import { AppState } from '../state/app.state';
 import { Store } from '@ngrx/store';
 import { selectAuthenticated, selectUser, selectUserError, selectUserStatus } from '../state/user/user.selector';
 import { MessageService } from 'primeng/api';
-import { BerkeService } from '../services/berke.service';
+import { BerkeService } from '../shared/services/berke.service';
 import { ToastModule } from 'primeng/toast';
 import { selectOtpError, selectOtpStatus, selectOtpTimer } from '../state/otp/otp.selector';
 import { requestOtp, verifyOtp } from '../state/otp/otp.actions';
-import { PersianDigitsPipe } from '../pipes/persian-digits.pipe'
-import { PersianDigitsDirective } from '../directives/persian-digits.directive';
+import { PersianDigitsPipe } from '../shared/pipes/persian-digits.pipe'
+import { PersianDigitsDirective } from '../shared/directives/persian-digits.directive';
 
 @Component({
   selector: 'app-login',

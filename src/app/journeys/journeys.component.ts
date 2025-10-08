@@ -5,13 +5,13 @@ import { LoadSessions } from '../state/sessions/sessions.actions';
 import { selectMeditationSessions, selectNext, selectPrevious } from '../state/sessions/sessions.selector';
 import { Course, Journey, MeditationSession, Track } from '../models/data.models';
 import { CommonModule } from '@angular/common';
-import { WindowDirective } from '../directives/window.directive';
-import { DataService } from '../services/data.service';
+import { WindowDirective } from '../shared/directives/window.directive';
+import { DataService } from '../shared/services/data.service';
 import { forkJoin } from 'rxjs';
-import { PersianDigitsPipe } from '../pipes/persian-digits.pipe'
+import { PersianDigitsPipe } from '../shared/pipes/persian-digits.pipe'
 import { DividerModule } from 'primeng/divider';
 import { AccordionModule } from 'primeng/accordion';
-import { WaveDirective } from "../directives/wave.directive";
+import { WaveDirective } from "../shared/directives/wave.directive";
 import { Button } from "primeng/button";
 
 @Component({

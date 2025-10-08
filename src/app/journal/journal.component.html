@@ -1,1 +1,103 @@
-<p>journal works!</p>
+<div class="flex justify-center">
+
+  <div class="w-full lg:w-3/4 m-5">
+    <!-- jalali calendar -->
+    <div appWindow
+      class="p-5 border-2 border-[var(--p-primary-600)] mb-5 backdrop-blur-md rounded-2xl text-[var(--p-primary-50)]">
+      <app-jalali-calendar [year]="currentYear" [month]="currentMonth" [eventsMap]="eventsMap"
+        (dateSelected)="selectedDate.set($event.gregorian)">
+      </app-jalali-calendar>
+    </div>
+    <!-- new journal note div -->
+    <div appWindow class="p-5 border-2 border-[var(--p-primary-600)] backdrop-blur-md rounded-2xl">
+      <div class=" my-3 items-center justify-between gap-3 text-[var(--p-primary-50)] flex flex-row">
+        <div class="w-1/3">
+          <p-floatlabel>
+            <p-date-picker [(ngModel)]="newJournal.dateTime" fluid="true" [iconDisplay]="'input'" [showIcon]="true" [timeOnly]="true" inputId="time"
+              [ngStyle]="{'direction': 'ltr', 'text-align': 'left', '!important': true}">
+              <ng-template #inputicon let-clickCallBack="clickCallBack">
+                <i class="pi pi-clock" (click)="clickCallBack($event)"></i>
+              </ng-template>
+            </p-date-picker>
+            <label for="time">ساعت</label>
+          </p-floatlabel>
+        </div>
+        <div class="w-2/3 lg:w-1/3">
+          <p-floatlabel>
+            <p-multiselect inputId="emotions" fluid="true" [options]="emotions()" optionLabel="emotion" display="chip"
+              [(ngModel)]="newJournal.emotionalStatus" [maxSelectedLabels]="5">
+              <ng-template let-emotion #item>
+                <span class="w-full flex-row inline-flex items-center gap-1 justify-between rounded-2xl"
+                  [style.background]="'var(--p-primary-700)'" [style.color]="'var(--p-primary-50)'">
+                  <p class="m-1.5">{{ emotion.emotion }}</p>
+                  <app-emotion-icon class="w-5 h-5 mx-2 inline-block align-middle" [emotion]="emotion.emotion">
+                  </app-emotion-icon>
+                </span>
+              </ng-template>
+              <ng-template pTemplate="selectedItems" let-selected>
+                <div class="w-full flex flex-col gap-1">
+                  <div *ngFor="let s of selected"
+                    class="flex flex-1 items-center justify-between rounded-xl px-3 py-1 text-[var(--p-primary-50)] bg-[var(--p-primary-600)]">
+                    <!-- Emotion + Icon -->
+                    <div class="flex items-center gap-1">
+                      <span>{{ s.emotion }}</span>
+                      <app-emotion-icon class="w-5 h-5" [emotion]="s.emotion"></app-emotion-icon>
+                    </div>
+                    <!-- Remove icon -->
+                    <button type="button" class="hover:text-[var(--p-primary-200)]" (click)="removeEmotion(s, selected)"
+                      aria-label="Remove emotion">
+                      <span class="flex items-center justify-center">
+                        <i class="pi pi-times-circle"></i>
+                      </span>
+                    </button>
+                  </div>
+                </div>
+              </ng-template>
+              <ng-template #empty>
+                <p>
+                  پیدا نکردیم!
+                </p>
+              </ng-template>
+
+            </p-multiselect>
+            <label for="emotions">حس و حال</label>
+          </p-floatlabel>
+        </div>
+      </div>
+
+      <textarea rows="5" [(ngModel)]="newJournal.note" type="text" placeholder="تست" fluid="true" pTextarea [autoResize]="true">
+            </textarea>
+        <div class="my-3">
+          <p-button (onClick)="saveJournal()">
+            <span>ذخیره <i class="pi pi-save"></i></span>
+          </p-button>
+        </div>
+    </div>
+
+    <!-- previous journal notes -->
+    <div appWindow class="backdrop-blur-md border-2 border-[var(--p-primary-600)] p-5 text-[var(--p-primary-50)] rounded-2xl mt-5"
+      *ngFor="let journal of journals()">
+      <div class="mb-2 ">
+        ساعت {{ journal.dateTime | date: 'hh:mm' | persianDigits}}
+      </div>
+      <div>
+      </div>
+      <div
+        class="rounded-2xl px-2 p-1 ml-2 text-[var(--p-primary-50)] bg-[var(--p-primary-600)] flex-row inline-flex items-center justify-center"
+        *ngFor="let e of journal.emotionalStatus">
+        <div>
+          {{ e.emotion }}
+
+          <app-emotion-icon class="w-5 h-5 inline-block align-middle" [emotion]="e.emotion">
+          </app-emotion-icon>
+        </div>
+      </div>
+      <div class="my-3">
+        <p>{{ journal.note }}</p>
+      </div>
+      <div>
+        <p-button></p-button>
+      </div>
+    </div>
+  </div>
+</div>

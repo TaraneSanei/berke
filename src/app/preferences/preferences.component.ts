@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { WindowDirective } from '../directives/window.directive';
+import { WindowDirective } from '../shared/directives/window.directive';
 import { Button, ButtonModule } from "primeng/button";
 import { StepperModule } from 'primeng/stepper';
 import { InputTextModule } from 'primeng/inputtext';
@@ -8,15 +8,15 @@ import { FormBuilder, FormGroup, FormsModule } from '@angular/forms';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { CheckboxModule } from 'primeng/checkbox';
 import { DatePickerModule } from 'primeng/datepicker';
-import { PersianDigitsDirective } from '../directives/persian-digits.directive';
-import { PersianDigitsPipe } from '../pipes/persian-digits.pipe';
+import { PersianDigitsDirective } from '../shared/directives/persian-digits.directive';
+import { PersianDigitsPipe } from '../shared/pipes/persian-digits.pipe';
 import { CalendarModule } from 'primeng/calendar';
-import { BerkeService } from '../services/berke.service';
+import { BerkeService } from '../shared/services/berke.service';
 import { AppState } from '../state/app.state';
 import { Store } from '@ngrx/store';
 import { setPreferences, updateProfile } from '../state/user/user.actions';
 import { Router } from '@angular/router';
-import { NotificationService } from '../services/notification.service';
+import { NotificationService } from '../shared/services/notification.service';
 
 @Component({
   selector: 'app-preferences',

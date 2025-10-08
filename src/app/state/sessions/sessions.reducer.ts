@@ -25,12 +25,14 @@ export const SessionsReducer = createReducer(
     on(LoadSessions, (state) => ({
         ...state,
         status: 'loading' as 'loading',
+        error: ''
     })),
     on(LoadSessionsSuccess, (state, { sessions, next, previous }) => ({
         ...state,
         meditationSessions: sessions,
         next: next,
         previous: previous,
+        error: '',
         status: 'success' as 'success',
     })),
     on(LoadSessionsFailure, (state, { error }) => ({

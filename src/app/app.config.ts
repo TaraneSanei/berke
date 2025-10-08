@@ -18,6 +18,10 @@ import { loadingInterceptor } from './loading/loading.interceptor';
 import { uiReducer } from './state/UI/ui.reducer';
 import { SessionsReducer } from './state/sessions/sessions.reducer';
 import { SessionsEffects } from './state/sessions/sessions.effects';
+import { JournalReducer } from './state/journal/journal.reducer';
+import { JournalEffects } from './state/journal/journal.effects';
+import { EmotionReducer } from './state/emotion/emotion.reducer';
+import { EmotionEffects } from './state/emotion/emotion.effects';
 
 
 const chosenThemeKey = (localStorage?.getItem('user-theme') || 'sunrise') as 'sunrise' | 'sunset' | 'forest' | 'aurora' | 'mountain' | 'morning';
@@ -55,12 +59,16 @@ export const appConfig: ApplicationConfig = {
       user: UserReducer,
       otp: OtpReducer,
       ui: uiReducer,
-      sessions : SessionsReducer
+      sessions : SessionsReducer,
+      journal: JournalReducer,
+      emotions: EmotionReducer
     }),
     provideEffects([
       UserEffects,
       OTPEffects,
-      SessionsEffects
+      SessionsEffects,
+      JournalEffects,
+      EmotionEffects
     ]),
     provideStoreDevtools({
       maxAge: 25,

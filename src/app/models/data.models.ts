@@ -38,7 +38,7 @@ export interface Emotion {
 }
 
 export interface MeditationSession {
-    id:number;
+    id?:number;
     dateTime: Date;
     courseId: number;
     trackId: number;
@@ -51,4 +51,11 @@ export interface Journey {
     course: Course;
     listenedto: number[];
     recommended?: number;
+}
+
+export interface Journal {
+    id?: number;
+    dateTime: Date;
+    note: string;
+    emotionalStatus?: Emotion[]
 }

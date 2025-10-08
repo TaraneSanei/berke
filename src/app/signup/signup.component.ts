@@ -1,11 +1,11 @@
 import { Component, computed, effect } from '@angular/core';
-import { WindowDirective } from '../directives/window.directive';
+import { WindowDirective } from '../shared/directives/window.directive';
 import { StepperModule } from 'primeng/stepper';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators, ɵInternalFormsSharedModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AppState } from '../state/app.state';
 import { Store } from '@ngrx/store';
-import { BerkeService } from '../services/berke.service';
+import { BerkeService } from '../shared/services/berke.service';
 import { MessageService } from 'primeng/api';
 import { signup } from '../state/user/user.actions';
 import { requestOtp, verifyOtp } from '../state/otp/otp.actions';
@@ -19,8 +19,8 @@ import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
 import { InputOtpModule } from 'primeng/inputotp';
 import { ToastModule } from 'primeng/toast';
-import { PersianDigitsDirective } from '../directives/persian-digits.directive';
-import { PersianDigitsPipe } from '../pipes/persian-digits.pipe';
+import { PersianDigitsDirective } from '../shared/directives/persian-digits.directive';
+import { PersianDigitsPipe } from '../shared/pipes/persian-digits.pipe';
 
 @Component({
   selector: 'app-signup',

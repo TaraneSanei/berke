@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
-import { BerkeService } from '../services/berke.service';
+import { BerkeService } from '../shared/services/berke.service';
 import { CommonModule } from '@angular/common';
-import { WindowDirective } from "../directives/window.directive";
+import { WindowDirective } from "../shared/directives/window.directive";
 
 @Component({
   selector: 'app-profile',

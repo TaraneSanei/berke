@@ -2,7 +2,7 @@ import { inject, Injectable } from "@angular/core";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { mergeMap, from, map, catchError, of } from "rxjs";
 import { LoadSessions, LoadSessionsFailure, LoadSessionsSuccess } from "./sessions.actions";
-import { DataService } from "../../services/data.service";
+import { DataService } from "../../shared/services/data.service";
 
 
 

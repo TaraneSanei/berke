@@ -440,15 +440,8 @@ export const mountain = definePreset(
             },
         },
         components: {
-            accordion:{
-                header:{
-                    background: 'transparent',
-                    hoverBackground: 'transparent'
-                },
-                content: {
-                    background: 'transparent',
-                    hoverBackground: 'transparent'
-                }
+            card:{
+                background: 'transparent'
             },
             stepper: {
                 steppanel: {
@@ -457,12 +450,13 @@ export const mountain = definePreset(
                 }
             },
             floatlabel: {
-                color: 'var(--p-primary-600)',
+                color: 'var(--p-primary-900)',
                 focusColor: 'var(--p-neutral-50)',
                 activeColor: 'var(--p-neutral-50)',
                 invalidColor: 'var(--p-red-600)'
             },
             inputtext: {
+                color: 'var(--p-primary-900)',
                 borderColor: 'var(--p-primary-50)',
                 hoverBorderColor: 'var(--p-primary-100)'
             },
