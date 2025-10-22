@@ -59,12 +59,12 @@ export const EditJournalFailure = createAction(
 
 export const DeleteJournal = createAction(
     '[backend] delete journal',
-    props<{journalEntry: Journal}>()
+    props<{journal: Journal}>()
 );
 
 export const DeleteJournalSuccess = createAction(
     '[backend] delete journal success',
-    props<{journalEntry: Journal}>()
+    props<{journal: Journal}>()
 );
 
 export const DeleteJournalFailure = createAction(

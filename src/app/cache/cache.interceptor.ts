@@ -39,6 +39,16 @@ export const cacheInterceptor: HttpInterceptorFn = (req, next) => {
         }
       });
     }
+  } else if(req.url.includes('journal/emotions')) {
+    const emotionsLastModified = localStorage.getItem('emotionsLastModified');
+    if (emotionsLastModified) {
+      req = req.clone({
+        setHeaders: {
+          ...req.headers.keys().reduce((acc, key) => ({ ...acc, [key]: req.headers.get(key) ?? '' }), {}),
+          'If-Modified-Since': emotionsLastModified
+        }
+      });
+    }
   }
 
   return next(req);

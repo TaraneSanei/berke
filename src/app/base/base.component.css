@@ -1,7 +1,7 @@
 .active-button {
-    background-color: var(--p-primary-600);
+    background-color: var(--p-accent-200) !important;
     border-radius: 6px;
-    color: var(--p-primary-200) !important;
+    color: var(--p-primary-600) !important;
 }
 
 ::ng-deep .p-button{

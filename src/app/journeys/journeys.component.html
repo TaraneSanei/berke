@@ -2,7 +2,7 @@
 
   <div (click)="toggleExpanded(journey)" *ngFor="let journey of journeys" class="w-9/10 md:w-3/4">
     <div appWindow *ngIf="expanded() !== journey.course.id"
-      class="rounded-2xl m-5 mb-2 backdrop-blur-md p-5 text-[var(--p-primary-50)]">
+      class="rounded-2xl m-5 mb-2 backdrop-blur-2xl p-5 text-[var(--p-primary-50)]">
       <h3 class="text-lg">{{ journey.course.title }}</h3>
       <div class=" mt-5 mb-5 flex justify-center items-center flex-row">
         <div class="flex w-full flex-row justify-between items-center"
@@ -52,7 +52,7 @@
       </div>
     </div>
     <div appWindow *ngIf="expanded() === journey.course.id"
-      class="rounded-2xl m-5 mb-2 backdrop-blur-md p-5 text-[var(--p-primary-50)]">
+      class="rounded-2xl m-5 mb-2 backdrop-blur-2xl p-5 text-[var(--p-primary-50)]">
 
       <h3 class="mb-5 text-lg">{{ journey.course.title }}</h3>
       <div class="flex w-full flex-row items-center justify-start"

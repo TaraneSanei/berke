@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { AppState } from './state/app.state';
 import { Store } from '@ngrx/store';
 import { selectLoading } from './state/UI/ui.selectors';
 import { BerkeService } from './shared/services/berke.service';
 import { selectUser } from './state/user/user.selector';
+import { getProfile } from './state/user/user.actions';
 
 @Component({
   selector: 'app-root',
@@ -22,5 +23,7 @@ export class AppComponent {
   constructor(private store: Store<AppState>) {
     this.loading$ = this.store.select(selectLoading);
   }
+
+
 
 }

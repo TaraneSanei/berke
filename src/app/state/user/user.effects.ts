@@ -1,9 +1,10 @@
 import { Injectable, inject } from "@angular/core";
 import { AuthService } from "../../auth/auth.service";
 import { Actions, createEffect, ofType } from '@ngrx/effects'
-import { mergeMap, catchError, of, map } from "rxjs";
-import { signup, signupSuccess, login, signupFailure, getProfile, loginFailure, loginSuccess, getProfileFailure, getProfileSuccess, setPreferences, setPreferencesFailure, setPreferencesSuccess } from "./user.actions";
+import { mergeMap, catchError, of, map, tap } from "rxjs";
+import { signup, signupSuccess, login, signupFailure, getProfile, loginFailure, loginSuccess, getProfileFailure, getProfileSuccess, setPreferences, setPreferencesFailure, setPreferencesSuccess, logout } from "./user.actions";
 import { BerkeService } from "../../shared/services/berke.service";
+import { Router } from "@angular/router";
 
 
 
@@ -14,7 +15,7 @@ export class UserEffects {
   private authService = inject(AuthService);
   private actions$ = inject(Actions);
   private berkeService = inject(BerkeService);
-
+  private router = inject(Router);
 
   signup$ = createEffect(() =>
     this.actions$.pipe(
@@ -62,7 +63,7 @@ export class UserEffects {
             }
             return getProfileSuccess({ user })
           }),
-          catchError(response => of(getProfileFailure({ error: response.error })))
+          catchError((response) => of(getProfileFailure({ error: response.error })))
         ))));
 
   setPreferences$ = createEffect(() =>
@@ -78,4 +79,18 @@ export class UserEffects {
           }),
           catchError((response) => of(setPreferencesFailure({ error: response.error })))
         ))));
+
+
+  
+  logout$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(logout),
+        tap(() => {
+          this.authService.logout();
+          this.router.navigate(['/login']);
+        })
+      ),
+    { dispatch: false }
+  );
 }

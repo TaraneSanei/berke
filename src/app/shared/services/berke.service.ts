@@ -3,23 +3,26 @@ import { usePreset } from '@primeng/themes';
 import { aurora, morning, forest, mountain, sunrise, sunset } from '../../../mypresets';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment.development';
-import { Course, Tag } from '../../models/data.models';
-import { catchError, EMPTY, tap } from 'rxjs';
+import { Course, Emotion, Tag } from '../../models/data.models';
+import { catchError, EMPTY, Observable, tap } from 'rxjs';
+import * as jalali from 'jalaali-js';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BerkeService {
 
+
   constructor(private http: HttpClient) { }
 
-  private apiUrl = environment.apiUrl + 'meditation/'
+  private apiUrl = environment.apiUrl
   private _courses = signal<Course[]>([]);
   public courses = this._courses.asReadonly();
   private _errorMessage = signal<string | null>(null);
   public errorMessage = this._errorMessage.asReadonly();
   private _tags = signal<Tag[]>([]);
-  public tags = this._tags.asReadonly();
+  private _emotions = signal<Emotion[]>([]);
+  public emotions = this._emotions.asReadonly();
 
   //setters and getters for the cached last modified token for courses and tags list
 
@@ -39,6 +42,14 @@ export class BerkeService {
     localStorage.setItem('tagsLastModified', value);
   }
 
+  getEmotionsLastModified(): string | null {
+    return localStorage.getItem('emotionsLastModified');
+  }
+
+  setEmotionsLastModified(value: string) {
+    localStorage.setItem('emotionsLastModified', value);
+  }
+
 
   //setters and getters for the cached data of courses and tags list
 
@@ -51,6 +62,18 @@ export class BerkeService {
     const tags = localStorage.getItem('tags');
     if (tags) {
       return JSON.parse(tags)
+    } else {
+      return null
+    }
+  }
+  setEmotions(emotions: any) {
+    localStorage.setItem('emotions', JSON.stringify(emotions));
+  }
+
+  getEmotions(): Emotion[] | null {
+    const emotions = localStorage.getItem('emotions');
+    if (emotions) {
+      return JSON.parse(emotions)
     } else {
       return null
     }
@@ -72,8 +95,39 @@ export class BerkeService {
 
   //methods to load the courses list and the tags list from the backend and update the cache
 
+  loadEmotions() {
+    this.http.get<Emotion[]>(this.apiUrl + 'journal/emotions', { observe: 'response' }).pipe(
+      tap(response => {
+        if (response.status === 200 && response.body) {
+          const emotions_data = response.body
+          this.setEmotions(emotions_data)
+          this._emotions.set(emotions_data || []);
+          const lm = response.headers.get('Last-Modified');
+          if (lm) this.setEmotionsLastModified(lm);
+          this._errorMessage.set(null);
+        }
+      }),        catchError(err => {
+          if (err.status === 304) {
+            console.log('err 304')
+            const cached = this.getEmotions();
+            if (cached) {
+              this._emotions.set(cached);
+              this._errorMessage.set(null);
+              console.log('Using cached emotions data', cached);
+            }
+            return EMPTY;
+          }
+
+          this._errorMessage.set(this.getErrorMessage(err));
+          console.log('Error loading emotions:', this._errorMessage());
+          return EMPTY;
+        })
+      )
+      .subscribe();
+  }
+
   loadCourses() {
-    this.http.get<Course[]>(this.apiUrl + 'courses', { observe: 'response' })
+    this.http.get<Course[]>(this.apiUrl + 'meditation/courses', { observe: 'response' })
       .pipe(
         tap(response => {
           if (response.status === 200 && response.body) {
@@ -108,7 +162,7 @@ export class BerkeService {
 
   
   loadTags() {
-    this.http.get<Tag[]>(this.apiUrl + 'tags', { observe: 'response' })
+    this.http.get<Tag[]>(this.apiUrl + 'meditation/tags', { observe: 'response' })
       .pipe(
         tap(response => {
           if (response.status === 200 && response.body) {
@@ -122,7 +176,7 @@ export class BerkeService {
         }),
         catchError(err => {
           if (err.status === 304) {
-            console.log('e4r 304')
+            console.log('err 304')
             const cached = this.getTags();
             if (cached) {
               this._tags.set(cached);
@@ -139,6 +193,7 @@ export class BerkeService {
       )
       .subscribe();
   }
+
 
 
   //setters and getters for the cached data of each course based on ID
@@ -209,4 +264,26 @@ export class BerkeService {
   const persianDigits = ['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'];
   return input.replace(/[۰-۹]/g, d => persianDigits.indexOf(d).toString());
 }
+
+
+getGregorianDateRange(jy: number, jm: number): { startDate: string, endDate: string } {
+    // 1. First day of current Jalali month
+    const gStart = jalali.toGregorian(jy, jm, 1);
+    const startDate = new Date(gStart.gy, gStart.gm - 1, gStart.gd);
+
+    // 2. First day of the *next* Jalali month
+    let nextJm = jm + 1;
+    let nextJy = jy;
+    if (nextJm > 12) {
+      nextJm = 1;
+      nextJy++;
+    }
+    const gEnd = jalali.toGregorian(nextJy, nextJm, 1);
+    const endDate = new Date(gEnd.gy, gEnd.gm - 1, gEnd.gd);
+
+    // Format to YYYY-MM-DD string, which matches your API requirement (no time/timezone)
+    const format = (d: Date) => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+
+    return { startDate: format(startDate), endDate: format(endDate) };
+  }
 }

@@ -1,9 +1,9 @@
 import { Component, HostListener, effect, signal } from '@angular/core';
 import { AppState } from '../state/app.state';
 import { Store } from '@ngrx/store';
-import { LoadSessions } from '../state/sessions/sessions.actions';
-import { selectMeditationSessions, selectNext, selectPrevious } from '../state/sessions/sessions.selector';
-import { Course, Journey, MeditationSession, Track } from '../models/data.models';
+import { LoadJourneysSessions } from '../state/JourneysSessions/journeysSessions.actions';
+import { selectJourneysSessions, selectNext, selectPrevious } from '../state/JourneysSessions/journeysSessions.selector';
+import { Course, Journey, JourneysSession, Track } from '../models/data.models';
 import { CommonModule } from '@angular/common';
 import { WindowDirective } from '../shared/directives/window.directive';
 import { DataService } from '../shared/services/data.service';
@@ -28,7 +28,7 @@ export class JourneysComponent {
 
   previous: any;
   next: any;
-  sessions = signal<MeditationSession[]>([])
+  sessions = signal<JourneysSession[]>([])
   journeys: Journey[] = []
   expanded= signal<number|null>(null)
 
@@ -38,11 +38,11 @@ export class JourneysComponent {
     this.previous = this.store.selectSignal(selectPrevious);
 
     effect(() => {
-      this.store.dispatch(LoadSessions({ url: null }));
+      this.store.dispatch(LoadJourneysSessions({ url: null }));
     })
 
     effect(() => {
-      const sessionsData = this.store.selectSignal(selectMeditationSessions)
+      const sessionsData = this.store.selectSignal(selectJourneysSessions)
       this.sessions.set(sessionsData())
       this.orderSessions()
       console.log(this.journeys)
@@ -61,7 +61,7 @@ toggleExpanded(journey: Journey) {
   loadMoreSessions() {
     let nextUrl: string | null = this.next()
     if (nextUrl != null) {
-      this.store.dispatch(LoadSessions({ url: nextUrl }))
+      this.store.dispatch(LoadJourneysSessions({ url: nextUrl }))
     }
   }
 

@@ -37,11 +37,18 @@ export interface Emotion {
     emotion: string;
 }
 
+export interface JourneysSession {
+    id?:number;
+    courseId: number;
+    trackId: number;
+
+}
+
 export interface MeditationSession {
     id?:number;
     dateTime: Date;
-    courseId: number;
-    trackId: number;
+    course: string;
+    track: string;
     duration: number;
     initialEmotion: Emotion;
     finalEmotion: Emotion;
@@ -58,4 +65,10 @@ export interface Journal {
     dateTime: Date;
     note: string;
     emotionalStatus?: Emotion[]
+}
+
+export interface CalendarSummary {
+  date: string;
+  journals: number;
+  meditations: number;
 }

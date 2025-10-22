@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment.development';
-import { Observable, of, tap } from 'rxjs';
-import { Course, Emotion, Journal } from '../../models/data.models';
+import { map, Observable, of, tap } from 'rxjs';
+import { CalendarSummary, Course, Emotion, Journal, MeditationSession } from '../../models/data.models';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +14,7 @@ export class DataService {
   private apiUrl = environment.apiUrl
   private cache = new Map<string, Course>();
 
-  getSessions(url: string | null): Observable<any> {
+  getJourneysSessions(url: string | null): Observable<any> {
     if (url) {
       return this.http.get<any>(url);
     }
@@ -38,12 +38,30 @@ export class DataService {
     return this.http.get<Journal[]>(this.apiUrl + 'journal?date=' + date);
   }
 
+  loadMeditationSessions(date: any): Observable<any> {
+    return this.http.get<MeditationSession[]>(this.apiUrl + 'sessions/sessions?date=' + date )
+  }
+
+  getMonthSummary(startDate: string, endDate: string) : Observable<CalendarSummary[]> {
+  return this.http.get<{ summary: CalendarSummary[] }>(this.apiUrl + 'dashboard/calendar/summary?startDate=' + startDate + '&endDate=' + endDate
+  ).pipe(map(response => response.summary));
+}
+
+
   getEmotions() {
     return this.http.get<Emotion[]>(this.apiUrl + 'journal/emotions');
   }
 
   addJournal(journal: Journal) {
     return this.http.post<Journal>(this.apiUrl + 'journal/new/', journal);
+  }
+
+  editJournal(journal: Journal) {
+    return this.http.put<Journal>(this.apiUrl + 'journal/' + journal.id, journal);
+  }
+
+  deleteJournal(journal: Journal) {
+    return this.http.delete<Journal>(this.apiUrl + 'journal/' + journal.id);
   }
 }
 

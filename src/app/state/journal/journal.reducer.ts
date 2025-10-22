@@ -70,9 +70,9 @@ export const JournalReducer = createReducer(
         ...state,
         status: 'loading' as 'loading'
     })),
-    on(DeleteJournalSuccess, (state, {journalEntry}) => ({
+    on(DeleteJournalSuccess, (state, {journal}) => ({
         ...state,
-        journals: state.journals.filter((j) => j.id !== journalEntry.id),
+        journals: state.journals.filter((j) => j.id !== journal.id),
         status: 'success' as 'success'
     })),
     on(DeleteJournalFailure, (state, {error}) => ({

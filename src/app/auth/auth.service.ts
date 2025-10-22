@@ -16,7 +16,7 @@ export class AuthService {
   private apiUrl = environment.apiUrl + 'user/'
 
   constructor(private http: HttpClient, private router: Router, private cookieService: CookieService) { }
-    signup(phoneNumber: string, password: string): Observable<any> {
+  signup(phoneNumber: string, password: string): Observable<any> {
     return this.http.post<any>(this.apiUrl + "register/", { 'phoneNumber': phoneNumber, 'password': password });
   }
 
@@ -81,9 +81,11 @@ export class AuthService {
 
   refreshAccessToken(): Observable<any> {
     const refreshToken = this.getRefreshToken();
-    return this.http.post<any>('user/token/refresh', { refresh: refreshToken }).pipe(
+    return this.http.post<any>(this.apiUrl + 'token/refresh/', { refresh: refreshToken }, { withCredentials: true }).pipe(
       tap(response => {
-        this.setToken(response.access); 
+        console.log('refresh token sent to update the access token')
+        this.setToken(response.access);
+        this.setRefreshToken(response.refresh)
       }),
       catchError(error => {
         this.logout();
@@ -97,10 +99,10 @@ export class AuthService {
   }
 
   updateProfile(user: User): Observable<any> {
-    return this.http.put<any>(this.apiUrl + 'profile/' , user)
+    return this.http.put<any>(this.apiUrl + 'profile/', user)
   }
 
   updatePreferences(preferences: any): Observable<any> {
-    return this.http.post<any>(this.apiUrl + 'preferences/' , preferences)
+    return this.http.post<any>(this.apiUrl + 'preferences/', preferences)
   }
 }

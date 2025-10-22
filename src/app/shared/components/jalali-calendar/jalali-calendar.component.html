@@ -1,34 +1,53 @@
-  <div class="w-full mx-auto p-2">
-    <div class="flex items-center justify-between mb-5">
-      <p-button (click)="prevMonth()" rounded="true" size="small" icon="pi pi-chevron-right"></p-button>
-      <div class="text-center">
-        <div class="font-semibold text-lg">{{ monthNames[month - 1] }} <span class="text-sm text-[var(--p-primary-200)]">{{ year | persianDigits }}</span></div>
-      </div>
-      <p-button (click)="nextMonth()" rounded="true" size="small" icon="pi pi-chevron-left"></p-button>
+<div class="w-full mx-auto p-2">
+  <div class="flex items-center justify-between mb-5">
+    <p-button (click)="prevMonth()" rounded="true" severity="secondary" variant="text" size="small"
+      icon="pi pi-chevron-right"></p-button>
+    <div class="text-center">
+      <div class="font-semibold text-lg">{{ monthNames[month - 1] }} <span
+          class="text-sm text-[var(--p-primary-200)]">{{ year | persianDigits }}</span></div>
     </div>
-
-    <!-- weekday header -->
-    <div class="grid border grid-cols-7 text-center bg-[var(--p-primary-600)] font-medium">
-      <div *ngFor="let wd of weekDays" class="py-1 border border-b-0">{{ wd }}</div>
-    </div>
-
-    <!-- days grid -->
-    <div class="grid border grid-cols-7">
-      
-      <button class="border"
-        *ngFor="let day of days; trackBy: trackByDay"
-        (click)="selectDate(day)"
-        [attr.aria-current]="isToday(day) ? 'date' : null"
-        [class.opacity-50]="!day.isCurrentMonth"
-        [class.bg-[var(--p-primary-600)]]="isSelected(day)"
-      >
-        <div class="py-5 inline-block">
-          <span class="flex justify-center items-center w-10 h-10" [innerHTML]="day.jd | persianDigits"
-                  [ngClass]="{
-          'rounded-3xl border-2': isToday(day),
-        }"></span>
-        </div>
-        <span *ngIf="hasEvents(day)" class="absolute bottom-1 right-1 w-2 h-2 rounded-full bg-red-500" title="{{ eventsMap[getKey(day)].length }}"></span>
-      </button>
-    </div>
+    <p-button (click)="nextMonth()" severity="secondary" rounded="true" variant="text" size="small"
+      icon="pi pi-chevron-left"></p-button>
   </div>
+
+  <!-- weekday header -->
+  <div class="grid border grid-cols-7 border-white/50 text-center font-medium">
+    <div *ngFor="let wd of weekDays" class="py-1 border-white/50 border border-b-0">{{ wd }}</div>
+  </div>
+
+  <!-- days grid -->
+  <div class="grid shadow-inner grid-rows-5 border border-white/50 grid-cols-7">
+
+    <button class="border border-white/50" *ngFor="let day of days; trackBy: trackByDay" (click)="selectDate(day)"
+      [attr.aria-current]="isToday(day) ? 'date' : null" [class.bg-[var(--p-accent-200)]]="isSelected(day)"
+      [class.text-[var(--p-primary-500)]]="isSelected(day)">
+            <div>
+      <span class="flex flex-col mt-1 gap-0.5 items-center justify-center" *ngIf="getSummaryForDay(day) as summary">
+        <div *ngFor="let _ of [].constructor((Math.min(summary.meditations, 3)))" class="flex mb-1">
+          <span class="w-10 h-1 bg-[var(--p-primary-100)] opacity-70 rounded-full"
+            [class.bg-[var(--p-primary-600)]]="isSelected(day)">
+          </span>
+        </div>
+        <p [class.text-[var(--p-primary-600)]]="isSelected(day)" *ngIf="summary.meditations>3">+</p>
+      </span>
+      </div>
+      <div class="flex items-center justify-center" style="height: 8.5vh;">
+        <span class="flex justify-center items-center w-10 h-10" 
+          [class.opacity-30]="!day.isCurrentMonth" [ngClass]="{
+          'rounded-3xl border-2': isToday(day),
+          
+        }">{{day.jd | persianDigits}}</span>
+      </div>
+      <div>
+      <span class="flex flex-row gap-0.5 items-center justify-center" *ngIf="getSummaryForDay(day) as summary">
+        <div *ngFor="let _ of [].constructor((Math.min(summary.journals, 3)))" class="flex mb-1">
+          <span class="w-2 h-2 bg-[var(--p-primary-100)] opacity-70 rounded-full"
+            [class.bg-[var(--p-primary-600)]]="isSelected(day)">
+          </span>
+        </div>
+        <p [class.text-[var(--p-primary-600)]]="isSelected(day)" *ngIf="summary.journals>3">+</p>
+      </span>
+      </div>
+    </button>
+  </div>
+</div>

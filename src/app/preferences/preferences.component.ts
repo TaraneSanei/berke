@@ -1,20 +1,18 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { WindowDirective } from '../shared/directives/window.directive';
-import { Button, ButtonModule } from "primeng/button";
+import { ButtonModule } from "primeng/button";
 import { StepperModule } from 'primeng/stepper';
 import { InputTextModule } from 'primeng/inputtext';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, FormsModule } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { CheckboxModule } from 'primeng/checkbox';
 import { DatePickerModule } from 'primeng/datepicker';
 import { PersianDigitsDirective } from '../shared/directives/persian-digits.directive';
-import { PersianDigitsPipe } from '../shared/pipes/persian-digits.pipe';
-import { CalendarModule } from 'primeng/calendar';
 import { BerkeService } from '../shared/services/berke.service';
 import { AppState } from '../state/app.state';
 import { Store } from '@ngrx/store';
-import { setPreferences, updateProfile } from '../state/user/user.actions';
+import { getProfile, setPreferences } from '../state/user/user.actions';
 import { Router } from '@angular/router';
 import { NotificationService } from '../shared/services/notification.service';
 
@@ -41,6 +39,8 @@ export class PreferencesComponent {
 
   activeStep: number = 1;
   direction: 'up' | 'down' = 'up'; //stepper direction
+
+  
   preferences = {
   username: '',
   experience: '',

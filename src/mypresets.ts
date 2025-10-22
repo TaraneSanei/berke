@@ -8,17 +8,17 @@ export const sunrise = definePreset(
     {
         semantic: {
             primary: {
-                50: '{indigo.50}',
-                100: '{indigo.100}',
-                200: '{indigo.200}',
-                300: '{indigo.300}',
-                400: '{indigo.400}',
-                500: '{indigo.500}',
-                600: '{indigo.600}',
-                700: '{indigo.700}',
-                800: '{indigo.800}',
-                900: '{indigo.900}',
-                950: '{indigo.950}'
+                50: '{purple.50}',
+                100: '{purple.100}',
+                200: '{purple.200}',
+                300: '{purple.300}',
+                400: '{purple.400}',
+                500: '{purple.500}',
+                600: '{purple.600}',
+                700: '{purple.700}',
+                800: '{purple.800}',
+                900: '{purple.900}',
+                950: '{purple.950}'
             },
             secondary: {
                 50: '{pink.50}',
@@ -33,7 +33,19 @@ export const sunrise = definePreset(
                 900: '{pink.900}',
                 950: '{pink.950}'
             },
-            accent: '#FF5A28',
+            accent: {
+                50: '{purple.50}',
+                100: '{purple.100}',
+                200: '{purple.200}',
+                300: '{purple.300}',
+                400: '{purple.400}',
+                500: '{purple.500}',
+                600: '{purple.600}',
+                700: '{purple.700}',
+                800: '{purple.800}',
+                900: '{purple.900}',
+                950: '{purple.950}'
+            },
             neutral: {
                 50: '{zinc.50}',
                 100: '{zinc.100}',
@@ -56,10 +68,9 @@ export const sunrise = definePreset(
                 }
             },
             floatlabel: {
-                color: 'var(--p-primary-600)',
                 focusColor: 'var(--p-neutral-50)',
                 activeColor: 'var(--p-neutral-50)',
-                invalidColor: 'var(--p-red-600)'
+                invalidColor: 'var(--p-red-500)'
             },
             inputtext: {
                 borderColor: 'var(--p-primary-50)',
@@ -68,7 +79,11 @@ export const sunrise = definePreset(
             button: {
                 root: {
                     primary: {
-                        background: 'var(--p-primary-600) !important',
+                        background: 'var(--p-accent-200) !important',
+                        color: 'var(--p-primary-600) !important',
+                        hoverColor: 'var(--p-primary-700) !important',  // color on hover
+                        hoverBackground: 'var(--p-accent-100) !important',
+                        border: 'var(--p-accent-200) !important'
                     }
                 },
                 text: {
@@ -92,9 +107,6 @@ export const sunrise = definePreset(
             css: {
                 ':root': {
                     '--app-background': 'linear-gradient(var(--p-primary-950), var(--p-primary-900), var(--p-secondary-700))',
-                },
-                '.p-button.p-button-text.p-button-secondary:hover' : {
-                    color: 'var(--p-secondary-700) !important'
                 }
             }
         }
@@ -252,7 +264,6 @@ export const forest = definePreset(
                 }
             },
             floatlabel: {
-                color: 'var(--p-primary-600)',
                 focusColor: 'var(--p-neutral-50)',
                 activeColor: 'var(--p-neutral-50)',
                 invalidColor: 'var(--p-red-600)'
@@ -350,10 +361,9 @@ export const aurora = definePreset(
                 }
             },
             floatlabel: {
-                color: 'var(--p-primary-600)',
                 focusColor: 'var(--p-neutral-50)',
                 activeColor: 'var(--p-neutral-50)',
-                invalidColor: 'var(--p-red-600)'
+                invalidColor: 'var(--p-red-500)'
             },
             inputtext: {
                 borderColor: 'var(--p-primary-50)',
@@ -399,32 +409,44 @@ export const mountain = definePreset(
     {
         semantic: {
             primary: {
-                50: '{amber.50}',
-                100: '{amber.100}',
-                200: '{amber.200}',
-                300: '{amber.300}',
-                400: '{amber.400}',
-                500: '{amber.500}',
-                600: '{amber.600}',
-                700: '{amber.700}',
-                800: '{amber.800}',
-                900: '{amber.900}',
-                950: '{amber.950}'
+                50: '{stone.50}',
+                100: '{stone.100}',
+                200: '{stone.200}',
+                300: '{stone.300}',
+                400: '{stone.400}',
+                500: '{stone.500}',
+                600: '{stone.600}',
+                700: '{stone.700}',
+                800: '{stone.800}',
+                900: '{stone.900}',
+                950: '{stone.950}'
             },
             secondary: {
-                50: '{amber.50}',
-                100: '{amber.100}',
-                200: '{amber.200}',
-                300: '{amber.300}',
-                400: '{amber.400}',
-                500: '{amber.500}',
-                600: '{amber.600}',
-                700: '{amber.700}',
-                800: '{amber.800}',
-                900: '{amber.900}',
-                950: '{amber.950}'
+                50: '{slate.50}',
+                100: '{slate.100}',
+                200: '{slate.200}',
+                300: '{slate.300}',
+                400: '{slate.400}',
+                500: '{slate.500}',
+                600: '{slate.600}',
+                700: '{slate.700}',
+                800: '{slate.800}',
+                900: '{slate.900}',
+                950: '{slate.950}'
             },
-            accent: '#FF5A28',
+            accent: {
+                50: '{orange.50}',
+                100: '{orange.100}',
+                200: '{orange.200}',
+                300: '{orange.300}',
+                400: '{orange.400}',
+                500: '{orange.500}',
+                600: '{orange.600}',
+                700: '{orange.700}',
+                800: '{orange.800}',
+                900: '{orange.900}',
+                950: '{orange.950}'
+            },
             neutral: {
                 50: '{zinc.50}',
                 100: '{zinc.100}',
@@ -450,20 +472,22 @@ export const mountain = definePreset(
                 }
             },
             floatlabel: {
-                color: 'var(--p-primary-900)',
                 focusColor: 'var(--p-neutral-50)',
                 activeColor: 'var(--p-neutral-50)',
-                invalidColor: 'var(--p-red-600)'
+                invalidColor: 'var(--p-red-500)'
             },
             inputtext: {
-                color: 'var(--p-primary-900)',
                 borderColor: 'var(--p-primary-50)',
                 hoverBorderColor: 'var(--p-primary-100)'
             },
             button: {
                 root: {
                     primary: {
-                        background: 'var(--p-primary-600) !important',
+                        background: 'var(--p-accent-200) !important',
+                        color: 'var(--p-primary-600) !important',
+                        hoverColor: 'var(--p-primary-700) !important',  // color on hover
+                        hoverBackground: 'var(--p-accent-100) !important',
+                        border: 'var(--p-primary-200)'
                     }
                 },
                 text: {

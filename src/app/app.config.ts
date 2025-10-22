@@ -16,12 +16,13 @@ import { OtpReducer } from './state/otp/otp.reducer';
 import { OTPEffects } from './state/otp/otp.effects';
 import { loadingInterceptor } from './loading/loading.interceptor';
 import { uiReducer } from './state/UI/ui.reducer';
-import { SessionsReducer } from './state/sessions/sessions.reducer';
-import { SessionsEffects } from './state/sessions/sessions.effects';
+import { JourneysSessionsReducer } from './state/JourneysSessions/journeysSessions.reducer';
+import { JourneysSessionsEffects } from './state/JourneysSessions/journeysSessions.effects';
 import { JournalReducer } from './state/journal/journal.reducer';
 import { JournalEffects } from './state/journal/journal.effects';
-import { EmotionReducer } from './state/emotion/emotion.reducer';
-import { EmotionEffects } from './state/emotion/emotion.effects';
+import { MeditationSessionsEffects } from './state/meditationsSessions/meditationSessions.effects';
+import { meditationSessionsReducer } from './state/meditationsSessions/meditationSessions.reducer';
+
 
 
 const chosenThemeKey = (localStorage?.getItem('user-theme') || 'sunrise') as 'sunrise' | 'sunset' | 'forest' | 'aurora' | 'mountain' | 'morning';
@@ -59,16 +60,17 @@ export const appConfig: ApplicationConfig = {
       user: UserReducer,
       otp: OtpReducer,
       ui: uiReducer,
-      sessions : SessionsReducer,
+      journeysSessions : JourneysSessionsReducer,
       journal: JournalReducer,
-      emotions: EmotionReducer
+      meditationSessions: meditationSessionsReducer
+
     }),
     provideEffects([
       UserEffects,
       OTPEffects,
-      SessionsEffects,
+      JourneysSessionsEffects,
       JournalEffects,
-      EmotionEffects
+      MeditationSessionsEffects
     ]),
     provideStoreDevtools({
       maxAge: 25,

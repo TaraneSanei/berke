@@ -8,13 +8,14 @@ import { BerkeComponent } from './berke/berke.component';
 import { SubscriptionComponent } from './subscription/subscription.component';
 import { JourneysComponent } from './journeys/journeys.component';
 import { JournalComponent } from './journal/journal.component';
+import { authGuard } from './auth/auth.guard';
 
 export const routes: Routes = [
     { path: 'login', component: LoginComponent, title:'login' },
     { path: 'signup', component: SignupComponent, title:'signup' },
     { path: 'preferences', component: PreferencesComponent, title:'preferences' },
     { path: 'subscribe', component: SubscriptionComponent, title:'subscribe' },
-    { path: '', component: BaseComponent, title:'base', children:[
+    { path: '', component: BaseComponent, title:'base', canActivate:[authGuard], children:[
     {path: 'berke', component: BerkeComponent, title:'berke'},
     {path: 'journeys', component: JourneysComponent, title:'journeys'},
     {path: 'journal', component: JournalComponent, title:'journal'},
