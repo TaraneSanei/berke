@@ -4,6 +4,7 @@ import { UserState } from "./user/user.reducer";
 import { JourneysSessionsState } from "./JourneysSessions/journeysSessions.reducer";
 import { JournalState } from "./journal/journal.reducer";
 import { MeditationSessionsState } from "./meditationsSessions/meditationSessions.reducer";
+import { CalendarState } from "./history/history.reducer";
 
 export interface AppState {
   user: UserState;
@@ -11,5 +12,6 @@ export interface AppState {
   ui: UiState;
   journeysSessions: JourneysSessionsState;
   journal: JournalState;
-  meditationSessions: MeditationSessionsState
+  meditationSessions: MeditationSessionsState;
+  calendar: CalendarState;
 }

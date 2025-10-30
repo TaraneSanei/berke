@@ -22,6 +22,8 @@ import { JournalReducer } from './state/journal/journal.reducer';
 import { JournalEffects } from './state/journal/journal.effects';
 import { MeditationSessionsEffects } from './state/meditationsSessions/meditationSessions.effects';
 import { meditationSessionsReducer } from './state/meditationsSessions/meditationSessions.reducer';
+import { calendarReducer } from './state/history/history.reducer';
+import { CalendarEffects } from './state/history/history.effects';
 
 
 
@@ -62,7 +64,8 @@ export const appConfig: ApplicationConfig = {
       ui: uiReducer,
       journeysSessions : JourneysSessionsReducer,
       journal: JournalReducer,
-      meditationSessions: meditationSessionsReducer
+      meditationSessions: meditationSessionsReducer,
+      calendar: calendarReducer
 
     }),
     provideEffects([
@@ -70,7 +73,8 @@ export const appConfig: ApplicationConfig = {
       OTPEffects,
       JourneysSessionsEffects,
       JournalEffects,
-      MeditationSessionsEffects
+      MeditationSessionsEffects,
+      CalendarEffects
     ]),
     provideStoreDevtools({
       maxAge: 25,

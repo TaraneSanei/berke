@@ -1,6 +1,6 @@
 import { createReducer, on } from "@ngrx/store";
 import { User } from "../../models/data.models";
-import { signup, signupSuccess, signupFailure, login, loginSuccess, loginFailure, getProfile, getProfileSuccess, getProfileFailure, updateProfile, updateProfileSuccess, updateProfileFailure, logout, setPreferences, setPreferencesSuccess, setPreferencesFailure } from "./user.actions";
+import { signup, signupSuccess, signupFailure, login, loginSuccess, loginFailure, getProfile, getProfileSuccess, getProfileFailure, updateProfile, updateProfileSuccess, updateProfileFailure, logout, setPreferences, setPreferencesSuccess, setPreferencesFailure, changePassword, changePasswordFailure, changePasswordSuccess } from "./user.actions";
 
 
 
@@ -91,6 +91,21 @@ export const UserReducer = createReducer(
         error: ''
     })),
     on(setPreferencesFailure, (state, { error }) => ({
+        ...state,
+        status: 'error' as 'error',
+        error: error
+    })),
+    on(changePassword, (state) => ({
+        ...state,
+        status: 'loading' as 'loading',
+        error: ''
+    })),
+    on(changePasswordSuccess, (state) => ({
+        ...state,
+        status: 'success' as 'success',
+        error: ''
+    })),
+    on(changePasswordFailure, (state, { error }) => ({
         ...state,
         status: 'error' as 'error',
         error: error

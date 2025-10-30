@@ -73,4 +73,18 @@ export const setPreferencesFailure = createAction(
     props<{ error: any }>()
 );
 
+export const changePassword = createAction(
+    '[User] Change Password',
+    props<{ oldPassword: string; newPassword: string }>()
+)
+
+export const changePasswordSuccess = createAction(
+    '[User] Change Password Success'
+);
+
+export const changePasswordFailure = createAction(
+    '[User] Change Password Failure',
+    props<{ error: any }>()
+);
+
 export const logout = createAction('[User] Logout');

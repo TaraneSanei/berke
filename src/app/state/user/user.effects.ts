@@ -1,8 +1,8 @@
 import { Injectable, inject } from "@angular/core";
 import { AuthService } from "../../auth/auth.service";
 import { Actions, createEffect, ofType } from '@ngrx/effects'
-import { mergeMap, catchError, of, map, tap } from "rxjs";
-import { signup, signupSuccess, login, signupFailure, getProfile, loginFailure, loginSuccess, getProfileFailure, getProfileSuccess, setPreferences, setPreferencesFailure, setPreferencesSuccess, logout } from "./user.actions";
+import { mergeMap, catchError, of, map, tap, from } from "rxjs";
+import { signup, signupSuccess, login, signupFailure, getProfile, loginFailure, loginSuccess, getProfileFailure, getProfileSuccess, setPreferences, setPreferencesFailure, setPreferencesSuccess, logout, updateProfile, updateProfileSuccess, updateProfileFailure, changePassword, changePasswordSuccess, changePasswordFailure } from "./user.actions";
 import { BerkeService } from "../../shared/services/berke.service";
 import { Router } from "@angular/router";
 
@@ -81,7 +81,31 @@ export class UserEffects {
         ))));
 
 
+  updateProfile$ = createEffect(() => 
+  this.actions$.pipe(
+    ofType(updateProfile),
+    mergeMap((action) =>
+    this.authService.updateProfile(action.user).pipe(
+      mergeMap((response) => {
+        return [
+          updateProfileSuccess({ user: response }),
+          getProfile()
+        ];
+      }),
+      catchError((response) => of(updateProfileFailure({ error: response.error })))
+    ))))
   
+
+    changePassword$ = createEffect(() => 
+    this.actions$.pipe(
+      ofType(changePassword),
+      mergeMap((action) =>
+      from(this.authService.changePassword(action.oldPassword, action.newPassword)).pipe(
+        map(() => changePasswordSuccess()),
+        catchError((response) => of(changePasswordFailure({ error: response.error })))
+      ))))
+
+
   logout$ = createEffect(
     () =>
       this.actions$.pipe(

@@ -13,6 +13,7 @@ import { DividerModule } from 'primeng/divider';
 import { AccordionModule } from 'primeng/accordion';
 import { WaveDirective } from "../shared/directives/wave.directive";
 import { Button } from "primeng/button";
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-journeys',
@@ -32,7 +33,7 @@ export class JourneysComponent {
   journeys: Journey[] = []
   expanded= signal<number|null>(null)
 
-  constructor(private store: Store<AppState>, private dataservice: DataService) {
+  constructor(private store: Store<AppState>, private dataservice: DataService, private router: Router) {
 
     this.next = this.store.selectSignal(selectNext);
     this.previous = this.store.selectSignal(selectPrevious);
@@ -97,5 +98,8 @@ toggleExpanded(journey: Journey) {
 
   const nextTrack = sortedTracks.find(track => !journey.listenedto.includes(track.id));
   return nextTrack ? nextTrack.id : null;
+}
+playTrack(track:Track){
+  this.router.navigate(['/play', track.id]);
 }
 }

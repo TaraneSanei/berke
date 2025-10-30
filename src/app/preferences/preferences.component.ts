@@ -91,7 +91,6 @@ export class PreferencesComponent {
 
   subscribe(){
     this.router.navigate(['/subscribe']);
-
   }
 
   start() {

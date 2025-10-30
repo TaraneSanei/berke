@@ -1,6 +1,6 @@
 import { createReducer, on } from "@ngrx/store";
 import { MeditationSession } from "../../models/data.models";
-import { LoadMeditationSession, LoadMeditationSessionFailure, LoadMeditationSessionSuccess } from "./meditationSessions.actions";
+import { AddMeditationSession, AddMeditationSessionFailure, AddMeditationSessionSuccess, EditMeditationSession, EditMeditationSessionFailure, EditMeditationSessionSuccess, LoadMeditationSession, LoadMeditationSessionFailure, LoadMeditationSessionSuccess } from "./meditationSessions.actions";
 
 
 export interface MeditationSessionsState {
@@ -33,6 +33,36 @@ export const meditationSessionsReducer = createReducer(
         ...state,
         error: error,
         status: 'error' as 'error'
-    }))
+    })),
+        on(AddMeditationSession, (state) => ({
+            ...state,
+            status: 'loading' as 'loading',
+            error: ''
+        })),
+        on(AddMeditationSessionSuccess, (state, {session}) => ({
+            ...state,
+            meditationSessions: [...state.meditationSessions, session],
+            status: 'success' as 'success',
+            error: ''
+        })),
+        on(AddMeditationSessionFailure, (state, {error}) => ({
+            ...state,
+            error,
+            status: 'error' as 'error'
+        })),
+        on(EditMeditationSession, (state) => ({
+            ...state,
+            status: 'loading' as 'loading'
+        })),
+        on(EditMeditationSessionSuccess, (state, {session}) => ({
+            ...state,
+            meditationSessions: state.meditationSessions.map((s) => (s.id === session.id ? session : s)),
+            status: 'success' as 'success'
+        })),
+        on(EditMeditationSessionFailure, (state, {error}) => ({
+            ...state,
+            error,
+            status: 'error' as 'error'
+        })),
 )
 

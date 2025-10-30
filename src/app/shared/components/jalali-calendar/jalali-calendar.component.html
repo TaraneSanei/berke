@@ -31,7 +31,7 @@
         <p [class.text-[var(--p-primary-600)]]="isSelected(day)" *ngIf="summary.meditations>3">+</p>
       </span>
       </div>
-      <div class="flex items-center justify-center" style="height: 8.5vh;">
+      <div class="flex items-center justify-center min-h-10" style="height: 8.5vh;">
         <span class="flex justify-center items-center w-10 h-10" 
           [class.opacity-30]="!day.isCurrentMonth" [ngClass]="{
           'rounded-3xl border-2': isToday(day),

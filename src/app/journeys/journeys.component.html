@@ -102,7 +102,7 @@
           <p>{{track.duration*1000 | date:'mm:ss': 'UTC' | persianDigits}}</p>
         </div>
         <div>
-          <p-button size="small" rounded="true" severity="secondary" variant="text">
+          <p-button size="small" rounded="true" (click)="playTrack(track)" severity="secondary" variant="text">
             <span class="rounded-full border-2 w-8 h-8 inline-flex items-center justify-center">
               <i class="pi pi-play ml-0.5"></i>
             </span>

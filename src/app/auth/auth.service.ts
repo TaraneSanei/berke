@@ -105,4 +105,8 @@ export class AuthService {
   updatePreferences(preferences: any): Observable<any> {
     return this.http.post<any>(this.apiUrl + 'preferences/', preferences)
   }
+
+  changePassword(oldPassword: string, newPassword: string): Observable<any> {
+    return this.http.post<any>(this.apiUrl + 'password/change/', { old_password: oldPassword, new_password: newPassword })
+  }
 }

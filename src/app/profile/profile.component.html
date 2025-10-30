@@ -1,6 +1,140 @@
+<div class="flex justify-center">
+    <div class="grid grid-cols-1 w-full items-start lg:w-3/4 m-3 text-[var(--p-primary-50)]">
+        <!-- username -->
+
+        <div appWindow [opacity]="1" class=" items-center m-2 rounded-2xl backdrop-blur-2xl">
+            <div *ngIf="!expanded().includes('user')" class="flex flex-row p-5 gap-3 items-center"
+                (click)="toggleExpanded('user')">
+                <div class="relative inline-block">
+                    <p-avatar icon="pi pi-user" class="mr-3" size="xlarge" shape="circle" />
+                    <i *ngIf="UserProfile()?.isSubscribed"
+                        class="pi pi-crown absolute text-yellow-500 bg-[var(--p-primary-700)] rounded-2xl p-1 bottom-0 right-0"></i>
+                </div>
+                <div class="text-xl">
+                    {{UserProfile()?.username}}
+                </div>
+                <div>
+                    {{UserProfile()?.phoneNumber | persianDigits}}
+                </div>
+            </div>
+            <div *ngIf="expanded().includes('user')" class="flex flex-col gap-3">
+                <div class="p-5" (click)="toggleExpanded('user')">
+                    <div class="relative inline-block">
+                        <p-avatar icon="pi pi-user" class="mr-3" size="xlarge" shape="circle" />
+                        <i *ngIf="UserProfile()?.isSubscribed"
+                            class="pi pi-crown absolute text-yellow-500 bg-[var(--p-primary-700)] rounded-2xl p-1 bottom-0 right-0"></i>
+                    </div>
+                </div>
+                <div *ngIf="!isEditingUserName()" class="text-lg flex flex-row mx-6 my-2">
+                    {{UserProfile()?.username? UserProfile()?.username : 'کاربر'}}
+                    <p-button icon="pi pi-pencil" variant="text" (onClick)="startEditUsername()" rounded="true"
+                        size="small"></p-button>
+                </div>
+                <div *ngIf="isEditingUserName()" class="flex flex-row items-center mx-6 my-2">
+                    <input pInputText [(ngModel)]="editableUserProfile.username" />
+                    <p-button class="mx-3" icon="pi pi-save" (onClick)="editUsername()" variant="text" rounded="true"
+                        size="small"></p-button>
+                </div>
+                <div class="m-4 mx-6 text-lg">
+                    {{UserProfile()?.phoneNumber | persianDigits}}
+
+                </div>
+                <div *ngIf="!isChangingPassword()" class="flex flex-row mx-6 my-2 text-lg items-center">
+                    <p>تغییر گذرواژه</p>
+                    <p-button class="mx-3" icon="pi pi-pencil" variant="text" rounded="true" size="small"
+                        (click)="toggleChangePassword()"></p-button>
+                </div>
+                <div *ngIf="isChangingPassword()">
+                    <form [formGroup]="changePasswordForm" class="flex flex-col text-lg gap-4 my-2 mx-6">
+                        <p>تغییر گذرواژه</p>
+                        <p-password formControlName="oldPassword" placeholder="گذرواژه قدیمی" toggleMask="true"
+                            feedback="false"></p-password>
+                        <p-password formControlName="newPassword" placeholder="گذرواژه جدید" toggleMask="true"
+                            styleClass="text-sm" [toggleMask]="true" autocomplete="true"
+                            promptLabel="یک گذرواژه قوی انتخاب کنید." weakLabel="گذرواژه ضعیف"
+                            mediumLabel="گذرواژه متوسط" strongLabel="گذرواژه قوی"></p-password>
+                        <p-password formControlName="repeatNewPassword" placeholder="تکرار گذرواژه جدید"
+                            toggleMask="true" feedback="false" (onFocus)="passwordRepeatFocused.set(true)"
+                            (onBlur)="passwordRepeatFocused.set(false)" />
+                        <div class="p-password-overlay border-2 relative z-1000 mt-21 text-sm"
+                            *ngIf="passwordRepeatFocused() && changePasswordForm.hasError('passwordMismatch')"
+                            [ngClass]="{ '!text-red-400': true }">
+                            گذرواژه‌ها با هم مطابقت ندارند.
+                        </div>
+                        <div class="flex flex-row items-center gap-2">
+                            <p-button icon="pi pi-times" (click)="toggleChangePassword()" variant="outlined"
+                                rounded="true" size="small"></p-button>
+                            <p-button icon="pi pi-save" [disabled]="changePasswordForm.invalid" variant="outlined"
+                                rounded="true" size="small" (click)="changePassword()"></p-button>
+                        </div>
+                    </form>
+                </div>
 
 
-<div *ngFor="let theme of themes">
-    <button appWindow class="rounded-xl p-2 text-white w-30 m-2 border-2" (click)="themeChange(theme.value)">{{ theme.label }}</button>
+                <div class="mx-6 mt-4 mb-8 text-lg">
+                    تاریخ عضویت:
+                    {{UserProfile()?.createdAt! | jalaliDate:'longDate' |persianDigits}}
+                </div>
+            </div>
+
+        </div>
+        <div appWindow [opacity]="1" class="m-2 rounded-2xl backdrop-blur-2xl">
+            <div class="items-center p-5" (click)="toggleExpanded('subscription')">
+                <div *ngIf="!expanded().includes('subscription')" class="flex flex-row gap-3 items-center">
+                    <p-avatar icon="pi pi-crown" class="mr-2" size="xlarge" shape="circle" />
+                    <div class="text-xl">
+                        اشتراک
+                    </div>
+                </div>
+                <div *ngIf="expanded().includes('subscription')" class="flex flex-row gap-3 items-center">
+                    <p-avatar icon="pi pi-crown" class="mr-2" size="xlarge" shape="circle" />
+                    <div class="text-xl">
+                        اشتراک
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div appWindow [opacity]="1" class="m-2 rounded-2xl backdrop-blur-2xl">
+            <div class="items-center p-5" (click)="toggleExpanded('settings')">
+                <div *ngIf="!expanded().includes('settings')" class="flex flex-row gap-3 items-center">
+                    <p-avatar icon="pi pi-cog" class="mr-2" size="xlarge" shape="circle" />
+                    <div class="text-xl">
+                        تنظیمات
+                    </div>
+                </div>
+                <div *ngIf="expanded().includes('settings')" class="flex flex-col gap-2">
+                    <div class="relative inline-block">
+                        <p-avatar icon="pi pi-cog" class="mr-2" size="xlarge" shape="circle" />
+                    </div>
+                    <div>
+                        یادآوری
+                    </div>
+                    <div>
+                        تم
+                        <div class="grid grid-cols-1 gap-2" *ngFor="let theme of themes">
+                            <button class="m-2 border rounded-lg h-50 "
+                                [ngStyle]="{'background-image': selectedTheme === theme.value ? 'var(--p--root---app-background)' : 'transparent', 'color': selectedTheme === theme.value ? 'white' : 'black'}"
+                                (click)="themeChange(theme.value)">{{ theme.label }}</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+                <div appWindow [opacity]="1" class="m-2 rounded-2xl backdrop-blur-2xl">
+            <div class="items-center p-5" (click)="toggleExpanded('subscription')">
+                <div *ngIf="!expanded().includes('subscription')" class="flex flex-row gap-3 items-center">
+                    <p-avatar icon="pi pi-crown" class="mr-2" size="xlarge" shape="circle" />
+                    <div class="text-xl">
+                        streak
+                    </div>
+                </div>
+                <div *ngIf="expanded().includes('subscription')" class="flex flex-row gap-3 items-center">
+                    <p-avatar icon="pi pi-crown" class="mr-2" size="xlarge" shape="circle" />
+                    <div class="text-xl">
+                        streak
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-
+</div>

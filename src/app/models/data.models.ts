@@ -9,6 +9,7 @@ export interface User {
     subscriptionEnd?: Date;
     preferences?: string[];
     theme: string;
+    createdAt?: Date;
 }
 
 export interface Course {
@@ -50,8 +51,8 @@ export interface MeditationSession {
     course: string;
     track: string;
     duration: number;
-    initialEmotion: Emotion;
-    finalEmotion: Emotion;
+    initialEmotion: Emotion[];
+    finalEmotion: Emotion[];
 }
 
 export interface Journey {
@@ -72,3 +73,4 @@ export interface CalendarSummary {
   journals: number;
   meditations: number;
 }
+

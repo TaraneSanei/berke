@@ -23,6 +23,9 @@ import { ConfirmationService } from 'primeng/api';
 import { LoadMeditationSession } from '../state/meditationsSessions/meditationSessions.actions';
 import { selectMeditationSessions, SelectMeditationSessions } from '../state/meditationsSessions/meditationSessions.selector';
 import { DataService } from '../shared/services/data.service';
+import { LoadCalendarSummary } from '../state/history/history.actions';
+import { selectCalendar } from '../state/history/history.selector';
+import { JalaliDatePipe } from '../shared/pipes/jalali-date.pipe';
 
 
 @Component({
@@ -54,8 +57,8 @@ export class JournalComponent implements OnInit {
   emotions = this.berkeService.emotions
   courses = this.berkeService.courses
   selectedDate = signal<Date | null>(new Date());
-  calendarView = signal<{ jy: number, jm: number }>({ jy: 0, jm: 0 }); // Tracks current displayed month/year
-  monthSummaryMap = signal<Map<string, CalendarSummary>>(new Map()); // Holds the fetched data
+  calendarView = signal<{ jy: number, jm: number }>({ jy: 0, jm: 0 });
+  monthSummaryMap :any;
   journals = signal<Journal[]>([]);
   meditationSessions = signal<MeditationSession[]>([])
   newJournal: Journal = {
@@ -73,7 +76,6 @@ export class JournalComponent implements OnInit {
   };
 
 
-
   ngOnInit() {
     const now = new Date();
     const { jy, jm, jd } = jalali.toJalaali(now);
@@ -81,7 +83,6 @@ export class JournalComponent implements OnInit {
   }
 
   onMonthChange(date: { year: number, month: number }) {
-    // This updates the signal, which triggers the effect above
     this.calendarView.set({ jy: date.year, jm: date.month });
   }
 
@@ -106,6 +107,17 @@ export class JournalComponent implements OnInit {
       this.meditationSessions.set(meditationSessionsData())
     })
 
+  const calendarData = this.store.selectSignal(selectCalendar);
+
+  // computed signal: transform to a Map
+  this.monthSummaryMap = computed(() => {
+    const data = calendarData();
+    return new Map(
+      (data || []).map(item => [item.date, item]) // keep full object
+    );
+  });
+    
+
     this.combinedEntries = computed(() => {
       const journalItems = this.journals();
       const sessionItems = this.meditationSessions();
@@ -123,23 +135,10 @@ export class JournalComponent implements OnInit {
 
   }
 
-  private fetchMonthSummary(jy: number, jm: number) {
+  fetchMonthSummary(jy: number, jm: number) {
     const { startDate, endDate } = this.berkeService.getGregorianDateRange(jy, jm);
-
-    this.dataService.getMonthSummary(startDate, endDate).subscribe({
-      next: (summaryData: CalendarSummary[]) => {
-        const newMap = new Map<string, CalendarSummary>();
-        summaryData.forEach(item => {
-          newMap.set(item.date, item);
-        });
-        this.monthSummaryMap.set(newMap);
-        console.log('Month summary map updated:', this.monthSummaryMap());
-      },
-      error: (err) => {
-        console.error('Error fetching month summary:', err);
-        this.monthSummaryMap.set(new Map());
-      }
-    });
+    this.store.dispatch(LoadCalendarSummary({ startDate, endDate }));
+    const calendarData = this.store.selectSignal(selectCalendar)
   }
 
   onDateSelected(gregorian: Date) {
@@ -226,7 +225,6 @@ export class JournalComponent implements OnInit {
       this.expanded.set( {type: 'meditation', id: session.id!})
     } else {
       this.expanded.set(undefined)
-      console.log('the session should collapse now')
     }
   }
 }

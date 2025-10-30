@@ -1,1 +1,88 @@
-<p>play works!</p>
+<div appWave [duration]="(track?.duration ?? 0) * 1000" appWindow class="overflow-hidden absolute inset-1 top-0 left-0 right-0 bottom-0  w-full h-full">
+    <div class="justify-center h-1/2 items-center text-xl flex w-full text-[var(--p-primary-100)]">
+        <p>{{track?.title}}</p>
+    </div>
+    <p-dialog header="حس و حالت چیه؟" [modal]="true" [(visible)]="initialEmotionDialog" styleClass="flex w-1/2 h-[28rem]">
+      <p-multiselect inputId="emotions" fluid="true" [options]="emotions()" optionLabel="emotion" display="chip"
+              [(ngModel)]="meditationSession.initialEmotion" [maxSelectedLabels]="5">
+              <ng-template let-emotion #item>
+                <span class="w-full flex-row inline-flex items-center gap-1 justify-between rounded-2xl"
+                  [style.background]="'var(--p-primary-700)'" [style.color]="'var(--p-primary-50)'">
+                  <p class="m-1.5">{{ emotion.emotion }}</p>
+                  <app-emotion-icon class="w-5 h-5 mx-2 inline-block align-middle" [emotion]="emotion.emotion">
+                  </app-emotion-icon>
+                </span>
+              </ng-template>
+              <ng-template pTemplate="selectedItems" let-selected>
+                <div class="w-full flex flex-col gap-1">
+                  <div *ngFor="let s of selected"
+                    class="flex flex-1 items-center justify-between rounded-xl px-3 py-1 text-[var(--p-primary-50)] bg-[var(--p-primary-600)]">
+                    <!-- Emotion + Icon -->
+                    <div class="flex items-center gap-1">
+                      <span>{{ s.emotion }}</span>
+                      <app-emotion-icon class="w-5 h-5" [emotion]="s.emotion"></app-emotion-icon>
+                    </div>
+                    <!-- Remove icon -->
+                    <button type="button" class="hover:text-[var(--p-primary-200)]" (click)="removeEmotion(s, selected)"
+                      aria-label="Remove emotion">
+                      <span class="flex items-center justify-center">
+                        <i class="pi pi-times-circle"></i>
+                      </span>
+                    </button>
+                  </div>
+                </div>
+              </ng-template>
+              <ng-template #empty>
+                <p>
+                  پیدا نکردیم!
+                </p>
+              </ng-template>
+
+      </p-multiselect>
+      <div class="absolute bottom-3">
+        <p-button (onClick)="startMeditationSession()" rounded="true" severity="primary">
+          <span>ذخیره <i class="pi pi-save"></i></span>
+        </p-button>
+      </div>
+    </p-dialog>
+ <div class="absolute inset-0 m-auto rounded-full w-22 h-22 flex items-center justify-center">
+    <svg class="w-full h-full transform -rotate-90">
+      <circle
+        class="text-gray-300"
+        stroke="currentColor"
+        stroke-width="9"
+        fill="transparent"
+        r="36"
+        cx="44"
+        cy="44"
+      ></circle>
+      <circle
+        class="text-blue-500 transition-all duration-200"
+        stroke="currentColor"
+        stroke-width="9"
+        fill="transparent"
+        [attr.stroke-dasharray]="circumference"
+        [attr.stroke-dashoffset]="circumference - progress * circumference"
+        r="30"
+        cx="44"
+        cy="44"
+      ></circle>
+    </svg>
+
+  <button (click)="togglePlay()"
+    class="absolute z-1000 inset-0 m-auto bg-white rounded-full w-16 h-16 flex items-center justify-center">
+      <ng-container *ngIf="!isPlaying(); else pauseIcon">
+        <i class="pi pi-play"></i>
+      </ng-container>
+      <ng-template #pauseIcon>
+        <i class="pi pi-pause"></i>
+      </ng-template>  </button>
+      </div>
+          <audio
+  *ngIf="track"
+  [src]="track.audioUrl"
+      #audio
+
+  autoplay>
+</audio>
+</div>

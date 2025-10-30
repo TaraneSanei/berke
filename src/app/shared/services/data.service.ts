@@ -14,6 +14,9 @@ export class DataService {
   private apiUrl = environment.apiUrl
   private cache = new Map<string, Course>();
 
+  getCoursesCache(): Map<string, Course> {
+  return this.cache;
+}
   getJourneysSessions(url: string | null): Observable<any> {
     if (url) {
       return this.http.get<any>(url);
@@ -43,8 +46,7 @@ export class DataService {
   }
 
   getMonthSummary(startDate: string, endDate: string) : Observable<CalendarSummary[]> {
-  return this.http.get<{ summary: CalendarSummary[] }>(this.apiUrl + 'dashboard/calendar/summary?startDate=' + startDate + '&endDate=' + endDate
-  ).pipe(map(response => response.summary));
+  return this.http.get<CalendarSummary[]>(this.apiUrl + 'dashboard/calendar/summary?startDate=' + startDate + '&endDate=' + endDate)
 }
 
 

@@ -18,4 +18,6 @@ export class MeditationSessionsEffects {
             map((meditationSessions) => LoadMeditationSessionSuccess({ sessions: meditationSessions})),
             catchError((response) => of(LoadJourneysSessionsFailure({error:response.error})))
         ))));
+
+    
 }
