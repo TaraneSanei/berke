@@ -31,7 +31,7 @@ export class JourneysComponent {
   next: any;
   sessions = signal<JourneysSession[]>([])
   journeys: Journey[] = []
-  expanded= signal<number|null>(null)
+  expanded = signal<number | null>(null)
 
   constructor(private store: Store<AppState>, private dataservice: DataService, private router: Router) {
 
@@ -50,14 +50,14 @@ export class JourneysComponent {
     })
   }
 
-toggleExpanded(journey: Journey) {
-  if(this.expanded() !== journey.course.id){
-    this.expanded.set(journey.course.id)
-  } else {
-    this.expanded.set(null)
+  toggleExpanded(journey: Journey) {
+    if (this.expanded() !== journey.course.id) {
+      this.expanded.set(journey.course.id)
+    } else {
+      this.expanded.set(null)
+    }
+    console.log(this.expanded())
   }
-  console.log(this.expanded())
-}
 
   loadMoreSessions() {
     let nextUrl: string | null = this.next()
@@ -93,13 +93,13 @@ toggleExpanded(journey: Journey) {
   }
 
   getNextTrackId(journey: Journey): number | null {
-  if (!journey.course?.tracks || !journey.listenedto) return null;
-  const sortedTracks = [...journey.course.tracks].sort((a, b) => a.dayNumber - b.dayNumber);
+    if (!journey.course?.tracks || !journey.listenedto) return null;
+    const sortedTracks = [...journey.course.tracks].sort((a, b) => a.dayNumber - b.dayNumber);
 
-  const nextTrack = sortedTracks.find(track => !journey.listenedto.includes(track.id));
-  return nextTrack ? nextTrack.id : null;
-}
-playTrack(track:Track){
-  this.router.navigate(['/play', track.id]);
-}
+    const nextTrack = sortedTracks.find(track => !journey.listenedto.includes(track.id));
+    return nextTrack ? nextTrack.id : null;
+  }
+  playTrack(track: Track) {
+    this.router.navigate(['/play', track.id]);
+  }
 }

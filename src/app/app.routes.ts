@@ -10,13 +10,14 @@ import { JourneysComponent } from './journeys/journeys.component';
 import { JournalComponent } from './journal/journal.component';
 import { authGuard } from './auth/auth.guard';
 import { PlayComponent } from './play/play.component';
+import { meditationGuard } from './shared/guards/meditation.guard';
 
 export const routes: Routes = [
     { path: 'login', component: LoginComponent, title:'login' },
     { path: 'signup', component: SignupComponent, title:'signup' },
     { path: 'preferences', component: PreferencesComponent, title:'preferences' },
     { path: 'subscribe', component: SubscriptionComponent, title:'subscribe' },
-    { path: 'play/:trackId', component: PlayComponent, title:'play' },
+    { path: 'play/:trackId', component: PlayComponent, title:'play',  canDeactivate: [meditationGuard]},
     { path: '', component: BaseComponent, title:'base', canActivate:[authGuard], children:[
     {path: 'berke', component: BerkeComponent, title:'berke'},
     {path: 'journeys', component: JourneysComponent, title:'journeys'},

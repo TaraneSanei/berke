@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment.development';
 import { map, Observable, of, tap } from 'rxjs';
-import { CalendarSummary, Course, Emotion, Journal, MeditationSession } from '../../models/data.models';
+import { CalendarSummary, Course, Emotion, Journal, MeditationSession, Track } from '../../models/data.models';
 
 @Injectable({
   providedIn: 'root'
@@ -37,12 +37,29 @@ export class DataService {
     );
   }
 
+  getTrack(trackId: number): Observable<Track> {
+    for (const course of this.getCoursesCache().values()) {
+      const found = course.tracks.find(t => t.id === trackId);
+      console.log('Found track:', found);
+      if (found) return of(found);
+    }
+    return this.http.get<Track>(this.apiUrl + '/meditation/track/' + trackId)
+  }
+
   loadJournals(date: string) {
     return this.http.get<Journal[]>(this.apiUrl + 'journal?date=' + date);
   }
 
   loadMeditationSessions(date: any): Observable<any> {
     return this.http.get<MeditationSession[]>(this.apiUrl + 'sessions/sessions?date=' + date )
+  }
+
+  addMeditationSession(session: MeditationSession): Observable<MeditationSession> {
+    return this.http.post<MeditationSession>(this.apiUrl + 'sessions/sessions/new/', session)
+  }
+
+  updateMeditationSession(session: MeditationSession): Observable<MeditationSession> {
+    return this.http.put<MeditationSession>(this.apiUrl + 'sessions/session/' + session.id +'/', session)
   }
 
   getMonthSummary(startDate: string, endDate: string) : Observable<CalendarSummary[]> {

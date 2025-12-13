@@ -1,4 +1,5 @@
-import { Directive, ElementRef, Input, OnDestroy, OnInit, Renderer2, HostListener } from '@angular/core';
+
+import { Directive, ElementRef, Input, OnDestroy, OnInit, Renderer2, HostListener, OnChanges, SimpleChanges } from '@angular/core';
 
 interface Wave {
   wavelength: number;
@@ -8,19 +9,18 @@ interface Wave {
   targetAmplitude: number;
   targetWavelength: number;
   targetSpeed: number;
-  initialAmplitude?: number;
-  initialWavelength?: number;
-  initialSpeed?: number;
+  initialAmplitude: number;
+  initialWavelength: number;
+  initialSpeed: number;
 }
 
 @Directive({
   selector: '[appWave]'
 })
-export class WaveDirective implements OnInit, OnDestroy {
+export class WaveDirective implements OnInit, OnDestroy, OnChanges { // 1. Implement OnChanges
 
-  @Input() syncLevel = 0; // 0 = chaotic, 1 = fully harmonized
-  @Input() duration?: number; // optional: duration in ms for gradual harmony
-
+  @Input() syncLevel = 0; 
+  private renderedSyncLevel: number = 0;
   private canvas!: HTMLCanvasElement;
   private ctx!: CanvasRenderingContext2D | null;
   private animationFrameId: number | null = null;
@@ -32,9 +32,6 @@ export class WaveDirective implements OnInit, OnDestroy {
     this.createCanvas();
     this.initWaves();
     this.resizeCanvas();
-
-    // Animate dynamic harmony if duration is provided
-    if (this.duration) this.animateHarmonyOverTime();
   }
 
   ngOnDestroy(): void {
@@ -45,6 +42,16 @@ export class WaveDirective implements OnInit, OnDestroy {
   @HostListener('window:resize')
   onResize(): void {
     this.resizeCanvas();
+  }
+
+  // 2. Handle Input Changes
+ngOnChanges(changes: SimpleChanges): void {
+    if (changes['syncLevel']) {
+      if (!this.animationFrameId) {
+        const parent: HTMLElement = this.el.nativeElement;
+        this.animate(parent.clientWidth, parent.clientHeight);
+      }
+    }
   }
 
   private createCanvas(): void {
@@ -58,21 +65,18 @@ export class WaveDirective implements OnInit, OnDestroy {
   }
 
   private initWaves() {
-    // Define the 3 waves with disorganized initial values and harmonious target values
     this.waves = [
-      { wavelength: 30, amplitude: 15, speed: 0.03, phase: 0, targetAmplitude: 12, targetWavelength: 35, targetSpeed: 0.02 },
-      { wavelength: 48, amplitude: 12, speed: 0.010, phase: 2, targetAmplitude: 12, targetWavelength: 35, targetSpeed: 0.025 },
-      { wavelength: 23, amplitude: 10, speed: 0.025, phase: 4, targetAmplitude: 12, targetWavelength: 35, targetSpeed: 0.015 },
+      { wavelength: 30, amplitude: 15, speed: 0.03, phase: 0, 
+        targetAmplitude: 12, targetWavelength: 35, targetSpeed: 0.02, 
+        initialAmplitude: 15, initialWavelength: 30, initialSpeed: 0.03 },
+      { wavelength: 48, amplitude: 12, speed: 0.010, phase: 2, 
+        targetAmplitude: 12, targetWavelength: 35, targetSpeed: 0.025, 
+        initialAmplitude: 12, initialWavelength: 48, initialSpeed: 0.010 },
+      { wavelength: 23, amplitude: 10, speed: 0.025, phase: 4, 
+        targetAmplitude: 12, targetWavelength: 35, targetSpeed: 0.015, 
+        initialAmplitude: 10, initialWavelength: 23, initialSpeed: 0.025 },
     ];
-
-    // If no duration, compute static harmony immediately
-    if (!this.duration) {
-      this.waves.forEach(w => {
-        w.amplitude = this.lerp(w.amplitude, w.targetAmplitude, this.syncLevel);
-        w.wavelength = this.lerp(w.wavelength, w.targetWavelength, this.syncLevel);
-        w.speed = this.lerp(w.speed, w.targetSpeed, this.syncLevel);
-      });
-    }
+    
   }
 
   private resizeCanvas(): void {
@@ -97,52 +101,29 @@ export class WaveDirective implements OnInit, OnDestroy {
 
     this.animate(width, height);
   }
-
-  private animateHarmonyOverTime() {
-    if (!this.duration) return;
-
-    // Store initial values to interpolate from
+  
+private updateWaveProperties(t: number) {
     this.waves.forEach(w => {
-      w.initialAmplitude = w.amplitude;
-      w.initialWavelength = w.wavelength;
-      w.initialSpeed = w.speed;
+      w.amplitude = this.lerp(w.initialAmplitude, w.targetAmplitude, t);
+      w.wavelength = this.lerp(w.initialWavelength, w.targetWavelength, t);
+      w.speed = this.lerp(w.initialSpeed, w.targetSpeed, t);
     });
-
-    const start = performance.now();
-    const step = (timestamp: number) => {
-      const elapsed = timestamp - start;
-      const progress = Math.min(elapsed / this.duration!, 1);
-
-      // Linear interpolation for uniform change
-      this.waves.forEach(w => {
-        w.amplitude = w.initialAmplitude! + (w.targetAmplitude - w.initialAmplitude!) * progress;
-        w.wavelength = w.initialWavelength! + (w.targetWavelength - w.initialWavelength!) * progress;
-        w.speed = w.initialSpeed! + (w.targetSpeed - w.initialSpeed!) * progress;
-      });
-
-      if (progress < 1) requestAnimationFrame(step);
-    };
-    requestAnimationFrame(step);
   }
 
-  private animate = (width: number, height: number) => {
+private animate = (width: number, height: number) => {
     if (!this.ctx) return;
 
     this.ctx.clearRect(0, 0, width, height);
-
-    // Only interpolate dynamically if duration is defined
-    if (this.duration) this.updateWavesPhase();
+    
+    const diff = this.syncLevel - this.renderedSyncLevel;
+    this.renderedSyncLevel += diff * 0.05;
+    this.updateWaveProperties(this.renderedSyncLevel);
 
     for (let wave of this.waves) {
       wave.phase += wave.speed;
       this.drawWave(width, height, wave);
     }
-
     this.animationFrameId = requestAnimationFrame(() => this.animate(width, height));
-  }
-
-  private updateWavesPhase() {
-    // This can be left empty for now, as phase is updated in animate()
   }
 
   private drawWave(width: number, height: number, wave: Wave) {

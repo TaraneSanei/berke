@@ -35,17 +35,17 @@ export const AddMeditationSessionFailure = createAction(
 
 //Edit meditation session actions
 
-export const EditMeditationSession = createAction(
+export const UpdateMeditationSession = createAction(
     '[backend] edit meditation session',
     props<{session: MeditationSession}>()
 );
 
-export const EditMeditationSessionSuccess = createAction(
+export const UpdateMeditationSessionSuccess = createAction(
     '[backend] edit meditation session success',
     props<{session: MeditationSession}>()
 );
 
-export const EditMeditationSessionFailure = createAction(
+export const UpdateMeditationSessionFailure = createAction(
     '[backend] edit meditation session failure',
     props<{error: string}>()
 );

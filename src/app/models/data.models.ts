@@ -49,7 +49,7 @@ export interface MeditationSession {
     id?:number;
     dateTime: Date;
     course: string;
-    track: string;
+    track: Track | undefined;
     duration: number;
     initialEmotion: Emotion[];
     finalEmotion: Emotion[];

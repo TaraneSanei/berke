@@ -106,7 +106,7 @@ export const sunrise = definePreset(
         extend: {
             css: {
                 ':root': {
-                    '--app-background': 'linear-gradient(var(--p-primary-950), var(--p-primary-900), var(--p-secondary-700))',
+                    '--app-background': 'linear-gradient(var(--p-secondary-700), var(--p-primary-900), var(--p-primary-950))',
                 }
             }
         }
