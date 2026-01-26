@@ -1,0 +1,13 @@
+<div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+    <div class="w-full" *ngFor="let theme of themes">
+
+        <button class="w-full flex justify-center items-center border rounded-lg h-50 text-white "
+            [ngStyle]="{'background-image': theme.background,  'background-repeat': 'no-repeat',
+                                'background-size': 'cover',
+                                'background-position': 'center'}" (click)="themeChange(theme.value)">
+            <div class="backdrop-blur-2xl p-4 rounded-lg border-1 w-fit">{{
+                theme.label
+                }}</div>
+        </button>
+    </div>
+</div>

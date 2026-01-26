@@ -1,5 +1,6 @@
 
-import { Directive, ElementRef, Input, OnDestroy, OnInit, Renderer2, HostListener, OnChanges, SimpleChanges } from '@angular/core';
+import { Directive, ElementRef, Input, OnDestroy, OnInit, Renderer2, HostListener, OnChanges, SimpleChanges, AfterViewInit, inject } from '@angular/core';
+import { CutoutService } from '../services/cutout.service';
 
 interface Wave {
   wavelength: number;
@@ -17,8 +18,9 @@ interface Wave {
 @Directive({
   selector: '[appWave]'
 })
-export class WaveDirective implements OnInit, OnDestroy, OnChanges { // 1. Implement OnChanges
+export class WaveDirective implements OnInit, OnDestroy, OnChanges, AfterViewInit {
 
+  private cutoutService = inject(CutoutService);
   @Input() syncLevel = 0; 
   private renderedSyncLevel: number = 0;
   private canvas!: HTMLCanvasElement;
@@ -27,6 +29,9 @@ export class WaveDirective implements OnInit, OnDestroy, OnChanges { // 1. Imple
   private waves: Wave[] = [];
 
   constructor(private el: ElementRef, private renderer: Renderer2) { }
+  ngAfterViewInit() {
+    this.cutoutService.register(() => this.resizeCanvas());
+  }
 
   ngOnInit(): void {
     this.createCanvas();

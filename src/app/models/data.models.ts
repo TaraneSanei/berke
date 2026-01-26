@@ -7,16 +7,19 @@ export interface User {
     isSubscribed: boolean;
     subscribedAt?: Date;
     subscriptionEnd?: Date;
-    preferences?: string[];
+    preferences?: number[];
     theme: string;
     createdAt?: Date;
+    notification?: string;
 }
 
 export interface Course {
     id: number;
     title: string;
+    description: string;
     tags: number[];
-    tracks: Track[]
+    tracks: Track[];
+    iconPath: string;
 }
 
 export interface Tag {
@@ -59,6 +62,7 @@ export interface Journey {
     course: Course;
     listenedto: number[];
     recommended?: number;
+    latestSessionId?: number;
 }
 
 export interface Journal {

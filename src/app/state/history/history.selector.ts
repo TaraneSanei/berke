@@ -8,3 +8,8 @@ export const selectCalendar = createSelector(
     SelectCalendar,
     (state: CalendarState) => state.calendar
 )
+
+export const selectCalendarError = createSelector(
+    SelectCalendar,
+    (state: CalendarState) => state.error
+)

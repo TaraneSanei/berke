@@ -93,6 +93,10 @@ export class JournalComponent implements OnInit {
       this.berkeService.loadEmotions()
     })
 
+    effect(() =>{
+      console.log(this.selectedDate())
+    })
+
     effect(() => {
       const { jy, jm } = this.calendarView();
       if (jy > 0 && jm > 0) {
@@ -113,7 +117,7 @@ export class JournalComponent implements OnInit {
   this.monthSummaryMap = computed(() => {
     const data = calendarData();
     return new Map(
-      (data || []).map(item => [item.date, item]) // keep full object
+      (data || []).map(item => [item.date, item])
     );
   });
     

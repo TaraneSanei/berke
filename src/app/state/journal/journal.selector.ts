@@ -8,3 +8,7 @@ export const selectJournal = createSelector(
     Selectjournal,
     (state: JournalState) => state.journals
 );
+export const selectJournalError = createSelector(
+    Selectjournal,
+    (state: JournalState) => state.error
+);

@@ -1,0 +1,7 @@
+:host ::ng-deep .p-selectbutton .p-togglebutton {
+  background: transparent !important;
+  border-color: transparent !important;
+  color: var(--color-neutral-100) !important;
+  margin: 1px;
+  border-radius: 1px;
+}

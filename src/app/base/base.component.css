@@ -1,7 +1,20 @@
 .active-button {
-    background-color: var(--p-accent-200) !important;
+    background-color: var(--p-accent-100) !important;
     border-radius: 6px;
     color: var(--p-primary-600) !important;
+}
+
+.active-button .text-sm {
+    color: var(--p-primary-600) !important; 
+    /* Use !important here to beat the component's internal styles */
+}
+
+.active-button .rounded-full {
+    /* Set the color on the SVG's parent, so the SVG (using currentColor) inherits it */
+    color: var(--p-primary-600) !important; 
+    
+    /* Also ensure the border color is updated */
+    border-color: var(--p-primary-600) !important;
 }
 
 ::ng-deep .p-button{

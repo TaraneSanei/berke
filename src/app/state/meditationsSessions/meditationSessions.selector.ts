@@ -8,7 +8,12 @@ export const selectMeditationSessions = createSelector(
     SelectMeditationSessions,
     (state: MeditationSessionsState) => state.meditationSessions
 );
-export const selectmeditationSessionStatus = createSelector(
+export const selectmeditationSessionsStatus = createSelector(
     SelectMeditationSessions,
     (state: MeditationSessionsState) => state.status
+);
+
+export const selectMeditationSessionsError = createSelector(
+    SelectMeditationSessions,
+    (state) => state.error
 );

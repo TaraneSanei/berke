@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { definePreset } from '@primeng/themes';
 import Nora from '@primeng/themes/aura';
+import { Accordion, AccordionPanel } from 'primeng/accordion';
 
 
 export const sunrise = definePreset(
@@ -34,17 +35,17 @@ export const sunrise = definePreset(
                 950: '{pink.950}'
             },
             accent: {
-                50: '{purple.50}',
-                100: '{purple.100}',
-                200: '{purple.200}',
-                300: '{purple.300}',
-                400: '{purple.400}',
-                500: '{purple.500}',
-                600: '{purple.600}',
-                700: '{purple.700}',
-                800: '{purple.800}',
-                900: '{purple.900}',
-                950: '{purple.950}'
+                50: '{fuchsia.50}',
+                100: '{fuchsia.100}',
+                200: '{fuchsia.200}',
+                300: '{fuchsia.300}',
+                400: '{fuchsia.400}',
+                500: '{fuchsia.500}',
+                600: '{fuchsia.600}',
+                700: '{fuchsia.700}',
+                800: '{fuchsia.800}',
+                900: '{fuchsia.900}',
+                950: '{fuchsia.950}'
             },
             neutral: {
                 50: '{zinc.50}',
@@ -61,12 +62,18 @@ export const sunrise = definePreset(
             },
         },
         components: {
+            selectbutton: {
+                color: 'rgba(0,0,0,0) !important',
+                background: 'rgba(0,0,0,0) !important',
+
+        },
             stepper: {
                 steppanel: {
                     background: 'transparent',
                     color: 'var(--p-neutral-50)',
                 }
             },
+
             floatlabel: {
                 focusColor: 'var(--p-neutral-50)',
                 activeColor: 'var(--p-neutral-50)',
@@ -143,7 +150,19 @@ export const sunset = definePreset(
                 900: '{amber.900}',
                 950: '{amber.950}'
             },
-            accent: '#FF5A28',
+            accent: {
+                50: '{fuchsia.50}',
+                100: '{fuchsia.100}',
+                200: '{fuchsia.200}',
+                300: '{fuchsia.300}',
+                400: '{fuchsia.400}',
+                500: '{fuchsia.500}',
+                600: '{fuchsia.600}',
+                700: '{fuchsia.700}',
+                800: '{fuchsia.800}',
+                900: '{fuchsia.900}',
+                950: '{fuchsia.950}'
+            },
             neutral: {
                 50: '{zinc.50}',
                 100: '{zinc.100}',
@@ -166,10 +185,10 @@ export const sunset = definePreset(
                 }
             },
             floatlabel: {
-                color: 'var(--p-primary-600)',
+                color: 'var(--p-neutral-500)',
                 focusColor: 'var(--p-neutral-50)',
                 activeColor: 'var(--p-neutral-50)',
-                invalidColor: 'var(--p-red-600)'
+                invalidColor: 'var(--p-red-400)'
             },
             inputtext: {
                 borderColor: 'var(--p-primary-50)',
@@ -178,7 +197,9 @@ export const sunset = definePreset(
             button: {
                 root: {
                     primary: {
-                        background: 'var(--p-primary-600) !important',
+                        background: 'var(--p-primary-700) !important',
+                        hoverBackground: 'var(--p-primary-800) !important',  // color on hover
+
                     }
                 },
                 text: {
@@ -202,8 +223,7 @@ export const sunset = definePreset(
         extend: {
             css: {
                 ':root': {
-                    '--app-background': 'linear-gradient(var(--p-purple-950), var(--p-purple-800), var(--p-orange-300))',
-                    '--app-text-shadow': '2px 2px 6px var(--p-neutral-950)',
+                    '--app-background': 'linear-gradient(var(--p-indigo-950), var(--p-purple-800), var(--p-orange-400))',
 
                 }
             }
@@ -241,7 +261,19 @@ export const forest = definePreset(
                 900: '{amber.900}',
                 950: '{amber.950}'
             },
-            accent: '#FF5A28',
+            accent: {
+                50: '{emerald.50}',
+                100: '{emerald.100}',
+                200: '{emerald.200}',
+                300: '{emerald.300}',
+                400: '{emerald.400}',
+                500: '{emerald.500}',
+                600: '{emerald.600}',
+                700: '{emerald.700}',
+                800: '{emerald.800}',
+                900: '{emerald.900}',
+                950: '{emerald.950}'
+            },
             neutral: {
                 50: '{zinc.50}',
                 100: '{zinc.100}',
@@ -275,7 +307,9 @@ export const forest = definePreset(
             button: {
                 root: {
                     primary: {
-                        background: 'var(--p-primary-600) !important',
+                        background: 'var(--p-primary-700) !important',
+                        hoverBackground: 'var(--p-primary-800) !important',  // color on hover
+
                     }
                 },
                 text: {
@@ -435,17 +469,17 @@ export const mountain = definePreset(
                 950: '{slate.950}'
             },
             accent: {
-                50: '{orange.50}',
-                100: '{orange.100}',
-                200: '{orange.200}',
-                300: '{orange.300}',
-                400: '{orange.400}',
-                500: '{orange.500}',
-                600: '{orange.600}',
-                700: '{orange.700}',
-                800: '{orange.800}',
-                900: '{orange.900}',
-                950: '{orange.950}'
+                50: '{amber.50}',
+                100: '{amber.100}',
+                200: '{amber.200}',
+                300: '{amber.300}',
+                400: '{amber.400}',
+                500: '{amber.500}',
+                600: '{amber.600}',
+                700: '{amber.700}',
+                800: '{amber.800}',
+                900: '{amber.900}',
+                950: '{amber.950}'
             },
             neutral: {
                 50: '{zinc.50}',
@@ -483,10 +517,10 @@ export const mountain = definePreset(
             button: {
                 root: {
                     primary: {
-                        background: 'var(--p-accent-200) !important',
-                        color: 'var(--p-primary-600) !important',
+                        background: 'var(--p-accent-100) !important',
+                        color: 'var(--p-primary-900) !important',
                         hoverColor: 'var(--p-primary-700) !important',  // color on hover
-                        hoverBackground: 'var(--p-accent-100) !important',
+                        hoverBackground: 'var(--p-accent-50) !important',
                         border: 'var(--p-primary-200)'
                     }
                 },
@@ -524,7 +558,7 @@ export const morning = definePreset(
     Nora,
     {
         semantic: {
-            primary: {
+            accent: {
                 50: '{sky.50}',
                 100: '{sky.100}',
                 200: '{sky.200}',
@@ -550,7 +584,19 @@ export const morning = definePreset(
                 900: '{amber.900}',
                 950: '{amber.950}'
             },
-            accent: '#FF5A28',
+            primary: {
+                50: '{sky.900}',
+                100: '{sky.900}',
+                200: '{sky.800}',
+                300: '{sky.700}',
+                400: '{sky.600}',
+                500: '{sky.500}',
+                600: '{sky.400}',
+                700: '{sky.300}',
+                800: '{sky.200}',
+                900: '{sky.100}',
+                950: '{sky.50}'
+            },
             neutral: {
                 50: '{zinc.50}',
                 100: '{zinc.100}',
@@ -608,7 +654,7 @@ export const morning = definePreset(
         extend: {
             css: {
                 ':root': {
-                    '--app-background': 'linear-gradient(var(--p-sky-600), var(--p-blue-300), var(--p-blue-50))',
+                    '--app-background': 'linear-gradient(var(--p-cyan-500), var(--p-blue-300))',
                 }
             }
         }

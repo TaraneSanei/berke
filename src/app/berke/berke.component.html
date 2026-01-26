@@ -1,13 +1,82 @@
-<div class="flex justify-center">
-    <div class="w-full lg:w-3/4 m-5">
-        <div appWindow (click)="journal()" class="p-3 rounded-2xl">
-            <p class="text-2xl text-[var(--p-primary-50)]">بنویس ...</p>
-                  <div class=" my-5 items-center justify-between gap-3 text-[var(--p-primary-50)] flex flex-row">
+<div class="flex justify-center px-5" dir="rtl">
+  <div class="w-full lg:w-3/4 m-5 mt-2">
+
+    <div appWindow class="flex flex-row my-5 backdrop-blur-2xl rounded-2xl justify-center text-[var(--p-primary-50)] p-3">
+      <div class="flex flex-col items-center gap-5" *ngIf="getTimeOfDay() === 'morning'">
+        <span class="w-30 h-30" [innerHTML]="timeIcons['morning']" style="filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.7));"></span>
+      <p class="text-xl">{{userProfile()?.username || ''}} صبح به خیر</p>
+      </div>
+      <div class="flex flex-col items-center gap-5" *ngIf="getTimeOfDay() === 'afternoon'">
+      <span class="w-30 h-30" [innerHTML]="timeIcons['afternoon']" style="filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.7));"></span>
+      <p class="text-xl">{{userProfile()?.username || ''}} بعد از ظهر به خیر</p>
+      </div>
+      <div class="flex flex-col items-center gap-5" *ngIf="getTimeOfDay() === 'evening'">
+        <span class="w-30 h-30" [innerHTML]="timeIcons['evening']" style="filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.7));"></span>
+      <p class="text-xl">{{userProfile()?.username || ''}} عصر به خیر</p>
+      </div>
+      <div class="flex flex-col items-center gap-5" *ngIf="getTimeOfDay() === 'night'">
+      <span class="w-30 h-30" [innerHTML]="timeIcons['night']" style="filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.7));"></span>
+      <p class="text-xl">{{userProfile()?.username || ''}} شب به خیر</p>
+      </div>
+    </div>
+    <div appWindow appWave [syncLevel]="calculateSyncLevel(journey)" *ngIf="featuredJourney() as journey"
+      class="my-5 h-40 backdrop-blur-2xl rounded-2xl p-3 text-[var(--p-primary-50)]" (click)="goToCourse(journey.course.id)">
+      <p class="text-xl ">ادامه سفر {{ journey.course.title }}</p>
+
+      <div class=" mt-5 mb-5 flex justify-center items-center flex-row">
+        <div class="flex w-full flex-row justify-between items-center"
+          *ngFor="let track of journey.course.tracks let i = index"
+          [ngClass]="{'w-full': i < journey.course.tracks.length - 1}">
+          <span
+            class="rounded-full m-1 text-[var(--p-primary-50)] z-1000 border-2 w-8 h-8 inline-flex items-center justify-center"
+            [ngClass]="{
+        'bg-[var(--p-primary-600)]': journey.listenedto.includes(track.id),
+      }">
+            <p *ngIf="track.id !== getNextTrackId(journey)">{{track.dayNumber | persianDigits}}</p>
+            <p *ngIf="track.id === getNextTrackId(journey)">
+              <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 453 402">
+                <path fill="#ffffff00"
+                  d="M453,402H0V0H453V402Zm-47.03-164.1c-.5-1.64-.66-2.44-.98-3.18-19.63-45.56-43.15-88.78-77.54-125.11-27.47-29.03-59.45-50.36-100.37-55.09-3.71-.43-4.49-2.19-4.45-5.57,.16-12.83,.21-25.67-.07-38.5-.05-2.41,2.39-6.51-2.52-6.96-.48-.04-2.03,4.52-1.96,6.91,.12,4.15-1.03,5.8-5.46,6.11-11.74,.81-22.56,4.3-31.2,12.84-2.72,2.7-5.34,5.5-8.06,8.2-5.38,5.32-11.77,7.4-19.21,5.65-4.27-1.01-8.49-2.22-14-3.68,3.62,3.27,6.21,5.83,9.02,8.12,8.81,7.18,18.57,12.2,30.29,10.01,6.15-1.15,11.98-3.97,18.06-5.61,5.24-1.41,10.61-2.5,15.99-3.08,1.32-.14,4.19,2.28,4.17,3.5-.14,11.6,1.45,23.24-1.85,34.77-9.02,31.5-22.52,60.91-40.63,88.17-24.16,36.36-53.69,67.04-93.26,86.91-.38,.19-.6,.72-1.21,1.47,43.79,19.8,88.57,30.37,136.6,18.92,.26,1.81,.52,2.93,.57,4.06,.33,7.69,.33,7.82-7.21,8.41-34.84,2.72-69.69,5.36-104.53,8.04-3.77,.29-7.53,.67-11.73,1.04,1.66,11.07,3.89,21.42,9.33,30.82,4.43,7.65,5.82,8.49,13.86,4.52,6.44-3.18,12.19-7.73,18.47-11.81,24.28,20.26,37.84,20.28,64.14-.8,8.24,9.97,19.03,15.63,32,15.61,12.95-.02,23.71-5.72,31.86-15.76,23.64,21.11,38.22,21.1,65.78-.28,.62,.99,1.17,2.27,2.07,3.21,7.05,7.43,15.6,11.91,25.92,12.36,2.08,.09,4.94-.38,6.21-1.75,6.55-7.03,13.63-13.83,18.82-21.82,12.29-18.95,18.78-40.37,23.9-62.2,.09-.39-.26-.88-.55-1.77-60.14,17.04-120.76,31.39-183.13,38.97-.18-2.04-.37-3.33-.4-4.63-.16-7.37-.12-7.27,6.82-8.82,6.66-1.49,13.46-2.68,19.86-4.96,25.1-8.92,50.07-18.22,75.09-27.38,21.45-7.86,43.33-13.26,66.43-11.54,4.77,.36,9.52,1.05,15.08,1.68Zm-250.53,116.82c19.78,21.96,53.76,17.54,67.8-.43-22.89,11-45.32,10.85-67.8,.43Zm220.91-.43c-22.98,11.01-45.51,10.88-69.15-.48,21.42,23.04,55.06,18.31,69.15,.48Zm-374.1-.1c20.62,23.46,56.56,17.08,67.99,.31-20.04,9.99-44.17,11.17-67.99-.31Zm182.93,32.13c-5.37-9.24-22.06-16.14-37.16-15.37-11.94,.61-26.83,7.91-29.77,14.6,24.94-11.32,46.99-9.12,66.93,.77Zm153.12,.08c-4.95-8.99-21.74-16.05-36.66-15.47-12.1,.47-27.17,7.73-30.41,14.79,22.54-10.5,44.85-10.48,67.07,.67Zm-38.89-23.69c-20.38-23.63-57.21-17.57-67.88-1.07,23.99-11.15,46.8-9.47,67.88,1.07Zm-152.65,.21c-20.09-22.58-54.65-19.16-69.26-.77,23.18-10.92,45.63-10.96,69.26,.77Zm237.29-1.53c22.06-10.08,44.04-10.05,66.53,.57-13.26-18.05-48.97-21.44-66.53-.57Zm-341.05,19.06c19.34,21.82,54.7,16.3,66.58-.97-22.11,10.99-44.25,11.03-66.58,.97Zm219.6-1.03c-11.32,5.37-22.44,8.43-34.27,8.4-11.89-.03-23.07-3.13-34.87-8.88,20.03,22.43,54.09,19.08,69.14,.47Zm84.21-.37c19.16,22.64,54.42,18.57,67.98,.74-23.05,10.85-45.26,10.58-67.98-.74Z" />
+                <path fill="currentColor"
+                  d="M405.97,237.9c-5.56-.63-10.31-1.32-15.08-1.68-23.1-1.72-44.98,3.68-66.43,11.54-25.01,9.17-49.98,18.46-75.09,27.38-6.4,2.27-13.2,3.46-19.86,4.96-6.94,1.56-6.98,1.45-6.82,8.82,.03,1.3,.22,2.59,.4,4.63,62.37-7.59,122.99-21.93,183.13-38.97,.29,.89,.64,1.39,.55,1.77-5.12,21.83-11.61,43.25-23.9,62.2-5.18,7.99-12.26,14.79-18.82,21.82-1.27,1.36-4.13,1.84-6.21,1.75-10.32-.46-18.88-4.93-25.92-12.36-.9-.94-1.44-2.22-2.07-3.21-27.56,21.38-42.14,21.39-65.78,.28-8.16,10.04-18.92,15.74-31.86,15.76-12.97,.02-23.75-5.64-32-15.61-26.3,21.08-39.86,21.06-64.14,.8-6.27,4.08-12.03,8.64-18.47,11.81-8.04,3.97-9.43,3.13-13.86-4.52-5.44-9.4-7.67-19.75-9.33-30.82,4.21-.38,7.96-.75,11.73-1.04,34.84-2.68,69.69-5.32,104.53-8.04,7.54-.59,7.54-.72,7.21-8.41-.05-1.13-.31-2.26-.57-4.06-48.03,11.45-92.82,.88-136.6-18.92,.61-.76,.82-1.28,1.21-1.47,39.57-19.87,69.11-50.55,93.26-86.91,18.11-27.26,31.6-56.66,40.63-88.17,3.3-11.53,1.71-23.17,1.85-34.77,.02-1.22-2.86-3.64-4.17-3.5-5.38,.58-10.75,1.67-15.99,3.08-6.09,1.64-11.91,4.46-18.06,5.61-11.72,2.2-21.48-2.82-30.29-10.01-2.81-2.29-5.4-4.85-9.02-8.12,5.51,1.46,9.73,2.67,14,3.68,7.44,1.75,13.83-.33,19.21-5.65,2.72-2.7,5.34-5.5,8.06-8.2,8.63-8.54,19.46-12.04,31.2-12.84,4.43-.3,5.58-1.96,5.46-6.11-.07-2.39,1.48-6.95,1.96-6.91,4.91,.45,2.47,4.55,2.52,6.96,.28,12.83,.23,25.67,.07,38.5-.04,3.38,.75,5.14,4.45,5.57,40.92,4.73,72.9,26.06,100.37,55.09,34.39,36.34,57.91,79.55,77.54,125.11,.32,.74,.48,1.55,.98,3.18Zm-182.99,39.45c13.99-35.12,25.49-70.71,23.93-109.15-1.54-37.86-11.68-73.83-23.93-109.38v218.53Z" />
+                <path fill="currentColor"
+                  d="M155.44,354.72c22.48,10.42,44.91,10.57,67.8-.43-14.04,17.98-48.02,22.4-67.8,.43Z" />
+                <path fill="currentColor"
+                  d="M376.35,354.29c-14.1,17.83-47.74,22.56-69.15-.48,23.64,11.36,46.18,11.49,69.15,.48Z" />
+                <path fill="currentColor"
+                  d="M2.25,354.18c23.83,11.48,47.95,10.3,67.99,.31-11.44,16.77-47.38,23.15-67.99-.31Z" />
+                <path fill="currentColor"
+                  d="M185.18,386.32c-19.93-9.89-41.99-12.1-66.93-.77,2.94-6.68,17.83-13.99,29.77-14.6,15.09-.77,31.78,6.13,37.16,15.37Z" />
+                <path fill="currentColor"
+                  d="M338.29,386.4c-22.22-11.15-44.53-11.18-67.07-.67,3.24-7.07,18.3-14.32,30.41-14.79,14.92-.58,31.71,6.48,36.66,15.47Z" />
+                <path fill="currentColor"
+                  d="M299.4,362.7c-21.08-10.55-43.89-12.22-67.88-1.07,10.66-16.5,47.49-22.56,67.88,1.07Z" />
+                <path fill="currentColor"
+                  d="M146.75,362.92c-23.63-11.73-46.07-11.7-69.26-.77,14.61-18.39,49.17-21.81,69.26,.77Z" />
+                <path fill="currentColor"
+                  d="M384.04,361.39c17.56-20.87,53.27-17.48,66.53,.57-22.49-10.62-44.47-10.66-66.53-.57Z" />
+                <path fill="currentColor"
+                  d="M42.99,380.45c22.34,10.06,44.47,10.02,66.58-.97-11.88,17.27-47.24,22.79-66.58,.97Z" />
+                <path fill="currentColor"
+                  d="M262.59,379.42c-15.05,18.6-49.11,21.96-69.14-.47,11.8,5.75,22.98,8.85,34.87,8.88,11.83,.03,22.96-3.04,34.27-8.4Z" />
+                <path fill="currentColor"
+                  d="M346.8,379.05c22.71,11.32,44.93,11.59,67.98,.74-13.56,17.83-48.81,21.89-67.98-.74Z" />
+                <path fill="#ffffff00"
+                  d="M222.98,277.35V58.82c12.25,35.55,22.39,71.52,23.93,109.38,1.56,38.44-9.93,74.03-23.93,109.15Z" />
+              </svg>
+            </p>
+          </span>
+          <div class="h-0.5 flex grow bg-[var(--p-primary-100)]" *ngIf="i < journey.course.tracks.length - 1"></div>
+        </div>
+      </div>
+    </div>
+    <!--     
+    <div appWindow (click)="journal()" class="backdrop-blur-2xl p-3 rounded-2xl">
+      <p class="text-xl text-[var(--p-primary-50)]">بنویس ...</p>
+      <div class=" my-5 items-center justify-between gap-3 text-[var(--p-primary-50)] flex flex-row">
         <div class="w-1/3">
           <p-floatlabel>
-            <p-date-picker fluid="true" [iconDisplay]="'input'" [showIcon]="true"
-              [timeOnly]="true" inputId="time">
-              <!-- [ngStyle]="{'direction': 'ltr', 'text-align': 'left', '!important': true}"> -->
+            <p-date-picker fluid="true" [iconDisplay]="'input'" [showIcon]="true" [timeOnly]="true" inputId="time">
               <ng-template #inputicon let-clickCallBack="clickCallBack">
                 <i class="pi pi-clock" (click)="clickCallBack($event)"></i>
               </ng-template>
@@ -18,8 +87,7 @@
         </div>
         <div class="w-2/3 lg:w-1/3">
           <p-floatlabel>
-            <p-multiselect inputId="emotions" fluid="true" optionLabel="emotion" display="chip"
-              [maxSelectedLabels]="5">
+            <p-multiselect inputId="emotions" fluid="true" optionLabel="emotion" display="chip" [maxSelectedLabels]="5">
 
             </p-multiselect>
             <label for="emotions">حس و حال</label>
@@ -27,22 +95,101 @@
         </div>
       </div>
 
-      <textarea rows="5"  type="text" placeholder="تست" fluid="true" pTextarea
-        [autoResize]="true">
+      <textarea rows="3" type="text" placeholder="تست" fluid="true" pTextarea [autoResize]="true">
             </textarea>
       <div class="my-3">
-        <p-button  rounded="true" severity="primary">
+        <p-button rounded="true" severity="primary">
           <span>ذخیره <i class="pi pi-save"></i></span>
         </p-button>
       </div>
-        </div>
-        <div appWindow class="my-5 rounded-2xl h-75 p-3">
-            <p class="text-2xl text-[var(--p-primary-50)]">ادامه ...</p>
+    </div> -->
+    <div appWindow class="my-5 backdrop-blur-2xl rounded-2xl p-3">
+      <p class="text-xl mb-5 text-[var(--p-primary-50)]">جدیدترین ها در برکه</p>
+      <p-carousel class="m-5" [value]="newest()" [numScroll]="1" [numVisible]="3" [responsiveOptions]="responsiveOptions" showIndicators="false" [circular]="true" dir="rtl">
+        <ng-template let-course #item>
+          <div class="border border-white/30 bg-[var(--p-primary-300)]/30 items-center backdrop-blur-2xl flex flex-col justify-center h-30 text-[var(--p-primary-50)] m-2 rounded-3xl p-2 pb-4
+          shadow-[0px_0px_5px_1px_rgba(255,255,255,0.4)]
+          " (click)="goToCourse(course.id)">
+<div class="w-12 h-12 items-center justify-center">
+  <svg viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet" class="w-full h-full" style="font-size: 2rem; margin-bottom: 10px; filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.7));">
+    <g [innerHTML]="course.iconPath | safeHtml"></g>
+  </svg>
+</div>    
+            <div class="mb-2 text-[var(--p-primary-50)]">{{course.title}}</div>
+          </div>
+        </ng-template>
+      </p-carousel>
+      <p class="text-xl mb-5 text-[var(--p-primary-50)]">پیشنهادی</p>
+      
+      <p-carousel class="m-5" [value]="recommendedCourses()" [numScroll]="1" [numVisible]="3"  [responsiveOptions]="responsiveOptions" showIndicators="false" [circular]="true" dir="rtl">
+        <ng-template let-course #item>
+          <div class="border border-white/30 bg-[var(--p-primary-300)]/30 items-center backdrop-blur-2xl flex flex-col justify-center h-30 text-[var(--p-primary-50)] m-2 rounded-3xl p-2 pb-4
+          shadow-[0px_0px_5px_1px_rgba(255,255,255,0.4)]
+          " (click)="goToCourse(course.id)">
+<div class="w-12 h-12 items-center justify-center">
+  <svg viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet" class="w-full h-full" style="font-size: 2rem; margin-bottom: 10px; filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.7));">
+    <g [innerHTML]="course.iconPath | safeHtml"></g>
+  </svg>
+</div>               
+<div class="mb-2 text-[var(--p-primary-50)]">{{course.title}}</div>
+          </div>
+        </ng-template>
+      </p-carousel>
+<p class="text-xl mb-5 text-[var(--p-primary-50)]">مهارت ها</p>
+      <p-carousel class="m-5" [value]="skillCourses()" [numScroll]="1" [numVisible]="3" [responsiveOptions]="responsiveOptions" showIndicators="false" [circular]="true" dir="rtl">
+        <ng-template let-course #item>
+         <div class="border border-white/30 bg-[var(--p-primary-300)]/30 items-center backdrop-blur-2xl flex flex-col justify-center h-30 text-[var(--p-primary-50)] m-2 rounded-3xl p-2 pb-4
+          shadow-[0px_0px_5px_1px_rgba(255,255,255,0.4)]
+          " (click)="goToCourse(course.id)">
+<div class="w-12 h-12 items-center justify-center">
+  <svg viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet" class="w-full h-full" style="font-size: 2rem; margin-bottom: 10px; filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.7));">
+    <g [innerHTML]="course.iconPath | safeHtml"></g>
+  </svg>
+</div>    
+            <div class="mb-2 text-[var(--p-primary-50)]">{{course.title}}</div>
+          </div>
+        </ng-template>
+      </p-carousel>
+<p class="text-xl text-[var(--p-primary-50)]">عمیق</p>
+      <p-carousel class="m-5" [value]="deepCourses()" [numScroll]="1" [numVisible]="3" [responsiveOptions]="responsiveOptions" showIndicators="false" [circular]="true" dir="rtl">
+        <ng-template let-course #item>
+          <div class="border border-white/30 bg-[var(--p-primary-300)]/30 items-center backdrop-blur-2xl flex flex-col justify-center h-30 text-[var(--p-primary-50)] m-2 rounded-3xl p-2 pb-4
+          shadow-[0px_0px_5px_1px_rgba(255,255,255,0.4)]
+          " (click)="goToCourse(course.id)">
+<div class="w-12 h-12 items-center justify-center">
+  <svg viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet" class="w-full h-full" style="font-size: 2rem; margin-bottom: 10px; filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.7));">
+    <g [innerHTML]="course.iconPath | safeHtml"></g>
+  </svg>
+</div>               
+<div class="mb-2 text-[var(--p-primary-50)]">{{course.title}}</div>
+          </div>
+        </ng-template>
+      </p-carousel>
+    </div>
+    <!-- <div appWindow *ngIf="courses" class="my-5 backdrop-blur-2xl rounded-2xl p-3">
+      <div class="text-[var(--p-primary-50)] p-2 rounded-xl mb-3 bg-[var(--p-primary-500)]"> tag.title </div>
+          <div *ngFor="let course of courses" class="border-2 rounded-xl h-30 ml-3 p-3 text-[var(--p-primary-50)]">
+            <h3>{{ course.title }}</h3>
+            <p>{{ course.tracks }}</p>
+          </div>
+    </div> -->
+    <div appWindow class="my-5 backdrop-blur-2xl rounded-2xl p-3">
+      <p class="text-xl text-[var(--p-primary-50)]">دسته بندی ها</p>
+      <p-selectbutton class="mt-3" style="flex-wrap: wrap;" [options]="tags()" [multiple]="true" [optionLabel]="'title'"
+        [options]="tags()"></p-selectbutton>
 
-        </div>
-                <div appWindow class="my-5 rounded-2xl h-75 p-3">
-            <p class="text-2xl text-[var(--p-primary-50)]">پیشنهادی</p>
-
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+          <div *ngFor="let course of courses()" class="border border-white/30 bg-[var(--p-primary-300)]/30 items-center backdrop-blur-2xl flex flex-col justify-center h-30 text-[var(--p-primary-50)] m-2 rounded-3xl p-2 pb-4
+          shadow-[0px_0px_5px_1px_rgba(255,255,255,0.4)]
+          " (click)="goToCourse(course.id)">
+<div class="w-12 h-12 items-center justify-center">
+  <svg viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet" class="w-full h-full" style="font-size: 2rem; margin-bottom: 10px; filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.7));">
+    <g [innerHTML]="course.iconPath | safeHtml"></g>
+  </svg>
+</div>  
+            <h3>{{ course.title }}</h3>
+            </div>
         </div>
     </div>
+  </div>
 </div>

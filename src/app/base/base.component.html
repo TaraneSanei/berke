@@ -1,9 +1,41 @@
 <div class="grid grid-cols-1 grid-rows-15 md:grid-rows-1 md:grid-cols-12 h-screen">
-    <div class="row-span-13 overflow-y-auto md:col-span-11">
+    <div #scrollContainer (scroll)="onScroll($event)" dir="ltr"
+        class="row-span-13 overflow-y-auto md:col-span-11 relative overflow-x-hidden">
+        <aside class="absolute right-0" [style.top.px]="scrollTop"
+            style="height: 100%; overflow: visible; z-index: 70;">
+            <div (click)="openSupport()"
+                class="sticky top-1/2 -translate-y-1/2 z-[70] group cursor-pointer flex items-center">
 
+                <div class="flex items-center h-40 
+              bg-[var(--p-accent-900)]/50 backdrop-blur-3xl border-y border-l border-[var(--p-accent-900)]/20 
+              rounded-xl transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)]
+              translate-x-[calc(100%-1rem)] group-hover:translate-x-0
+              hover:bg-[var(--p-accent-900)]/60 hover:border-[var(--p-accent-600)]/50
+              shadow-[-10px_0_30px_rgba(0,0,0,0.2)]">
+
+                    <div class="w-5 flex flex-col items-center justify-center gap-1.5 h-full">
+                        <span
+                            class="w-1 h-1 rounded-full bg-[var(--p-primary-50)]/50 group-hover:bg-[var(--p-primary-50)]/80 transition-colors"></span>
+                        <span
+                            class="w-1 h-1 rounded-full bg-[var(--p-primary-50)]/50 group-hover:bg-[var(--p-primary-50)]/80 transition-colors"></span>
+                        <span
+                            class="w-1 h-1 rounded-full bg-[var(--p-primary-50)]/50 group-hover:bg-[var(--p-primary-50)]/80 transition-colors"></span>
+                    </div>
+
+                    <div class="overflow-hidden max-w-0 group-hover:max-w-xs transition-all duration-700 ease-in-out">
+                        <span class="text-[var(--p-primary-50)]/70 text-sm font-medium tracking-widest whitespace-nowrap 
+                   [writing-mode:vertical-rl] rotate-180 py-2">
+                            پشتیبانی
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </aside>
         <router-outlet></router-outlet>
     </div>
-    <div appWindow [opacity]="0.85" class="row-span-2 backdrop-blur-md flex flex-row w-full md:flex-col md:col-span-1 md:h-full">
+
+    <div appWindow [opacity]="0.85"
+        class="row-span-2 backdrop-blur-md flex flex-row w-full md:flex-col md:col-span-1 md:h-full">
         <p-button class="w-1/4 flex-col md:w-auto min-h-10 md:h-1/4 flex justify-center items-center" routerLink="berke"
             routerLinkActive="active-button font-bold md:border-r-2 md:border-t-0 border-t-2 border-[var(--p-primary-500)]"
             variant="text" severity="secondary">
@@ -57,17 +89,17 @@
             <span class="text-sm">سفرها</span>
         </p-button>
 
-        <p-button class="w-1/4 md:w-auto md:h-1/4 flex min-h-10 justify-center items-center" routerLink="journal" variant="text"
-            severity="secondary"
+        <p-button class="w-1/4 md:w-auto md:h-1/4 flex min-h-10 justify-center items-center" routerLink="journal"
+            variant="text" severity="secondary"
             routerLinkActive="active-button font-bold md:border-r-2 md:border-t-0 border-t-2 border-[var(--p-primary-500)]">
             <span class="rounded-full border-2 w-10 h-10 inline-flex items-center justify-center">
                 <i class="pi pi-calendar"></i>
             </span>
-            <span class="text-sm">جورنال</span>
+            <span class="text-sm">روزنوشت</span>
         </p-button>
 
-        <p-button class="w-1/4 md:w-auto md:h-1/4 flex min-h-10 justify-center items-center" routerLink="profile" variant="text"
-            severity="secondary"
+        <p-button class="w-1/4 md:w-auto md:h-1/4 flex min-h-10 justify-center items-center" routerLink="profile"
+            variant="text" severity="secondary"
             routerLinkActive="active-button font-bold md:border-r-2 md:border-t-0 border-t-2 border-[var(--p-primary-500)]">
             <span class="rounded-full border-2 w-10 h-10 inline-flex items-center justify-center">
                 <i class="pi pi-user"></i>
@@ -76,3 +108,5 @@
         </p-button>
     </div>
 </div>
+<p-toast position="center" [style]="{'z-index': '10000'}" [baseZIndex]="10000">
+</p-toast>

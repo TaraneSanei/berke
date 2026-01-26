@@ -99,7 +99,7 @@ export class AuthService {
   }
 
   updateProfile(user: User): Observable<any> {
-    return this.http.put<any>(this.apiUrl + 'profile/', user)
+    return this.http.patch<any>(this.apiUrl + 'profile/', user)
   }
 
   updatePreferences(preferences: any): Observable<any> {

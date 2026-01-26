@@ -21,4 +21,5 @@ const store = inject(Store);
         store.dispatch(stopLoading());
       }
     })
-  );};
+  );
+};

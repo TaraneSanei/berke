@@ -1,14 +1,10 @@
-<div class="flex justify-center">
+<div dir="rtl" class="flex justify-center">
 
   <div class="w-full lg:w-3/4 m-5">
     <!-- jalali calendar -->
     <div appWindow class="p-5 mb-5 backdrop-blur-2xl rounded-2xl text-[var(--p-primary-50)]">
-      <app-jalali-calendar 
-      [year]="calendarView().jy" 
-      [month]="calendarView().jm" 
-      [monthSummaryMap]="monthSummaryMap()" 
-      (monthChanged)="onMonthChange($event)"
-      (dateSelected)="selectedDate.set($event.gregorian)">
+      <app-jalali-calendar [year]="calendarView().jy" [month]="calendarView().jm" [monthSummaryMap]="monthSummaryMap()"
+        (monthChanged)="onMonthChange($event)" (dateSelected)="selectedDate.set($event.gregorian)">
       </app-jalali-calendar>
     </div>
     <!-- new journal note div -->
@@ -194,22 +190,35 @@
               <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</p>
             </div>
             <div class="flex justify-self-center m-5 flex-row justify-between sm:w-2/3 w-full">
-              <div class="flex flex-col m-2 items-center">
-                <app-emotion-icon class="w-10 h-10 mx-2 inline-block align-middle"
-                  [emotion]="entry.initialEmotion.emotion">
-                </app-emotion-icon>
-                {{entry.initialEmotion.emotion}}
+              <div *ngIf="entry.initialEmotion && entry.initialEmotion.length > 0">
+                <div class="flex flex-col m-2 w-full justify-center items-center"
+                  *ngFor="let e of entry.initialEmotion">
+                  <app-emotion-icon class="w-10 h-10 mx-2 inline-block align-middle" [emotion]="e.emotion">
+                  </app-emotion-icon>
+                  <p>{{e.emotion}}</p>
+                </div>
+              </div>
+              <div *ngIf="entry.initialEmotion.length === 0">
+                <div class="flex m-2 w-full justify-center text-bold items-center">
+                  --
+                </div>
               </div>
               <div class="flex flex-col m-2 items-center text-center">
-                <p class="text-xl m-4">{{ entry.track }}</p>
+                <p class="text-xl m-4">{{ entry.track.title }}</p>
 
                 <p class="text-sm">دوره ی {{ entry.course }}</p> <br />
               </div>
-              <div class="flex flex-col m-2 items-center">
-                <app-emotion-icon class="w-10 h-10 mx-2 inline-block align-middle"
-                  [emotion]="entry.finalEmotion.emotion">
-                </app-emotion-icon>
-                {{entry.finalEmotion.emotion}}
+              <div *ngIf="entry.finalEmotion && entry.finalEmotion.length > 0">
+                <div class="flex flex-col m-2 w-full justify-center items-center" *ngFor="let e of entry.finalEmotion">
+                  <app-emotion-icon class="w-10 h-10 mx-2 inline-block align-middle" [emotion]="e.emotion">
+                  </app-emotion-icon>
+                  {{e.emotion}}
+                </div>
+              </div>
+              <div *ngIf="entry.finalEmotion.length === 0">
+                <div class="flex m-2 w-full justify-center text-bold items-center">
+                  --
+                </div>
               </div>
             </div>
           </div>

@@ -11,7 +11,7 @@ import { DataService } from '../shared/services/data.service';
 import { BerkeService } from '../shared/services/berke.service';
 import { AppState } from '../state/app.state';
 import { AddMeditationSession, LoadMeditationSession, UpdateMeditationSession } from '../state/meditationsSessions/meditationSessions.actions';
-import { selectMeditationSessions, selectmeditationSessionStatus } from '../state/meditationsSessions/meditationSessions.selector';
+import { selectMeditationSessions, selectmeditationSessionsStatus } from '../state/meditationsSessions/meditationSessions.selector';
 import { WindowDirective } from "../shared/directives/window.directive";
 import { WaveDirective } from "../shared/directives/wave.directive";
 import { EmotionIconComponent } from '../shared/components/emotion-icon/emotion-icon.component';
@@ -74,7 +74,7 @@ export class PlayComponent implements OnInit, OnDestroy {
             error: (err) => { console.error('Failed to load track metadata:', err); }
         });
         this.berkeService.loadEmotions();
-        this.meditationSessionsStatus = this.store.selectSignal(selectmeditationSessionStatus)
+        this.meditationSessionsStatus = this.store.selectSignal(selectmeditationSessionsStatus)
         effect(() => {
             console.log('this.recentsession():', this.recentSession())
         })

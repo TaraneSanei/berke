@@ -16,8 +16,8 @@ import { OtpReducer } from './state/otp/otp.reducer';
 import { OTPEffects } from './state/otp/otp.effects';
 import { loadingInterceptor } from './loading/loading.interceptor';
 import { uiReducer } from './state/UI/ui.reducer';
-import { JourneysSessionsReducer } from './state/JourneysSessions/journeysSessions.reducer';
-import { JourneysSessionsEffects } from './state/JourneysSessions/journeysSessions.effects';
+import { JourneysReducer } from './state/journeys/journeys.reducer';
+import { JourneysEffects } from './state/journeys/journeys.effects';
 import { JournalReducer } from './state/journal/journal.reducer';
 import { JournalEffects } from './state/journal/journal.effects';
 import { MeditationSessionsEffects } from './state/meditationsSessions/meditationSessions.effects';
@@ -62,7 +62,7 @@ export const appConfig: ApplicationConfig = {
       user: UserReducer,
       otp: OtpReducer,
       ui: uiReducer,
-      journeysSessions : JourneysSessionsReducer,
+      journeys: JourneysReducer,
       journal: JournalReducer,
       meditationSessions: meditationSessionsReducer,
       calendar: calendarReducer
@@ -71,7 +71,7 @@ export const appConfig: ApplicationConfig = {
     provideEffects([
       UserEffects,
       OTPEffects,
-      JourneysSessionsEffects,
+      JourneysEffects,
       JournalEffects,
       MeditationSessionsEffects,
       CalendarEffects

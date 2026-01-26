@@ -1,289 +1,234 @@
-import { Injectable, signal } from '@angular/core';
+
+import { Injectable, signal, inject, computed, effect } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { usePreset } from '@primeng/themes';
 import { aurora, morning, forest, mountain, sunrise, sunset } from '../../../mypresets';
-import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment.development';
 import { Course, Emotion, Tag } from '../../models/data.models';
-import { catchError, EMPTY, Observable, tap } from 'rxjs';
+import { catchError, EMPTY, tap } from 'rxjs';
 import * as jalali from 'jalaali-js';
+import localforage from 'localforage';
+import { Store } from '@ngrx/store';
+import { AppState } from '../../state/app.state';
+import { selectUserError } from '../../state/user/user.selector';
+import { selectJournalError } from '../../state/journal/journal.selector';
+import { selectCalendarError } from '../../state/history/history.selector';
+import { selectJourneysError } from '../../state/journeys/journeys.selector';
+import { selectMeditationSessionsError } from '../../state/meditationsSessions/meditationSessions.selector';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BerkeService {
-
-
-  constructor(private http: HttpClient) { }
-
-  private apiUrl = environment.apiUrl
+  
+  private http = inject(HttpClient);
+  private apiUrl = environment.apiUrl;
+  private store = inject(Store<AppState>);
   private _courses = signal<Course[]>([]);
   public courses = this._courses.asReadonly();
-  private _errorMessage = signal<string | null>(null);
-  public errorMessage = this._errorMessage.asReadonly();
+
   private _tags = signal<Tag[]>([]);
+  public tags = this._tags.asReadonly();
+
+  private _userTheme = signal<string | undefined>(undefined);
+  public userTheme = this._userTheme.asReadonly();
+
   private _emotions = signal<Emotion[]>([]);
   public emotions = this._emotions.asReadonly();
 
-  //setters and getters for the cached last modified token for courses and tags list
+  private _recommendationMap = signal<Record<string, number[]>>({});
+  public recommendationMap = this._recommendationMap.asReadonly();
 
-  getCoursesLastModified(): string | null {
-    return localStorage.getItem('coursesLastModified');
-  }
+  private _errorMessage = signal<string | null>(null);
+  public errorMessage = this._errorMessage.asReadonly();
 
-  setCoursesLastModified(value: string) {
-    localStorage.setItem('coursesLastModified', value);
-  }
+  private metaStore = localforage.createInstance({
+    name: "Berke_App",
+    storeName: "metadata"
+  });
+// global error handling
+  private userError = this.store.selectSignal(selectUserError)
+  private journalError = this.store.selectSignal(selectJournalError)
+  private historyError = this.store.selectSignal(selectCalendarError)
+  private journeysError = this.store.selectSignal(selectJourneysError)
+  private meditationSessionsError = this.store.selectSignal(selectMeditationSessionsError)
 
-  getTagsLastModified(): string | null {
-    return localStorage.getItem('tagsLastModified');
-  }
-
-  setTagsLastModified(value: string) {
-    localStorage.setItem('tagsLastModified', value);
-  }
-
-  getEmotionsLastModified(): string | null {
-    return localStorage.getItem('emotionsLastModified');
-  }
-
-  setEmotionsLastModified(value: string) {
-    localStorage.setItem('emotionsLastModified', value);
-  }
-
-
-  //setters and getters for the cached data of courses and tags list
-
-  setTags(tags: any) {
-    localStorage.setItem('tags', JSON.stringify(tags));
-  }
-
+  public activeError = computed(() =>{
+    const rawError = this.userError() ||
+     this.journalError() || 
+     this.historyError() || 
+     this.journeysError() || 
+     this.meditationSessionsError() ||
+     this._errorMessage() ||
+     null
+     if (!rawError) return null;
+     return this.getErrorMessage(rawError);
+  })
   
-  getTags(): Tag[] | null {
-    const tags = localStorage.getItem('tags');
-    if (tags) {
-      return JSON.parse(tags)
-    } else {
-      return null
-    }
-  }
-  setEmotions(emotions: any) {
-    localStorage.setItem('emotions', JSON.stringify(emotions));
-  }
+  constructor() {
+    effect(() => {
+      if (!this._userTheme()) {
+        this.getUserTheme()
+      }
+      this.initTheme()
+    })
 
-  getEmotions(): Emotion[] | null {
-    const emotions = localStorage.getItem('emotions');
-    if (emotions) {
-      return JSON.parse(emotions)
-    } else {
-      return null
-    }
+    effect(() => {
+      console.log('User theme changed:', this.userTheme());
+    })
   }
 
-  setCourses(courses: any) {
-    localStorage.setItem('courses', JSON.stringify(courses));
-  }
+  async loadCourses() {
+    const cached = await this.metaStore.getItem<Course[]>('courses');
+    const lastModified = await this.metaStore.getItem<string>('courses_lm');
+    
+    if (cached) this._courses.set(cached);
 
-  getCourses(): Course[] | null {
-    const courses = localStorage.getItem('courses');
-    if (courses) {
-      return JSON.parse(courses)
-    } else {
-      return null
-    }
-  }
+    const headers = lastModified ? new HttpHeaders().set('If-Modified-Since', lastModified) : undefined;
 
-
-  //methods to load the courses list and the tags list from the backend and update the cache
-
-  loadEmotions() {
-    this.http.get<Emotion[]>(this.apiUrl + 'journal/emotions', { observe: 'response' }).pipe(
-      tap(response => {
-        if (response.status === 200 && response.body) {
-          const emotions_data = response.body
-          this.setEmotions(emotions_data)
-          this._emotions.set(emotions_data || []);
-          const lm = response.headers.get('Last-Modified');
-          if (lm) this.setEmotionsLastModified(lm);
-          this._errorMessage.set(null);
-        }
-      }),        catchError(err => {
-          if (err.status === 304) {
-            console.log('err 304')
-            const cached = this.getEmotions();
-            if (cached) {
-              this._emotions.set(cached);
-              this._errorMessage.set(null);
-              console.log('Using cached emotions data', cached);
-            }
-            return EMPTY;
-          }
-
-          this._errorMessage.set(this.getErrorMessage(err));
-          console.log('Error loading emotions:', this._errorMessage());
-          return EMPTY;
-        })
-      )
-      .subscribe();
-  }
-
-  loadCourses() {
-    this.http.get<Course[]>(this.apiUrl + 'meditation/courses', { observe: 'response' })
+    this.http.get<Course[]>(`${this.apiUrl}meditation/courses`, { observe: 'response', headers })
       .pipe(
-        tap(response => {
-          if (response.status === 200 && response.body) {
-            const courses_data = response.body
-            this.setCourses(courses_data)
-            this._courses.set(courses_data || []);
-            const lm = response.headers.get('Last-Modified');
-            if (lm) this.setCoursesLastModified(lm);
-            this._errorMessage.set(null);
+        tap(async res => {
+          if (res.status === 200 && res.body) {
+            this._courses.set(res.body);
+            await this.metaStore.setItem('courses', res.body);
+            const lm = res.headers.get('Last-Modified');
+            if (lm) await this.metaStore.setItem('courses_lm', lm);
           }
-
         }),
-        catchError(err => {
-          if (err.status === 304) {
-            console.log('err 304')
-            const cached = this.getCourses();
-            if (cached) {
-              this._courses.set(cached);
-              this._errorMessage.set(null);
-              console.log('Using cached courses data', cached);
-            }
-            return EMPTY;
-          }
-
-          this._errorMessage.set(this.getErrorMessage(err));
-          console.log('Error loading courses:', this._errorMessage());
-          return EMPTY;
-        })
-      )
-      .subscribe();
+        catchError(err => this.handleError(err, 'courses'))
+      ).subscribe();
   }
 
-  
-  loadTags() {
-    this.http.get<Tag[]>(this.apiUrl + 'meditation/tags', { observe: 'response' })
+  async loadTags() {
+    const cached = await this.metaStore.getItem<Tag[]>('tags');
+    const lastModified = await this.metaStore.getItem<string>('tags_lm');
+
+    if (cached) this._tags.set(cached);
+
+    const headers = lastModified ? new HttpHeaders().set('If-Modified-Since', lastModified) : undefined;
+
+    this.http.get<Tag[]>(`${this.apiUrl}meditation/tags`, { observe: 'response', headers })
       .pipe(
-        tap(response => {
-          if (response.status === 200 && response.body) {
-            const tags_data = response.body
-            this.setTags(tags_data)
-            this._tags.set(tags_data || []);
-            const lm = response.headers.get('Last-Modified');
-            if (lm) this.setTagsLastModified(lm);
-            this._errorMessage.set(null);
+        tap(async res => {
+          if (res.status === 200 && res.body) {
+            this._tags.set(res.body);
+            await this.metaStore.setItem('tags', res.body);
+            const lm = res.headers.get('Last-Modified');
+            if (lm) await this.metaStore.setItem('tags_lm', lm);
+          }
+        }),
+        catchError(err => this.handleError(err, 'tags'))
+      ).subscribe();
+  }
+
+  async loadEmotions() {
+    const cached = await this.metaStore.getItem<Emotion[]>('emotions');
+    const lastModified = await this.metaStore.getItem<string>('emotions_lm');
+
+    if (cached) this._emotions.set(cached);
+
+    const headers = lastModified ? new HttpHeaders().set('If-Modified-Since', lastModified) : undefined;
+
+    this.http.get<Emotion[]>(`${this.apiUrl}journal/emotions`, { observe: 'response', headers })
+      .pipe(
+        tap(async res => {
+          if (res.status === 200 && res.body) {
+            this._emotions.set(res.body);
+            await this.metaStore.setItem('emotions', res.body);
+            const lm = res.headers.get('Last-Modified');
+            if (lm) await this.metaStore.setItem('emotions_lm', lm);
+          }
+        }),
+        catchError(err => this.handleError(err, 'emotions'))
+      ).subscribe();
+  }
+
+  async loadRecommendationMap() {
+    const cached = await this.metaStore.getItem<Record<string, number[]>>('recommendation_map');
+    if (cached) this._recommendationMap.set(cached);
+
+    this.http.get<Record<string, number[]>>(`${this.apiUrl}meditation/recommendation`, { observe: 'response' })
+      .pipe(
+        tap(async res => {
+          if (res.status === 200 && res.body) {
+            this._recommendationMap.set(res.body);
+            await this.metaStore.setItem('recommendation_map', res.body);
           }
         }),
         catchError(err => {
-          if (err.status === 304) {
-            console.log('err 304')
-            const cached = this.getTags();
-            if (cached) {
-              this._tags.set(cached);
-              this._errorMessage.set(null);
-              console.log('Using cached tags data', cached);
-            }
-            return EMPTY;
-          }
-
           this._errorMessage.set(this.getErrorMessage(err));
-          console.log('Error loading tags:', this._errorMessage());
           return EMPTY;
         })
-      )
-      .subscribe();
+      ).subscribe();
   }
 
-
-
-  //setters and getters for the cached data of each course based on ID
-
-  getLastModified(courseId: number): string | null {
-    return localStorage.getItem(`tracksLastModified_${courseId}`);
+  private handleError(err: any, type: string) {
+    if (err.status === 304) {
+      console.log(`${type} not modified, using cache.`);
+      return EMPTY;
+    }
+    this._errorMessage.set(this.getErrorMessage(err));
+    return EMPTY;
   }
 
-  setLastModified(courseId: number, value: string) {
-    localStorage.setItem(`tracksLastModified_${courseId}`, value);
+  // --- Theme Logic (Updated to localforage) ---
+
+  private async getUserTheme(){
+      const theme = await this.metaStore.getItem<string>('user-theme') as any;
+      this._userTheme.set(theme);
   }
 
+  private async initTheme() {
+    const theme = await this.metaStore.getItem<string>('user-theme') as any;
+    if (theme) this.setTheme(theme);
+  }
 
-  //in app helper methods
-  setTheme(theme: 'sunrise' | 'sunset' | 'forest' | 'aurora' | 'mountain' | 'morning') {
-    if (theme === 'forest') {
-      const preset = forest;
-      usePreset(preset);
-      localStorage.setItem('user-theme', 'forest');
-    } else if (theme === 'aurora') {
-      const preset = aurora;
-      usePreset(preset);
-      localStorage.setItem('user-theme', 'aurora');
-    }
-    else if (theme === 'mountain') {
-      const preset = mountain;
-      usePreset(preset);
-      localStorage.setItem('user-theme', 'mountain');
-    }
-    else if (theme === 'morning') {
-      const preset = morning;
-      usePreset(preset);
-      localStorage.setItem('user-theme', 'morning');
-    }
-    else if (theme === 'sunset') {
-      const preset = sunset;
-      usePreset(preset);
-      localStorage.setItem('user-theme', 'sunset');
-    } else {
-      const preset = sunrise;
-      usePreset(preset);
-      localStorage.setItem('user-theme', 'sunrise');
-    }
+  async setTheme(theme: 'sunrise' | 'sunset' | 'forest' | 'aurora' | 'mountain' | 'morning') {
+    const presets: any = { forest, aurora, mountain, morning, sunset, sunrise };
+    const preset = presets[theme] || sunrise;
+    usePreset(preset);
+    await this.metaStore.setItem('user-theme', theme);
+    this.getUserTheme()
 
   }
 
+  // --- Utility Methods ---
+  
   ERROR_MESSAGES: Record<string, string> = {
     "user with this phone number already exists.": "کاربری با این شماره قبلاً ثبت شده است.",
     "No active account found with the given credentials": "شماره تماس یا گذرواژه اشتباه است.",
-    "Token is invalid": "توکن نامعتبر است.",
-    "Given token not valid for any token type": "توکن ارسال‌شده معتبر نیست.",
     "token_not_valid": "دسترسی شما منقضی شده است.",
     "Network Error": "خطای شبکه. لطفاً اتصال اینترنت را بررسی کنید.",
   };
 
   getErrorMessage(error: any): string {
-    const raw =
-      error?.detail ||
-      error?.message ||
-      error?.error?.code ||
-      error?.message ||
-      error?.toString();
+    const raw = error?.detail || error?.message || error?.error?.code || error?.toString();
+if (this.ERROR_MESSAGES[raw]) {
+    return this.ERROR_MESSAGES[raw];
+  }
 
-    return this.ERROR_MESSAGES[raw] || "خطای ناشناخته‌ای رخ داده است.";
+  // DEVELOPMENT/BETA MODE: 
+  // Show the raw error so we can screenshot it
+  console.error("Untranslated Error:", raw);
+  return `خطای ناشناخته: ${raw}`;
   }
 
   toEnglishDigits(input: string): string {
-  const persianDigits = ['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'];
-  return input.replace(/[۰-۹]/g, d => persianDigits.indexOf(d).toString());
-}
+    const persianDigits = ['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'];
+    return input.replace(/[۰-۹]/g, d => persianDigits.indexOf(d).toString());
+  }
 
-
-getGregorianDateRange(jy: number, jm: number): { startDate: string, endDate: string } {
-    // 1. First day of current Jalali month
+  getGregorianDateRange(jy: number, jm: number): { startDate: string, endDate: string } {
     const gStart = jalali.toGregorian(jy, jm, 1);
     const startDate = new Date(gStart.gy, gStart.gm - 1, gStart.gd);
-
-    // 2. First day of the *next* Jalali month
     let nextJm = jm + 1;
     let nextJy = jy;
-    if (nextJm > 12) {
-      nextJm = 1;
-      nextJy++;
-    }
+    if (nextJm > 12) { nextJm = 1; nextJy++; }
     const gEnd = jalali.toGregorian(nextJy, nextJm, 1);
     const endDate = new Date(gEnd.gy, gEnd.gm - 1, gEnd.gd);
 
-    // Format to YYYY-MM-DD string, which matches your API requirement (no time/timezone)
     const format = (d: Date) => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
-
     return { startDate: format(startDate), endDate: format(endDate) };
   }
 }

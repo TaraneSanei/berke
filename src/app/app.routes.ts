@@ -11,6 +11,7 @@ import { JournalComponent } from './journal/journal.component';
 import { authGuard } from './auth/auth.guard';
 import { PlayComponent } from './play/play.component';
 import { meditationGuard } from './shared/guards/meditation.guard';
+import { CourseComponent } from './course/course.component';
 
 export const routes: Routes = [
     { path: 'login', component: LoginComponent, title:'login' },
@@ -23,5 +24,7 @@ export const routes: Routes = [
     {path: 'journeys', component: JourneysComponent, title:'journeys'},
     {path: 'journal', component: JournalComponent, title:'journal'},
     {path: 'profile', component: ProfileComponent, title:'profile'},
+    { path: 'course/:courseId', component: CourseComponent, title:'course'},
+
 ]},
 ]

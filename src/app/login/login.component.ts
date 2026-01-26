@@ -1,4 +1,4 @@
-import { Component, computed, effect } from '@angular/core';
+import { Component, computed, effect, inject } from '@angular/core';
 import { WindowDirective } from "../shared/directives/window.directive";
 import { StepperModule } from 'primeng/stepper';
 import { CommonModule } from '@angular/common';
@@ -21,6 +21,7 @@ import { selectOtpError, selectOtpStatus, selectOtpTimer } from '../state/otp/ot
 import { requestOtp, verifyOtp } from '../state/otp/otp.actions';
 import { PersianDigitsPipe } from '../shared/pipes/persian-digits.pipe'
 import { PersianDigitsDirective } from '../shared/directives/persian-digits.directive';
+import { SupportService } from '../shared/services/support.service';
 
 @Component({
   selector: 'app-login',
@@ -51,6 +52,7 @@ export class LoginComponent {
   loginForm: FormGroup;
   user: any;
   authenticated: any;
+  private supportService = inject(SupportService)
   errorMessage = computed(() => {
     const userError = this.store.selectSignal(selectUserError)();
     const otpError = this.store.selectSignal(selectOtpError)();
@@ -183,5 +185,10 @@ export class LoginComponent {
 
     onStart() {
     this.router.navigate(['']);
+  }
+
+  
+  openSupport (){
+    this.supportService.open()
   }
 }

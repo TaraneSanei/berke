@@ -46,3 +46,8 @@ body {
 .p-button.p-button-outlined.p-button-secondary:hover .p-button-icon {
   color: var(--p-primary-600) !important;
 }
+
+#crisp-chatbox-button {
+  visibility: hidden !important;
+}
+

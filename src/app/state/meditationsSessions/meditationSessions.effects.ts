@@ -2,8 +2,7 @@ import { inject, Injectable } from "@angular/core";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { DataService } from "../../shared/services/data.service";
 import { catchError, from, map, mergeMap, of } from "rxjs";
-import { AddMeditationSession, AddMeditationSessionFailure, AddMeditationSessionSuccess, LoadMeditationSession, LoadMeditationSessionSuccess, UpdateMeditationSession, UpdateMeditationSessionFailure, UpdateMeditationSessionSuccess } from "./meditationSessions.actions";
-import { LoadJourneysSessionsFailure } from "../JourneysSessions/journeysSessions.actions";
+import { AddMeditationSession, AddMeditationSessionFailure, AddMeditationSessionSuccess, LoadMeditationSession, LoadMeditationSessionFailure, LoadMeditationSessionSuccess, UpdateMeditationSession, UpdateMeditationSessionFailure, UpdateMeditationSessionSuccess } from "./meditationSessions.actions";
 
 @Injectable()
 export class MeditationSessionsEffects {
@@ -16,7 +15,7 @@ export class MeditationSessionsEffects {
         mergeMap((action) => 
         from(this.dataService.loadMeditationSessions(action.date)).pipe(
             map((meditationSessions) => LoadMeditationSessionSuccess({ sessions: meditationSessions})),
-            catchError((response) => of(LoadJourneysSessionsFailure({error:response.error})))
+            catchError((response) => of(LoadMeditationSessionFailure({error:response.error})))
         ))));
 
     addMeditationSession = createEffect(() =>

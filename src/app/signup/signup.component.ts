@@ -1,4 +1,4 @@
-import { Component, computed, effect } from '@angular/core';
+import { Component, computed, effect, inject } from '@angular/core';
 import { WindowDirective } from '../shared/directives/window.directive';
 import { StepperModule } from 'primeng/stepper';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators, ɵInternalFormsSharedModule } from '@angular/forms';
@@ -21,6 +21,7 @@ import { InputOtpModule } from 'primeng/inputotp';
 import { ToastModule } from 'primeng/toast';
 import { PersianDigitsDirective } from '../shared/directives/persian-digits.directive';
 import { PersianDigitsPipe } from '../shared/pipes/persian-digits.pipe';
+import { SupportService } from '../shared/services/support.service';
 
 @Component({
   selector: 'app-signup',
@@ -47,9 +48,8 @@ import { PersianDigitsPipe } from '../shared/pipes/persian-digits.pipe';
 })
 export class SignupComponent {
 onStart() {
-throw new Error('Method not implemented.');
 }
-
+  private supportService = inject(SupportService)
   activeStep: number = 1; //stepper 
   direction: 'forward' | 'backward' = 'forward'; //stepper direction
   signupForm: FormGroup;
@@ -216,6 +216,10 @@ throw new Error('Method not implemented.');
 
   onPasswordRepeatBlur() {
     this.passwordRepeatFocused = false;
+  }
+
+    openSupport (){
+    this.supportService.open()
   }
 
 }
