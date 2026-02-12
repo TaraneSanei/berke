@@ -18,9 +18,9 @@ export class ManageThemeComponent {
     { label: 'طلوع', value: 'sunrise', background: 'linear-gradient(var(--p-pink-700), var(--p-purple-900), var(--p-purple-950))' },
     { label: 'غروب', value: 'sunset', background: 'linear-gradient(var(--p-purple-950), var(--p-purple-800), var(--p-orange-400))' },
     { label: 'صبح', value: 'morning', background: 'linear-gradient(var(--p-sky-600), var(--p-blue-300))' },
-    { label: 'جنگل', value: 'forest', background: 'url("/assets/bg-images/forest.jpg")' },
-    { label: 'شفق', value: 'aurora', background: 'url("/assets/bg-images/aurora (5).jpg")' },
-    { label: 'کوه', value: 'mountain', background: 'url("/assets/bg-images/mountain (8).JPG")' },
+    { label: 'جنگل', value: 'forest', background: 'url("/assets/bg-images/forest.webp")' },
+    { label: 'شفق', value: 'aurora', background: 'url("/assets/bg-images/aurora.webp")' },
+    { label: 'کوه', value: 'mountain', background: 'url("/assets/bg-images/mountain.webp")' },
   ];
 
   

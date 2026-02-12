@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { environment } from '../../../environments/environment.development';
+import { environment } from '../../../environments/environment';
 import { catchError, EMPTY, forkJoin, from, map, Observable, of, switchMap, tap } from 'rxjs';
 import { CalendarSummary, Course, Emotion, Journal, Journey, JourneysSession, MeditationSession, Track } from '../../models/data.models';
 import localforage from 'localforage';
@@ -36,7 +36,7 @@ export class DataService {
           return of(cachedCourse);
         }
         console.log(`[Cache] Course ${courseId} not found. Fetching from API.`);
-        return this.http.get<Course>(this.apiUrl + '/meditation/courses/' + courseId).pipe(
+        return this.http.get<Course>(this.apiUrl + 'meditation/courses/' + courseId).pipe(
           tap(course => {
             this.cache.set(courseId, course)
           }), tap(course => {

@@ -47,8 +47,7 @@ import { SupportService } from '../shared/services/support.service';
   styleUrl: './signup.component.css'
 })
 export class SignupComponent {
-onStart() {
-}
+
   private supportService = inject(SupportService)
   activeStep: number = 1; //stepper 
   direction: 'forward' | 'backward' = 'forward'; //stepper direction
@@ -143,6 +142,10 @@ onStart() {
     this.router.navigate(['/login'])
   }
 
+  onStart() {
+      this.router.navigate(['/preferences'])
+
+}
 
   passwordMatchValidator(): ValidatorFn {
     return (form: AbstractControl): ValidationErrors | null => {

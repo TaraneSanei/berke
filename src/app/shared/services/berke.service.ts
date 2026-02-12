@@ -2,8 +2,8 @@
 import { Injectable, signal, inject, computed, effect } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { usePreset } from '@primeng/themes';
-import { aurora, morning, forest, mountain, sunrise, sunset } from '../../../mypresets';
-import { environment } from '../../../environments/environment.development';
+import { aurora, morning, forest, mountain, sunrise, sunset, neutral } from '../../../mypresets';
+import { environment } from '../../../environments/environment';
 import { Course, Emotion, Tag } from '../../models/data.models';
 import { catchError, EMPTY, tap } from 'rxjs';
 import * as jalali from 'jalaali-js';
@@ -30,7 +30,7 @@ export class BerkeService {
   private _tags = signal<Tag[]>([]);
   public tags = this._tags.asReadonly();
 
-  private _userTheme = signal<string | undefined>(undefined);
+private _userTheme = signal<string>('sunrise'); // Default to sunrise immediately
   public userTheme = this._userTheme.asReadonly();
 
   private _emotions = signal<Emotion[]>([]);
@@ -66,12 +66,7 @@ export class BerkeService {
   })
   
   constructor() {
-    effect(() => {
-      if (!this._userTheme()) {
-        this.getUserTheme()
-      }
-      this.initTheme()
-    })
+
 
     effect(() => {
       console.log('User theme changed:', this.userTheme());
@@ -172,25 +167,21 @@ export class BerkeService {
     return EMPTY;
   }
 
-  // --- Theme Logic (Updated to localforage) ---
+  // Theme Logic
 
-  private async getUserTheme(){
-      const theme = await this.metaStore.getItem<string>('user-theme') as any;
-      this._userTheme.set(theme);
+async initializeAppTheme(): Promise<void> {
+    const savedTheme = await this.metaStore.getItem<string>('user-theme');
+        const themeToApply = savedTheme || 'sunrise';
+        await this.setTheme(themeToApply as any);
   }
 
-  private async initTheme() {
-    const theme = await this.metaStore.getItem<string>('user-theme') as any;
-    if (theme) this.setTheme(theme);
-  }
-
-  async setTheme(theme: 'sunrise' | 'sunset' | 'forest' | 'aurora' | 'mountain' | 'morning') {
-    const presets: any = { forest, aurora, mountain, morning, sunset, sunrise };
+async setTheme(theme: 'sunrise' | 'sunset' | 'forest' | 'aurora' | 'mountain' | 'morning' | 'neutral') {
+    const presets: any = { forest, aurora, mountain, morning, sunset, sunrise, neutral };
     const preset = presets[theme] || sunrise;
+    
     usePreset(preset);
+    this._userTheme.set(theme);
     await this.metaStore.setItem('user-theme', theme);
-    this.getUserTheme()
-
   }
 
   // --- Utility Methods ---

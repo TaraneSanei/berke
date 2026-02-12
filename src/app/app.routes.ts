@@ -12,11 +12,13 @@ import { authGuard } from './auth/auth.guard';
 import { PlayComponent } from './play/play.component';
 import { meditationGuard } from './shared/guards/meditation.guard';
 import { CourseComponent } from './course/course.component';
+import { StartComponent } from './start/start.component';
 
 export const routes: Routes = [
+    { path: 'start', component: StartComponent, title:'start' },
     { path: 'login', component: LoginComponent, title:'login' },
     { path: 'signup', component: SignupComponent, title:'signup' },
-    { path: 'preferences', component: PreferencesComponent, title:'preferences' },
+    { path: 'preferences', component: PreferencesComponent, title:'preferences', canActivate:[authGuard] },
     { path: 'subscribe', component: SubscriptionComponent, title:'subscribe' },
     { path: 'play/:trackId', component: PlayComponent, title:'play',  canDeactivate: [meditationGuard]},
     { path: '', component: BaseComponent, title:'base', canActivate:[authGuard], children:[
@@ -24,7 +26,7 @@ export const routes: Routes = [
     {path: 'journeys', component: JourneysComponent, title:'journeys'},
     {path: 'journal', component: JournalComponent, title:'journal'},
     {path: 'profile', component: ProfileComponent, title:'profile'},
-    { path: 'course/:courseId', component: CourseComponent, title:'course'},
+    {path: 'course/:courseId', component: CourseComponent, title:'course'},
 
 ]},
 ]

@@ -22,6 +22,8 @@ import { CutoutService } from '../shared/services/cutout.service';
 import { Dialog } from 'primeng/dialog';
 import { ManagePasswordComponent } from "../shared/components/manage-password/manage-password.component";
 import { ManageThemeComponent } from "../shared/components/manage-theme/manage-theme.component";
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { ConfirmationService } from 'primeng/api';
 
 @Component({
   selector: 'app-profile',
@@ -41,12 +43,15 @@ import { ManageThemeComponent } from "../shared/components/manage-theme/manage-t
     ReactiveFormsModule,
     Dialog,
     ManagePasswordComponent,
-    ManageThemeComponent
+    ManageThemeComponent,
+    ConfirmDialogModule
 ],
+providers:[ConfirmationService],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css'
 })
 export class ProfileComponent implements OnInit {
+  private confirmationService= inject(ConfirmationService);
   private cutoutService = inject(CutoutService);
   private supportService = inject(SupportService);
   private berkeService = inject(BerkeService);
@@ -143,8 +148,32 @@ export class ProfileComponent implements OnInit {
     this.supportService.open()
   }
 
-  logout(){
+  logout(event: Event){
+    this.confirmationService.confirm({
+          target: event.target as EventTarget,
+          header:'خروج؟' ,
+          message: ' مطمئنی که می خواهی از حساب کاربریت خارج بشی؟',
+          rejectLabel: 'نه',
+          rejectButtonProps: {
+            label: 'به برکه برگرد',
+            severity: 'primary',
+            outlined: true,
+            rounded: true
+          },
+          acceptButtonProps: {
+            label: 'خروج',
+            severity: 'danger',
+            rounded: true
+          },
+    
+          accept: () => {
     this.store.dispatch(logout());
+          },
+          reject: () => {
+          },
+        });
+      
+    
   }
 
 }

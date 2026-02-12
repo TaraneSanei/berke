@@ -2,7 +2,31 @@ import { Component } from '@angular/core';
 import { definePreset } from '@primeng/themes';
 import Nora from '@primeng/themes/aura';
 import { Accordion, AccordionPanel } from 'primeng/accordion';
-
+export const neutral = definePreset(
+    Nora,
+    {semantic: {
+            primary: {
+                50: '{zinc.50}',
+                100: '{zinc.100}',
+                200: '{zinc.200}',
+                300: '{zinc.300}',
+                400: '{zinc.400}',
+                500: '{zinc.500}',
+                600: '{zinc.800}',
+                700: '{zinc.700}',
+                800: '{zinc.800}',
+                900: '{zinc.900}',
+                950: '{zinc.950}'
+            }
+        },
+        extend: {
+            css: {
+                ':root': {
+                    '--app-background': 'white',
+                }
+            }
+        }
+    })
 
 export const sunrise = definePreset(
     Nora,
@@ -65,7 +89,6 @@ export const sunrise = definePreset(
             selectbutton: {
                 color: 'rgba(0,0,0,0) !important',
                 background: 'rgba(0,0,0,0) !important',
-
         },
             stepper: {
                 steppanel: {
@@ -333,7 +356,7 @@ export const forest = definePreset(
         extend: {
             css: {
                 ':root': {
-                    '--app-background': 'url("/assets/bg-images/forest.jpg")'
+                    '--app-background': 'url("/assets/bg-images/forest.webp")'
                 }
             }
         }
@@ -372,7 +395,19 @@ export const aurora = definePreset(
                 900: '{amber.900}',
                 950: '{amber.950}'
             },
-            accent: '#FF5A28',
+            accent: {
+                50: '{sky.50}',
+                100: '{sky.100}',
+                200: '{sky.200}',
+                300: '{sky.300}',
+                400: '{sky.400}',
+                500: '{sky.500}',
+                600: '{sky.600}',
+                700: '{sky.700}',
+                800: '{sky.800}',
+                900: '{sky.900}',
+                950: '{sky.950}'
+            },
             neutral: {
                 50: '{zinc.50}',
                 100: '{zinc.100}',
@@ -430,7 +465,7 @@ export const aurora = definePreset(
         extend: {
             css: {
                 ':root': {
-                    '--app-background': 'url("/assets/bg-images/aurora (5).jpg")'
+                    '--app-background': 'url("/assets/bg-images/aurora.webp")'
                 }
             }
         }
@@ -545,7 +580,7 @@ export const mountain = definePreset(
         extend: {
             css: {
                 ':root': {
-                    '--app-background': 'url("/assets/bg-images/mountain (8).JPG")'
+                    '--app-background': 'url("/assets/bg-images/mountain.webp")'
                 }
             }
         }

@@ -54,7 +54,7 @@
                         {{UserProfile()?.createdAt! | jalaliDate:'longDate' |persianDigits}}
                     </div>
                     <div class="mx-6 text-lg mb-6">
-                        <p-button class="flex w-20" (onClick)="logout()" rounded="true" severity="danger"
+                        <p-button class="flex w-20" (onClick)="logout($event)" rounded="true" severity="danger"
                             variant="text">
                             <span class="flex flex-row items-center gap-2">خروج <i class="pi pi-sign-out"></i></span>
                         </p-button>
@@ -103,7 +103,7 @@
                         </div>
                         <div class="mb-6">
                             <div class="flex flex-row mx-6 text-lg items-center">
-                                <p> تم {{selectedTheme()}}</p>
+                                <p> تم {{themeName}}</p>
                                 <p-button class="mx-3" icon="pi pi-pencil" variant="text" rounded="true" size="small"
                                     (click)="isChangingTheme.set(true)"></p-button>
                             </div>
@@ -156,3 +156,4 @@
             </div>
         </div>
     </div>
+      <p-confirmdialog />

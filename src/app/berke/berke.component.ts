@@ -21,6 +21,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { RecommendationService } from '../shared/services/recommendation.service';
 import { SupportService } from '../shared/services/support.service';
 import { SafeHtmlPipe } from '../shared/pipes/safe-html.pipe';
+import { FormsModule } from "@angular/forms";
 @Component({
   selector: 'app-berke',
   imports: [
@@ -35,7 +36,8 @@ import { SafeHtmlPipe } from '../shared/pipes/safe-html.pipe';
     PersianDigitsPipe,
     SelectButtonModule,
     CarouselModule,
-    SafeHtmlPipe
+    SafeHtmlPipe,
+    FormsModule
   ],
   templateUrl: './berke.component.html',
   styleUrl: './berke.component.css'
@@ -59,8 +61,33 @@ export class BerkeComponent {
   userProfile = this.store.selectSignal(selectUser)
   timeIcons: Record<string, any> = {};
   responsiveOptions: any[] | undefined;
+  selectedTags = signal<Tag[]>([])
+  filteredCourses = computed(() => {
+    const allCourses = this.courses();
+    const currentTags = this.selectedTags();
+    if (currentTags.length === 0) {
+      return allCourses;
+    }
+    const selectedTagIds = currentTags.map(tag => tag.id);
+    return allCourses.filter(course =>
+      course.tags.some(tagId => selectedTagIds.includes(tagId))
+    );
+  });
+  displayLimit = signal(6);
 
+  displayedCourses = computed(() => {
+    return this.filteredCourses().slice(0, this.displayLimit());
+  });
+
+  loadMore() {
+    this.displayLimit.update(n => n + 6); // Increase by 6 each time
+  }
+
+  hasMore = computed(() => {
+    return this.displayLimit() < this.filteredCourses().length;
+  });
   constructor() {
+
 
     Object.entries(timeIconMap).forEach(([key, svgString]) => {
       this.timeIcons[key] = this.sanitizer.bypassSecurityTrustHtml(svgString);
@@ -92,7 +119,7 @@ export class BerkeComponent {
 
   }
 
-  openSupport (){
+  openSupport() {
     this.supportService.open()
   }
 

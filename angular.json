@@ -21,16 +21,17 @@
             ],
             "tsConfig": "tsconfig.app.json",
             "assets": [
+              "src/favicon.ico",
+              "src/assets",
               {
-                "glob": "**/*", 
-                "input": "src/assets", 
-                "output": "/assets/"
+                "glob": "**/*",
+                "input": "public",
+                "output": "/"
               }
             ],
             "styles": [
               "src/styles.css",
               "node_modules/primeicons/primeicons.css"
-
             ],
             "scripts": []
           },
@@ -39,8 +40,8 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kB",
-                  "maximumError": "1MB"
+                  "maximumWarning": "1kB",
+                  "maximumError": "2MB"
                 },
                 {
                   "type": "anyComponentStyle",
@@ -89,7 +90,6 @@
             "tsConfig": "tsconfig.spec.json",
             "assets": [
               "src/assets"
-
             ],
             "styles": [
               "src/styles.css"

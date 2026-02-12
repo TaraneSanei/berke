@@ -26,6 +26,10 @@
             </div>
         </div>
     </div>
+    <p-dialog [(visible)]="forgotPassword" [modal]="true" [draggable]="false" [resizable]="false" [closable]="true"
+        header="فراموشی رمز عبور">
+        <app-manage-password [mode]="'forgot'"></app-manage-password>
+    </p-dialog>
     <div appWindow [opacity]="1" class="flex backdrop-blur-2xl
  flex-col overflow-hidden relative w-1/4 min-w-80 h-100 rounded-xl p-2
  text-right shadow-md text-shadow-white">
@@ -52,7 +56,9 @@
                                     'slide-in-left' : direction === 'forward' && activeStep === 1 ,
                                 }">
 
-                                <h2 class="text-xl mb-5">یه قدم تا آرامش...</h2>
+                                <h2 class="text-xl mb-5">
+                                    ورود به برکه
+                                </h2>
 
                                 <div class="w-full mb-3 flex flex-col gap-2">
                                     <p-floatlabel>
@@ -60,15 +66,15 @@
                                         <input pInputText id="phoneNumber" type="tel" class="w-full"
                                             formControlName="phoneNumber" />
                                     </p-floatlabel>
-                                    <p-button severity="secondary" variant="text" size="small" label="ثبت نام"
-                                        (onClick)="onSignup()"></p-button>
+                                    <p-button severity="secondary" variant="text" size="small"
+                                        label="حساب کاربری ندارید؟" (onClick)="onSignup()"></p-button>
                                 </div>
                             </div>
                             <!-- arrow buttons div -->
                             <div class="flex w-full justify-end">
                                 <p-button (onClick)="goToStep(2)" [disabled]="!phoneNumber.valid"
-                                    icon="pi pi-arrow-left" severity="secondary" variant="text" rounded="true"
-                                    size="small"></p-button>
+                                    icon="pi pi-arrow-left" label="قدم بعدی" severity="secondary" variant="text"
+                                    rounded="true" size="small"></p-button>
                             </div>
                         </ng-template>
                     </p-step-panel>
@@ -92,7 +98,9 @@
                                     'slide-in-right' : direction === 'backward' && activeStep === 2 ,
                                     'slide-in-left' : direction === 'forward' && activeStep === 2 ,
                                 }">
-                                <h2 class="text-xl mb-5">یه مکان امن برای ذهنت</h2>
+                                <h2 class="text-xl mb-5">
+                                    ورود به برکه
+                                </h2>
 
                                 <div class="w-full mb-3 flex flex-col gap-2">
                                     <p-floatlabel>
@@ -103,6 +111,7 @@
                                     </p-floatlabel>
                                     <p-button severity="secondary" label="فراموشی گذرواژه" variant="text"
                                         (onClick)="onForgotPassword()" size="small"></p-button>
+
                                 </div>
                             </div>
                             <!-- arrow buttons -->
@@ -133,7 +142,10 @@
                                     'slide-in-right' : direction === 'backward' && activeStep === 2 ,
                                     'slide-in-left' : direction === 'forward' && activeStep === 2 ,
                                 }">
-                                <h2 class="text-xl">جایی برای نفس کشیدن</h2>
+                                <h2 class="text-xl">
+                                    ورود به برکه
+
+                                </h2>
                                 <div class="text-sm h-5">
                                     <div *ngIf="otpTimer() as timer">
                                         {{ timer * 1000 | date:'mm:ss': 'UTC' | persianDigits}}

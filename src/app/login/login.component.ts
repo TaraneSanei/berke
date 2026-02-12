@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
 import { WindowDirective } from "../shared/directives/window.directive";
 import { StepperModule } from 'primeng/stepper';
 import { CommonModule } from '@angular/common';
@@ -22,6 +22,10 @@ import { requestOtp, verifyOtp } from '../state/otp/otp.actions';
 import { PersianDigitsPipe } from '../shared/pipes/persian-digits.pipe'
 import { PersianDigitsDirective } from '../shared/directives/persian-digits.directive';
 import { SupportService } from '../shared/services/support.service';
+import { Dialog } from 'primeng/dialog';
+import { CutoutService } from '../shared/services/cutout.service';
+import { ManageThemeComponent } from "../shared/components/manage-theme/manage-theme.component";
+import { ManagePasswordComponent } from '../shared/components/manage-password/manage-password.component';
 
 @Component({
   selector: 'app-login',
@@ -38,7 +42,9 @@ import { SupportService } from '../shared/services/support.service';
     PasswordModule,
     InputOtpModule,
     InputTextModule,
-    ToastModule
+    ToastModule,
+    Dialog,
+    ManagePasswordComponent
   ],
   providers: [MessageService],
   templateUrl: './login.component.html',
@@ -46,7 +52,7 @@ import { SupportService } from '../shared/services/support.service';
 })
 export class LoginComponent {
 
-
+  forgotPassword = signal<boolean>(false);
   activeStep: number = 1; //stepper 
   direction: 'forward' | 'backward' = 'forward'; //stepper direction
   loginForm: FormGroup;
@@ -134,7 +140,7 @@ export class LoginComponent {
   }
 
   onForgotPassword() {
-    this.router.navigate(['/forgot-password']);
+    this.forgotPassword.set(true)
   }
 
   login() {
@@ -184,7 +190,7 @@ export class LoginComponent {
   }
 
     onStart() {
-    this.router.navigate(['']);
+    this.router.navigate(['berke']);
   }
 
   

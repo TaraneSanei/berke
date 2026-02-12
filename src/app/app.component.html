@@ -1,4 +1,22 @@
 <div class="relative min-h-screen w-full overflow-x-hidden">
+<svg class="fixed inset-0 pointer-events-none z-10" 
+     style="width: 100%; height: 100dvh;" 
+     aria-hidden="true">
+  <defs>
+    <mask id="cutoutMask" maskUnits="userSpaceOnUse">
+      <rect x="0" y="0" width="100%" height="100%" fill="white"></rect>
+      
+      <g id="cutouts"></g>
+    </mask>
+  </defs>
+
+  <rect x="0" y="0" width="100%" height="100%" 
+        fill="rgba(255, 255, 255, 0.4)" 
+        mask="url(#cutoutMask)"></rect>
+</svg>
+    <router-outlet />
+
+ 
 
   <div *ngIf="loading$ | async" class="fixed inset-0 z-1500 flex flex-col items-center bg-white/40 justify-center">
 
@@ -12,18 +30,7 @@
     </svg>
   </div>
 
-  <div *ngIf="!(loading$ | async)" class="bg-white/40 pointer-events-none w-full h-screen absolute"
-    style="mask: url(#cutoutMask); -webkit-mask: url(#cutoutMask);">
-
-  </div>
-  <router-outlet />
 
 
-  <svg class="cutout-svg w-full h-screen">
-    <mask id="cutoutMask">
-      <rect x="0" y="0" width="100%" height="100%" fill="rgba(255, 255, 255, 1)"></rect>
-      <g id="cutouts"></g>
-    </mask>
-  </svg>
 
 </div>

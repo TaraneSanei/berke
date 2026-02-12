@@ -47,7 +47,19 @@ body {
   color: var(--p-primary-600) !important;
 }
 
-#crisp-chatbox-button {
-  visibility: hidden !important;
+.cc-1qbp0 {
+display: none !important;
+z-index: -99999 !important;
+scale: 0 !important;
 }
 
+:root {
+  color-scheme: light;
+}
+
+input, 
+textarea, 
+select, 
+button {
+  color-scheme: light !important;
+}

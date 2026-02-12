@@ -4,7 +4,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { routes } from './app.routes';
 import { CookieService } from 'ngx-cookie-service';
 import { providePrimeNG } from 'primeng/config';
-import { aurora, forest, morning, mountain, sunrise, sunset } from '../mypresets';
+import { aurora, forest, morning, mountain, neutral, sunrise, sunset } from '../mypresets';
 import { provideEffects } from '@ngrx/effects';
 import { provideStore } from '@ngrx/store';
 import { UserEffects } from './state/user/user.effects';
@@ -24,10 +24,11 @@ import { MeditationSessionsEffects } from './state/meditationsSessions/meditatio
 import { meditationSessionsReducer } from './state/meditationsSessions/meditationSessions.reducer';
 import { calendarReducer } from './state/history/history.reducer';
 import { CalendarEffects } from './state/history/history.effects';
+import { BerkeService } from './shared/services/berke.service';
 
 
 
-const chosenThemeKey = (localStorage?.getItem('user-theme') || 'sunrise') as 'sunrise' | 'sunset' | 'forest' | 'aurora' | 'mountain' | 'morning';
+const chosenThemeKey = (localStorage?.getItem('user-theme') || 'neutral') as 'sunrise' | 'sunset' | 'forest' | 'aurora' | 'mountain' | 'morning' | 'neutral';
 
 const presetMap = {
   'sunrise' : sunrise,
@@ -35,13 +36,13 @@ const presetMap = {
   'forest' : forest,
   'aurora' : aurora,
   'mountain' : mountain,
-  'morning' : morning
+  'morning' : morning,
+  'neutral' : neutral
 };
 
-const chosenPreset = presetMap[chosenThemeKey] ?? sunrise;
+const chosenPreset = presetMap[chosenThemeKey] ?? neutral;
 
 
-// registerLocaleData(localeFa, 'fa');
 export const appConfig: ApplicationConfig = {
   providers : [
     //Angular configurations
@@ -49,8 +50,6 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     //cookie service
     CookieService,
-    //farsi numerals doesn't seem to work, so I will comment it out for now
-    // { provide: LOCALE_ID, useValue: 'fa' },
     provideHttpClient(
       withInterceptors([
         authInterceptor,
@@ -84,8 +83,12 @@ export const appConfig: ApplicationConfig = {
     provideAnimationsAsync(),
     providePrimeNG({
       theme: {
-        preset: chosenPreset
+        preset: neutral
       }
+    }),
+    provideAppInitializer(() => {
+      const berkeService = inject(BerkeService);
+      return berkeService.initializeAppTheme();
     })
   ],
 };

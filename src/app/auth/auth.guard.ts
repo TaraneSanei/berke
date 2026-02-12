@@ -26,7 +26,7 @@ export const authGuard: CanActivateFn = (route, state) => {
     take(1),
     map(s => {
       const currentUser = store.selectSignal(selectUser)();
-      return currentUser ? true : router.createUrlTree(['/login']);
+      return currentUser ? true : router.createUrlTree(['/start']);
     })
   );
 };
