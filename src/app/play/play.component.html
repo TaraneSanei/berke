@@ -1,4 +1,4 @@
-<div appWave [syncLevel]="syncLevel()" appWindow class="overflow-hidden absolute inset-1 top-0 left-0 right-0 bottom-0  w-full h-full">
+<div appWave [syncLevel]="syncLevel()" class="overflow-hidden absolute inset-1 top-0 left-0 right-0 bottom-0  w-full h-full">
   <div class="justify-center h-1/2 items-center text-xl flex w-full text-[var(--p-primary-100)]">
     <p></p>
   </div>
@@ -19,7 +19,7 @@
       display="chip" [(ngModel)]="initialEmotion" [maxSelectedLabels]="1">
       <ng-template let-emotion #item>
         <span class="w-full flex-row inline-flex items-center gap-1 justify-between rounded-2xl"
-          [style.background]="'var(--p-primary-700)'" [style.color]="'var(--p-primary-50)'">
+          [style.background]="'var(--p-primary-300)'" [style.color]="'var(--p-primary-700)'">
           <p class="m-1.5">{{ emotion.emotion }}</p>
           <app-emotion-icon class="w-5 h-5 mx-2 inline-block align-middle" [emotion]="emotion.emotion">
           </app-emotion-icon>
@@ -67,7 +67,7 @@
       display="chip" [(ngModel)]="finalEmotion" [maxSelectedLabels]="1">
       <ng-template let-emotion #item>
         <span class="w-full flex-row inline-flex items-center gap-1 justify-between rounded-2xl"
-          [style.background]="'var(--p-primary-700)'" [style.color]="'var(--p-primary-50)'">
+          [style.background]="'var(--p-primary-300)'" [style.color]="'var(--p-primary-700)'">
           <p class="m-1.5">{{ emotion.emotion }}</p>
           <app-emotion-icon class="w-5 h-5 mx-2 inline-block align-middle" [emotion]="emotion.emotion">
           </app-emotion-icon>

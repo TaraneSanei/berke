@@ -2,7 +2,7 @@ import { Component, effect, inject, OnInit, signal } from '@angular/core';
 import { BerkeService } from '../shared/services/berke.service';
 import { CommonModule } from '@angular/common';
 import { WindowDirective } from "../shared/directives/window.directive";
-import { User } from '../models/data.models';
+import { Order, SubscriptionPlan, User } from '../models/data.models';
 import { Store } from '@ngrx/store';
 import { AppState } from '../state/app.state';
 import { selectUser } from '../state/user/user.selector';
@@ -13,23 +13,25 @@ import { AvatarGroupModule } from 'primeng/avatargroup';
 import { BadgeModule } from 'primeng/badge';
 import { OverlayBadgeModule } from 'primeng/overlaybadge';
 import { InputTextModule } from 'primeng/inputtext';
-import { changePassword, logout, updateProfile } from '../state/user/user.actions';
+import { changePassword, getProfile, logout, updateProfile } from '../state/user/user.actions';
 import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { PasswordModule } from 'primeng/password';
 import { JalaliDatePipe } from '../shared/pipes/jalali-date.pipe';
 import { SupportService } from '../shared/services/support.service';
-import { CutoutService } from '../shared/services/cutout.service';
 import { Dialog } from 'primeng/dialog';
 import { ManagePasswordComponent } from "../shared/components/manage-password/manage-password.component";
 import { ManageThemeComponent } from "../shared/components/manage-theme/manage-theme.component";
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
+import { Router } from '@angular/router';
+import { DataService } from '../shared/services/data.service';
+import { TableModule } from 'primeng/table';
+import { FormatDurationPipe } from '../shared/pipes/format-duration.pipe';
 
 @Component({
   selector: 'app-profile',
   imports: [
     CommonModule,
-    WindowDirective,
     PersianDigitsPipe,
     JalaliDatePipe,
     ButtonModule,
@@ -44,7 +46,10 @@ import { ConfirmationService } from 'primeng/api';
     Dialog,
     ManagePasswordComponent,
     ManageThemeComponent,
-    ConfirmDialogModule
+    ConfirmDialogModule,
+    TableModule,
+    FormatDurationPipe
+  
 ],
 providers:[ConfirmationService],
   templateUrl: './profile.component.html',
@@ -52,16 +57,19 @@ providers:[ConfirmationService],
 })
 export class ProfileComponent implements OnInit {
   private confirmationService= inject(ConfirmationService);
-  private cutoutService = inject(CutoutService);
   private supportService = inject(SupportService);
   private berkeService = inject(BerkeService);
-  expanded = signal<('user' | 'settings' | 'subscription' | 'badges' | 'about')[]>([])
+  private router = inject(Router)
+  private dataService = inject(DataService)
+  expanded = signal<('user' | 'settings' | 'subscription' | 'badges' | 'about' | 'history')[]>([])
   isEditingUserName = signal<boolean>(false);
   isChangingPassword = signal<boolean>(false);
   isChangingTheme = signal<boolean>(false);
   isChangingNotification = signal<boolean>(false);
   UserProfile = signal<User | null>(null)
+  orders = signal<Order[]>([])
   selectedTheme = this.berkeService.userTheme
+  subscriptionPlans = this.berkeService.subscriptionPlans
   themeName: string;
   themes = [
     { label: 'طلوع', value: 'sunrise', background: 'linear-gradient(var(--p-pink-700), var(--p-purple-900), var(--p-purple-950))' },
@@ -76,13 +84,15 @@ export class ProfileComponent implements OnInit {
     username: '',
     authenticated: false,
     isSubscribed: false,
-    minutesListened: 0,
-    theme: ''
+    secondsListened: 0,
+    theme: '',
   }
 
   constructor(private store: Store<AppState>, private fb: FormBuilder) {
-
+    this.store.dispatch(getProfile())
+    this.berkeService.loadSubscriptionPlans()
     this.themeName = this.themes.find(theme => theme.value === (this.selectedTheme()))?.label || 'طلوع';
+    this.loadOrderHistory();
 
     effect(() => {
       const profileData = this.store.selectSignal(selectUser)
@@ -107,7 +117,7 @@ export class ProfileComponent implements OnInit {
         username: this.UserProfile() ? this.UserProfile()?.username : '',
         authenticated: this.UserProfile() ? this.UserProfile()?.authenticated! : false,
         isSubscribed: this.UserProfile() ? this.UserProfile()?.isSubscribed! : false,
-        minutesListened: this.UserProfile() ? this.UserProfile()?.minutesListened! : 0,
+        secondsListened: this.UserProfile() ? this.UserProfile()?.secondsListened! : 0,
         theme: this.selectedTheme()!
       }
       console.log('attempting to change the profile data to: ',this.editableUserProfile)
@@ -115,15 +125,13 @@ export class ProfileComponent implements OnInit {
     }
   }
 
-  toggleExpanded(panel: 'user' | 'settings' | 'subscription' | 'badges' | 'about') {
+  toggleExpanded(panel: 'user' | 'settings' | 'subscription' | 'badges' | 'about' | 'history') {
     if (this.expanded().includes(panel)) {
       this.expanded.set(this.expanded().filter(p => p !== panel));
     } else {
       this.expanded.set([...this.expanded(), panel]);
       console.log('the session should collapse now')
     }
-
-    this.cutoutService.animateLayoutChanges(500);
   }
 
   startEditUsername() {
@@ -132,13 +140,16 @@ export class ProfileComponent implements OnInit {
       username: this.UserProfile() ? this.UserProfile()?.username : '',
       authenticated: this.UserProfile() ? this.UserProfile()?.authenticated! : false,
       isSubscribed: this.UserProfile() ? this.UserProfile()?.isSubscribed! : false,
-      minutesListened: this.UserProfile() ? this.UserProfile()?.minutesListened! : 0,
+      secondsListened: this.UserProfile() ? this.UserProfile()?.secondsListened! : 0,
       theme: this.UserProfile() ? this.UserProfile()?.theme! : ''
     }
     this.isEditingUserName.set(!this.isEditingUserName());
 
   }
 
+  toSubscribe(plan: SubscriptionPlan){
+    this.router.navigate(['/subscribe', plan.id])
+  }
   editUsername() {
     this.store.dispatch(updateProfile({ user: this.editableUserProfile }));
     this.isEditingUserName.set(false);
@@ -172,8 +183,17 @@ export class ProfileComponent implements OnInit {
           reject: () => {
           },
         });
-      
-    
   }
 
+  loadOrderHistory (){
+    this.dataService.getOrderHistory().subscribe({
+    next: (data: Order[]) => {
+      this.orders.set(data);
+      console.log(this.orders())
+    },
+    error: (err) => {
+        console.error('Failed to load order history:', err);
+      }
+  })
+  }
 }

@@ -17,20 +17,17 @@ import { selectAuthenticated, selectUser, selectUserError, selectUserStatus } fr
 import { MessageService } from 'primeng/api';
 import { BerkeService } from '../shared/services/berke.service';
 import { ToastModule } from 'primeng/toast';
-import { selectOtpError, selectOtpStatus, selectOtpTimer } from '../state/otp/otp.selector';
+import { selectOtpError, selectOtpStatus, selectOtpTimer, selectUserExists } from '../state/otp/otp.selector';
 import { requestOtp, verifyOtp } from '../state/otp/otp.actions';
 import { PersianDigitsPipe } from '../shared/pipes/persian-digits.pipe'
 import { PersianDigitsDirective } from '../shared/directives/persian-digits.directive';
 import { SupportService } from '../shared/services/support.service';
 import { Dialog } from 'primeng/dialog';
-import { CutoutService } from '../shared/services/cutout.service';
-import { ManageThemeComponent } from "../shared/components/manage-theme/manage-theme.component";
 import { ManagePasswordComponent } from '../shared/components/manage-password/manage-password.component';
 
 @Component({
   selector: 'app-login',
   imports: [
-    WindowDirective,
     PersianDigitsPipe,
     PersianDigitsDirective,
     StepperModule,
@@ -43,8 +40,6 @@ import { ManagePasswordComponent } from '../shared/components/manage-password/ma
     InputOtpModule,
     InputTextModule,
     ToastModule,
-    Dialog,
-    ManagePasswordComponent
   ],
   providers: [MessageService],
   templateUrl: './login.component.html',
@@ -58,6 +53,7 @@ export class LoginComponent {
   loginForm: FormGroup;
   user: any;
   authenticated: any;
+  loginMethod = signal<"password" | "otp"> ("otp")
   private supportService = inject(SupportService)
   errorMessage = computed(() => {
     const userError = this.store.selectSignal(selectUserError)();
@@ -67,7 +63,7 @@ export class LoginComponent {
   userStatus: any;
   otpTimer: any;
   otpStatus: any;
-
+  userExists: any;
   constructor(private fb: FormBuilder, private router: Router, private store: Store<AppState>, private berkeService: BerkeService, private messageService: MessageService) {
     this.loginForm = this.fb.group({
       phoneNumber: ['', [Validators.required,
@@ -78,7 +74,7 @@ export class LoginComponent {
         return valid ? null : { invalidPhone: true };
       }]],
       password: ['', [Validators.required, Validators.minLength(8)]],
-      otp: [{ value: '', disabled: true }, [Validators.required,
+      otp: ['', [Validators.required,
       (control: AbstractControl) => {
         if (!control.value) return null;
         const normalized = this.berkeService.toEnglishDigits(control.value);
@@ -89,11 +85,11 @@ export class LoginComponent {
     });
 
     this.user = this.store.selectSignal(selectUser);
-    this.authenticated = this.store.selectSignal(selectAuthenticated);
     this.userStatus = this.store.selectSignal(selectUserStatus);
     this.otpTimer = this.store.selectSignal(selectOtpTimer);
     this.otpStatus = this.store.selectSignal(selectOtpStatus);
-
+    this.userExists = this.store.selectSignal(selectUserExists);
+    
     effect(() => {
       if (this.otpStatus() === 'sent') {
         this.showOtpMessage()
@@ -102,16 +98,20 @@ export class LoginComponent {
 
     effect(() => {
       if (this.userStatus() === 'success') {
-        if (this.authenticated() === false) {
           this.goToStep(3);
-          this.loginForm.get('otp')?.enable();
-          this.sendOtp();
-        } else {
-          this.goToStep(4);
-        }
       }
     })
 
+    effect(() => {
+      if (this.loginMethod() === "password"){
+        this.loginForm.get('password')?.enable()
+        this.loginForm.get('otp')?.disable()
+      }
+      else {
+        this.loginForm.get('password')?.disable()
+        this.loginForm.get('otp')?.enable()
+      }
+    })
     this.setupErrorToast()
 
   }
@@ -135,13 +135,6 @@ export class LoginComponent {
     this.activeStep = step;
   }
 
-  onSignup() {
-    this.router.navigate(['/signup']);
-  }
-
-  onForgotPassword() {
-    this.forgotPassword.set(true)
-  }
 
   login() {
     if (this.loginForm.valid) {
@@ -153,7 +146,8 @@ export class LoginComponent {
 
 
   sendOtp() {
-    this.store.dispatch(requestOtp())
+    const normalizedPhone = this.berkeService.toEnglishDigits(this.phoneNumber.value).toString()
+    this.store.dispatch(requestOtp({phoneNumber: normalizedPhone}))
   }
 
   showOtpMessage() {
@@ -163,7 +157,8 @@ export class LoginComponent {
   verifyOTP() {
     const otp = this.loginForm.get('otp')?.value;
     const normalizedOtp = this.berkeService.toEnglishDigits(otp);
-    this.store.dispatch(verifyOtp({ otp: Number(normalizedOtp) }));
+    const normalizedPhone = this.berkeService.toEnglishDigits(this.phoneNumber.value).toString()
+    this.store.dispatch(verifyOtp({phoneNumber: normalizedPhone,  otp: Number(normalizedOtp) }));
   }
 
   //helper functions to show persian numerals
@@ -190,9 +185,20 @@ export class LoginComponent {
   }
 
     onStart() {
+    if(this.userExists()){
     this.router.navigate(['berke']);
+      } else {
+      this.router.navigate(['preferences']);
+      }
   }
 
+  resolveLogin() {
+    if (this.loginMethod() === 'password'){
+      this.login()
+    } else {
+      this.verifyOTP()
+    }
+}
   
   openSupport (){
     this.supportService.open()

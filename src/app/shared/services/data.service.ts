@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { catchError, EMPTY, forkJoin, from, map, Observable, of, switchMap, tap } from 'rxjs';
-import { CalendarSummary, Course, Emotion, Journal, Journey, JourneysSession, MeditationSession, Track } from '../../models/data.models';
+import { CalendarSummary, Course, Emotion, Journal, Journey, JourneysSession, MeditationSession, Order, Track } from '../../models/data.models';
 import localforage from 'localforage';
 
 @Injectable({
@@ -20,6 +20,10 @@ export class DataService {
   }
   getJourneysSessions(): Observable<any> {
     return this.http.get<any>(this.apiUrl + 'sessions/journeys/');
+  }
+
+  getOrderHistory(){
+    return this.http.get<Order[]>(this.apiUrl + 'subscription/orders');
   }
 
 
@@ -67,9 +71,13 @@ export class DataService {
       console.log('Found track:', found);
       if (found) return of(found);
     }
-    return this.http.get<Track>(this.apiUrl + '/meditation/track/' + trackId)
+    return this.http.get<Track>(this.apiUrl + 'meditation/track/' + trackId)
   }
 
+  getTrackUrl(trackId: number){
+    return this.http.get<{ audio_url: string }>(this.apiUrl + 'meditation/tracks/' + trackId + '/audio-url/')
+
+  }
   makeJourneys(
     sessions: JourneysSession[],
   ): Observable<Journey[]> {

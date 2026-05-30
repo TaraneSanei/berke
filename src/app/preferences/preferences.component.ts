@@ -20,7 +20,6 @@ import { NotificationService } from '../shared/services/notification.service';
   selector: 'app-preferences',
   imports: [
     PersianDigitsDirective,
-    WindowDirective,
     ButtonModule,
     StepperModule,
     InputTextModule,

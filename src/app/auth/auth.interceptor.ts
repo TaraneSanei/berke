@@ -10,6 +10,11 @@ let isRefreshing = false;
 const refreshTokenSubject = new BehaviorSubject<string | null>(null);
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
+  // Bypass Authorization for Liara storage presigned URLs
+  if (req.url.startsWith('https://files.berke-app.ir/')) {
+    return next(req);
+  }
+
   const authService = inject(AuthService);
   const token = authService.getToken();
   const store = inject(Store);

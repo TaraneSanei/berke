@@ -1,7 +1,7 @@
 <div dir="rtl" class="flex justify-center">
   <div class="w-full lg:w-3/4 m-5 flex flex-col items-center ">
     <!-- <div (click)="toggleExpanded(journey)" *ngFor="let journey of journeys()" class="w-full">
-      <div appWindow *ngIf="expanded() !== journey.course.id"
+      <div *ngIf="expanded() !== journey.course.id"
         class="rounded-2xl mb-5 backdrop-blur-2xl p-5 text-[var(--p-primary-50)]">
         <h3 class="text-lg">{{ journey.course.title }}</h3>
         <div class=" mt-5 mb-5 flex justify-center items-center flex-row">
@@ -51,7 +51,7 @@
           </div>
         </div>
       </div>
-      <div appWindow appWave [syncLevel]="calculateSyncLevel(journey)" *ngIf="expanded() === journey.course.id"
+      <div appWave [syncLevel]="calculateSyncLevel(journey)" *ngIf="expanded() === journey.course.id"
         class="rounded-2xl mb-2 backdrop-blur-2xl p-5 text-[var(--p-primary-50)]">
         <div class="flex gap-2 justify-center items-center m-4 mb-10">
         <div class="w-15 h-15 items-center justify-center">
@@ -121,9 +121,9 @@
     </div> -->
     <div *ngFor="let journey of journeys()" class="w-full mb-5">
 
-      <div appWindow 
+      <div  
         (click)="toggleExpanded(journey)"
-        class="rounded-2xl backdrop-blur-2xl text-[var(--p-primary-50)] transition-all duration-700 ease-in-out cursor-pointer overflow-hidden relative">
+        class="rounded-2xl border border-white/40 bg-white/10 backdrop-blur-2xl text-[var(--p-primary-50)] transition-all duration-700 ease-in-out cursor-pointer overflow-hidden relative">
 
         <div class="grid transition-all duration-700 ease-in-out"
           [class.grid-rows-[1fr]]="expanded() !== journey.course.id"
@@ -252,11 +252,18 @@
                   <div class="flex-1 h-1 border-dashed border-t-2 m-4 opacity-30"></div>
                   <p>{{track.duration*1000 | date:'mm:ss': 'UTC' | persianDigits}}</p>
                 </div>
-                <p-button size="small" rounded="true" (click)="$event.stopPropagation(); playTrack(track)"
+                <p-button *ngIf="userProfile()?.hasAccess" size="small" rounded="true" (click)="$event.stopPropagation(); playTrack(track)"
                   severity="secondary" variant="text">
               <span class="rounded-full border-2 w-8 h-8 inline-flex items-center justify-center">
                 <i class="pi pi-play ml-0.5"></i>
-              </span>                </p-button>
+              </span>
+                </p-button>
+
+          <p-button *ngIf="!userProfile()?.hasAccess" size="small" rounded="true" severity="secondary" variant="text">
+            <span class="rounded-full border-2 w-8 h-8 inline-flex items-center justify-center">
+              <i class="pi pi-lock"></i>
+            </span>
+          </p-button>
               </div>
 
             </div>

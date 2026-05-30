@@ -14,11 +14,11 @@ import { WaveDirective } from "../shared/directives/wave.directive";
 import { Router } from '@angular/router';
 import { SafeHtmlPipe } from '../shared/pipes/safe-html.pipe';
 import { ButtonModule } from 'primeng/button';
+import { selectUser } from '../state/user/user.selector';
 
 @Component({
   selector: 'app-journeys',
   imports: [CommonModule,
-    WindowDirective,
     PersianDigitsPipe,
     DividerModule,
     AccordionModule,
@@ -34,8 +34,11 @@ export class JourneysComponent {
   private router = inject(Router);
   journeys = signal<Journey[]>([])
   expanded = signal<number | null>(null)
+  private store = inject(Store<AppState>);
 
-  constructor(private store: Store<AppState>, private dataservice: DataService) {
+  userProfile = this.store.selectSignal(selectUser)
+
+  constructor() {
 
     effect(() => {
       this.store.dispatch(LoadJourneys());

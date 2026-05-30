@@ -46,6 +46,7 @@ const chosenPreset = presetMap[chosenThemeKey] ?? neutral;
 export const appConfig: ApplicationConfig = {
   providers : [
     //Angular configurations
+        provideAnimationsAsync(),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     //cookie service

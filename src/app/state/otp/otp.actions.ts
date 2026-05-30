@@ -1,12 +1,15 @@
 import { createAction, props } from "@ngrx/store";
 
 export const requestOtp = createAction(
-    '[User] Request OTP'
-)
+    '[User] Request OTP',
+    props<{ phoneNumber: string }>()
+);
 
 export const requestOtpSuccess = createAction(
-    '[User] Request OTP Success'
+    '[User] Request OTP Success',
+    props<{ userExists: boolean }>() 
 );
+
 
 export const requestOtpFailure = createAction(
     '[User] Request OTP Failure',
@@ -15,7 +18,7 @@ export const requestOtpFailure = createAction(
 
 export const verifyOtp = createAction(
     '[User] Verify OTP',
-    props<{ otp: number }>()
+    props<{phoneNumber:string; otp: number }>()
 )
 
 export const verifyOtpSuccess = createAction(

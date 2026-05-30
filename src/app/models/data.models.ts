@@ -3,7 +3,7 @@ export interface User {
     phoneNumber: string;
     username?: string;
     authenticated: boolean;
-    minutesListened: number;
+    secondsListened: number;
     isSubscribed: boolean;
     subscribedAt?: Date;
     subscriptionEnd?: Date;
@@ -11,6 +11,7 @@ export interface User {
     theme: string;
     createdAt?: Date;
     notification?: string;
+    hasAccess?: boolean;
 }
 
 export interface Course {
@@ -33,7 +34,6 @@ export interface Track {
     title: string;
     dayNumber: number;
     duration: number;
-    audioUrl: string;
 }
 
 export interface Emotion {
@@ -78,3 +78,18 @@ export interface CalendarSummary {
   meditations: number;
 }
 
+export interface SubscriptionPlan {
+    id: number;
+    name: string;
+    description: string;
+    duration: number;
+    price: number;
+}
+
+export interface Order {
+    id: string;
+    plan: SubscriptionPlan;
+    amount: number;
+    status: string;
+    date: Date;
+}

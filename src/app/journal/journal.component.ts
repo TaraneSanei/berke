@@ -32,7 +32,6 @@ import { JalaliDatePipe } from '../shared/pipes/jalali-date.pipe';
   selector: 'app-journal',
   imports: [
     CommonModule,
-    WindowDirective,
     TextareaModule,
     FormsModule,
     ReactiveFormsModule,

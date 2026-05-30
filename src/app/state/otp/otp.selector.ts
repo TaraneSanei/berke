@@ -16,3 +16,8 @@ export const selectOtpStatus = createSelector(
     SelectOTP,
     (state) => state.status
 );
+
+export const selectUserExists = createSelector(
+    SelectOTP,
+    (state) => state.userExists
+);

@@ -7,7 +7,7 @@
                 class="sticky top-1/2 -translate-y-1/2 z-[70] group cursor-pointer flex items-center">
 
                 <div class="flex items-center h-40 
-              bg-[var(--p-accent-900)]/50 backdrop-blur-3xl border-y border-l border-[var(--p-accent-900)]/20 
+              bg-[var(--p-accent-900)]/50 backdrop-blur-3xl border-y border-l border-[var(--p-accent-50)]/40 
               rounded-xl transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)]
               translate-x-[calc(100%-1rem)] group-hover:translate-x-0
               hover:bg-[var(--p-accent-900)]/60 hover:border-[var(--p-accent-600)]/50
@@ -34,8 +34,8 @@
         <router-outlet></router-outlet>
     </div>
 
-    <div appWindow [opacity]="0.85"
-        class="row-span-2 backdrop-blur-md flex flex-row w-full md:flex-col md:col-span-1 md:h-full">
+    <div
+        class="row-span-2 backdrop-blur-md flex flex-row w-full md:flex-col md:col-span-1 md:h-full border-t md:border-r border-white/40 bg-white/10">
         <p-button class="w-1/4 flex-col md:w-auto min-h-10 md:h-1/4 flex justify-center items-center" routerLink="berke"
             routerLinkActive="active-button font-bold md:border-r-2 md:border-t-0 border-t-2 border-[var(--p-primary-500)]"
             variant="text" severity="secondary">

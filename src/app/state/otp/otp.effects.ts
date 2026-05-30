@@ -5,7 +5,7 @@ import { AuthService } from "../../auth/auth.service";
 import { mergeMap, from, catchError, of, interval, map, switchMap, takeWhile, withLatestFrom } from "rxjs";
 import { requestOtp, requestOtpSuccess, startOtpTimer, requestOtpFailure, tickOtpTimer, verifyOtp, verifyOtpFailure, verifyOtpSuccess } from "./otp.actions";
 import { selectOtpTimer } from "./otp.selector";
-import { getProfile } from "../user/user.actions";
+import { getProfile, loginSuccess } from "../user/user.actions";
 
 
 @Injectable()
@@ -17,10 +17,10 @@ export class OTPEffects {
   requestOtp$ = createEffect(() =>
     this.actions$.pipe(
       ofType(requestOtp),
-      mergeMap(() =>
-        from(this.authService.requestOTP()).pipe(
-          mergeMap(() => [
-            requestOtpSuccess(),
+      mergeMap((action) =>
+        from(this.authService.requestOTP(action.phoneNumber)).pipe(
+          mergeMap((response) => [
+            requestOtpSuccess({userExists: response.user_exists}),
             startOtpTimer(),
           ]),
           catchError((error) => of(requestOtpFailure({ error: error })))
@@ -39,9 +39,10 @@ export class OTPEffects {
   verifyOtp$ = createEffect(() =>
     this.actions$.pipe(
       ofType(verifyOtp),
-      mergeMap((action) =>
-        from(this.authService.verifyOTP(action.otp)).pipe(
-          mergeMap(() => [
+      switchMap((action) =>
+        from(this.authService.verifyOTP(action.phoneNumber, action.otp)).pipe(
+          mergeMap((response) => [
+            loginSuccess({ token: response.access, refreshToken: response.refresh }),
             verifyOtpSuccess(),
             getProfile()
           ]),

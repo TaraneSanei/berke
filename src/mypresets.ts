@@ -136,7 +136,8 @@ export const sunrise = definePreset(
         extend: {
             css: {
                 ':root': {
-                    '--app-background': 'linear-gradient(var(--p-secondary-700), var(--p-primary-900), var(--p-primary-950))',
+                    '--app-background': 'linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), linear-gradient(var(--p-secondary-700), var(--p-primary-800), var(--p-primary-900))',
+                    
                 }
             }
         }
@@ -220,8 +221,8 @@ export const sunset = definePreset(
             button: {
                 root: {
                     primary: {
-                        background: 'var(--p-primary-700) !important',
-                        hoverBackground: 'var(--p-primary-800) !important',  // color on hover
+                        background: 'var(--p-primary-800) !important',
+                        hoverBackground: 'var(--p-primary-900) !important',  // color on hover
 
                     }
                 },
@@ -231,6 +232,9 @@ export const sunset = definePreset(
                         hoverColor: 'var(--p-primary-700) !important',  // color on hover
                         hoverBackground: 'var(--p-primary-50) !important',  // color on hover
 
+                    },
+                    primary : {
+                        color: 'var(--p-primary-300) !important'
                     }
                 },
                 outlined: {
@@ -484,7 +488,7 @@ export const mountain = definePreset(
                 300: '{stone.300}',
                 400: '{stone.400}',
                 500: '{stone.500}',
-                600: '{stone.600}',
+                600: '{stone.500}',
                 700: '{stone.700}',
                 800: '{stone.800}',
                 900: '{stone.900}',
@@ -504,16 +508,16 @@ export const mountain = definePreset(
                 950: '{slate.950}'
             },
             accent: {
-                50: '{amber.50}',
-                100: '{amber.100}',
-                200: '{amber.200}',
-                300: '{amber.300}',
-                400: '{amber.400}',
-                500: '{amber.500}',
-                600: '{amber.600}',
-                700: '{amber.700}',
-                800: '{amber.800}',
-                900: '{amber.900}',
+                50: '{stone.50}',
+                100: '{stone.100}',
+                200: '{stone.200}',
+                300: '{stone.300}',
+                400: '{stone.400}',
+                500: '{stone.500}',
+                600: '{stone.600}',
+                700: '{stone.700}',
+                800: '{stone.800}',
+                900: '{stone.700}',
                 950: '{amber.950}'
             },
             neutral: {
@@ -552,10 +556,10 @@ export const mountain = definePreset(
             button: {
                 root: {
                     primary: {
-                        background: 'var(--p-accent-100) !important',
+                        background: 'var(--p-accent-300) !important',
                         color: 'var(--p-primary-900) !important',
-                        hoverColor: 'var(--p-primary-700) !important',  // color on hover
-                        hoverBackground: 'var(--p-accent-50) !important',
+                        hoverColor: 'var(--p-primary-900) !important',  // color on hover
+                        hoverBackground: 'var(--p-accent-400) !important',
                         border: 'var(--p-primary-200)'
                     }
                 },
@@ -565,13 +569,19 @@ export const mountain = definePreset(
                         hoverColor: 'var(--p-primary-700) !important',  // color on hover
                         hoverBackground: 'var(--p-primary-50) !important',  // color on hover
 
+                    },
+                    primary:{
+                        color: 'var(--p-primary-300) !important',      // text color
+                        hoverColor: 'var(--p-primary-700) !important',  // color on hover
+                        hoverBackground: 'var(--p-primary-50) !important',  // color on hover
+
                     }
                 },
                 outlined: {
                     secondary: {
-                        color: 'var(--p-primary-100) !important',      // text color
+                        color: 'var(--p-primary-200) !important',      // text color
                         hoverColor: 'var(--p-primary-700) !important',  // color on hover
-                        hoverBackground: 'var(--p-primary-50) !important',  // color on hover
+                        hoverBackground: 'var(--p-primary-100) !important',  // color on hover
                         borderColor: 'var(--p-primary-100) !important',  // border color
                     }
                 }
@@ -594,17 +604,17 @@ export const morning = definePreset(
     {
         semantic: {
             accent: {
-                50: '{sky.50}',
-                100: '{sky.100}',
-                200: '{sky.200}',
-                300: '{sky.300}',
-                400: '{sky.400}',
-                500: '{sky.500}',
-                600: '{sky.600}',
-                700: '{sky.700}',
-                800: '{sky.800}',
-                900: '{sky.900}',
-                950: '{sky.950}'
+                50: '{cyan.50}',
+                100: '{cyan.100}',
+                200: '{cyan.200}',
+                300: '{cyan.300}',
+                400: '{cyan.400}',
+                500: '{cyan.500}',
+                600: '{cyan.600}',
+                700: '{cyan.700}',
+                800: '{cyan.800}',
+                900: '{cyan.900}',
+                950: '{cyan.950}'
             },
             secondary: {
                 50: '{amber.50}',
@@ -620,17 +630,17 @@ export const morning = definePreset(
                 950: '{amber.950}'
             },
             primary: {
-                50: '{sky.900}',
-                100: '{sky.900}',
-                200: '{sky.800}',
-                300: '{sky.700}',
-                400: '{sky.600}',
+                50: '{sky.50}',
+                100: '{sky.100}',
+                200: '{sky.200}',
+                300: '{sky.300}',
+                400: '{sky.400}',
                 500: '{sky.500}',
-                600: '{sky.400}',
-                700: '{sky.300}',
-                800: '{sky.200}',
-                900: '{sky.100}',
-                950: '{sky.50}'
+                600: '{sky.600}',
+                700: '{sky.700}',
+                800: '{sky.800}',
+                900: '{sky.900}',
+                950: '{sky.950}'
             },
             neutral: {
                 50: '{zinc.50}',
@@ -650,7 +660,7 @@ export const morning = definePreset(
             stepper: {
                 steppanel: {
                     background: 'transparent',
-                    color: 'var(--p-primary-900)',
+                    color: 'var(--p-primary-50)',
                 }
             },
             floatlabel: {
@@ -672,8 +682,13 @@ export const morning = definePreset(
                 text: {
                     secondary: {
                         color: 'var(--p-primary-100) !important',      // text color
-                        hoverColor: 'var(--p-primary-700) !important',  // color on hover
-                        hoverBackground: 'var(--p-primary-50) !important',  // color on hover
+                        hoverColor: 'var(--p-primary-100) !important',  // color on hover
+                        hoverBackground: 'var(--p-accent-100) !important',  // color on hover
+
+                    },
+                    primary: {
+                        color: 'var(--p-primary-100) !important',
+                        hoverBackground: 'var(--p-accent-100) !important',  // color on hover
 
                     }
                 },
@@ -689,7 +704,7 @@ export const morning = definePreset(
         extend: {
             css: {
                 ':root': {
-                    '--app-background': 'linear-gradient(var(--p-cyan-500), var(--p-blue-300))',
+                    '--app-background': 'linear-gradient(var(--p-cyan-500),var(--p-sky-400), var(--p-blue-400))',
                 }
             }
         }

@@ -17,7 +17,6 @@ import { Toast } from 'primeng/toast';
   imports: [
     RouterModule,
     ButtonModule,
-    WindowDirective,
     Toast
 ],
 providers: [MessageService],

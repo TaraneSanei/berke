@@ -7,13 +7,16 @@ export interface OTPState {
     otpTimer: number | null;
     status: 'pending' | 'sent' | 'verified' | 'notVerified' | 'notSent';
     error: string;
+    userExists: boolean | null;
+
 }
 
 
 export const initialOTPState: OTPState = {
     otpTimer: null,
     status: 'pending',
-    error: ''
+    error: '',
+    userExists: null
 };
 
 
@@ -22,17 +25,20 @@ export const OtpReducer = createReducer(
     on(requestOtp, (state) => ({
         ...state,
     })),
-    on(requestOtpSuccess, (state) => ({
+    on(requestOtpSuccess, (state, { userExists }) => ({
         ...state,
         error: '',
         status: 'sent' as 'sent',
         otpTimer:120,
+        userExists: userExists
     })),
 
     on(requestOtpFailure, (state, {error}) => ({
         ...state,
         status: 'notSent' as 'notSent',
-        error: error
+        error: error,
+        userExists: null
+
     })),
     on(verifyOtp, (state) => ({
         ...state,

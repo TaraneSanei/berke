@@ -4,8 +4,8 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { usePreset } from '@primeng/themes';
 import { aurora, morning, forest, mountain, sunrise, sunset, neutral } from '../../../mypresets';
 import { environment } from '../../../environments/environment';
-import { Course, Emotion, Tag } from '../../models/data.models';
-import { catchError, EMPTY, tap } from 'rxjs';
+import { Course, Emotion, SubscriptionPlan, Tag } from '../../models/data.models';
+import { catchError, EMPTY, map, Observable, of, tap } from 'rxjs';
 import * as jalali from 'jalaali-js';
 import localforage from 'localforage';
 import { Store } from '@ngrx/store';
@@ -29,6 +29,9 @@ export class BerkeService {
 
   private _tags = signal<Tag[]>([]);
   public tags = this._tags.asReadonly();
+
+  private _subscriptionPlans= signal<SubscriptionPlan[]>([]);
+  public subscriptionPlans = this._subscriptionPlans.asReadonly();
 
 private _userTheme = signal<string>('sunrise'); // Default to sunrise immediately
   public userTheme = this._userTheme.asReadonly();
@@ -137,6 +140,40 @@ private _userTheme = signal<string>('sunrise'); // Default to sunrise immediatel
         }),
         catchError(err => this.handleError(err, 'emotions'))
       ).subscribe();
+  }
+
+    loadSubscriptionPlans() {
+    this.http.get<SubscriptionPlan[]>(`${this.apiUrl}subscription`, { observe: 'response' })
+      .pipe(
+        tap(res => {
+          if (res.status === 200 && res.body) {
+            this._subscriptionPlans.set(res.body);
+            console.log('subscription plans: ', this.subscriptionPlans())
+          }
+        }),
+        catchError(err => this.handleError(err, 'subscription'))
+      ).subscribe();
+  }
+
+  verify(Authority: string): Observable<boolean> {
+    return this.http.post<any>(`${this.apiUrl}subscription/verify`, { Authority }, { observe: 'response' })
+      .pipe(
+        map(response => {
+          return true;
+        }),
+        catchError(error => {
+          return of(false);
+        })
+      );
+  }
+
+  
+  order(plan: SubscriptionPlan){
+    const order ={
+      subPlan: plan,
+      amount : plan.price,
+    }
+    return this.http.post<any>(this.apiUrl + 'subscription/new-order/' , order)
   }
 
   async loadRecommendationMap() {

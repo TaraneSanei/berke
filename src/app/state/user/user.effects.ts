@@ -2,7 +2,7 @@ import { Injectable, inject } from "@angular/core";
 import { AuthService } from "../../auth/auth.service";
 import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { mergeMap, catchError, of, map, tap, from } from "rxjs";
-import { signup, signupSuccess, login, signupFailure, getProfile, loginFailure, loginSuccess, getProfileFailure, getProfileSuccess, setPreferences, setPreferencesFailure, setPreferencesSuccess, logout, updateProfile, updateProfileSuccess, updateProfileFailure, changePassword, changePasswordSuccess, changePasswordFailure } from "./user.actions";
+import { login, getProfile, loginFailure, loginSuccess, getProfileFailure, getProfileSuccess, setPreferences, setPreferencesFailure, setPreferencesSuccess, logout, updateProfile, updateProfileSuccess, updateProfileFailure, changePassword, changePasswordSuccess, changePasswordFailure } from "./user.actions";
 import { BerkeService } from "../../shared/services/berke.service";
 import { Router } from "@angular/router";
 
@@ -17,40 +17,34 @@ export class UserEffects {
   private berkeService = inject(BerkeService);
   private router = inject(Router);
 
-  signup$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType(signup),
-      mergeMap((action) =>
-        this.authService.signup(action.phoneNumber, action.password).pipe(
-          mergeMap(response => {
-            return [
-              signupSuccess(),
-              login({ phoneNumber: action.phoneNumber, password: action.password })
-            ];
-          }),
-          catchError((response) => of(signupFailure({ error: response.error })))
-        ))));
-
 
   login$ = createEffect(() =>
     this.actions$.pipe(
       ofType(login),
       mergeMap((action) =>
         this.authService.login(action.phoneNumber, action.password).pipe(
-          mergeMap(response => {
+          map(response => {
             if (response.access && response.refresh) {
-              this.authService.setToken(response.access);
-              this.authService.setRefreshToken(response.refresh);
-              return [
-                loginSuccess({ token: response.access, refreshToken: response.refresh }),
-                getProfile()
-              ];
+              return loginSuccess({ token: response.access, refreshToken: response.refresh });
             } else {
-              return of(loginFailure({ error: response.error }));
+              return loginFailure({ error: response.error });
             }
           }),
           catchError((response) => of(loginFailure({ error: response.error })))
-        ))));
+        )
+      )))
+
+
+  loginSuccess$ = createEffect(()=>
+  this.actions$.pipe(
+    ofType(loginSuccess),
+    tap((action) => {
+      this.authService.setToken(action.token);
+      this.authService.setRefreshToken(action.refreshToken);
+    }),
+    map(() => getProfile()) 
+  ),
+)
 
   getProfile$ = createEffect(() =>
     this.actions$.pipe(

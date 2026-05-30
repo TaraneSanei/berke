@@ -1,8 +1,7 @@
 <div class="flex justify-center px-5" dir="rtl">
   <div class="w-full lg:w-3/4 m-5 mt-2">
-
-    <div appWindow
-      class="flex flex-row my-5 backdrop-blur-2xl rounded-2xl justify-center text-[var(--p-primary-50)] p-3">
+    <div
+      class="flex flex-row my-5 backdrop-blur-2xl rounded-2xl justify-center text-[var(--p-primary-50)] border border-white/40 bg-white/10 p-3">
       <div class="flex flex-col items-center gap-5" *ngIf="getTimeOfDay() === 'morning'">
         <span class="w-30 h-30" [innerHTML]="timeIcons['morning']"
           style="filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.7));"></span>
@@ -24,8 +23,8 @@
         <p class="text-xl">{{userProfile()?.username || ''}} شب به خیر</p>
       </div>
     </div>
-    <div appWindow appWave [syncLevel]="calculateSyncLevel(journey)" *ngIf="featuredJourney() as journey"
-      class="my-5 h-40 backdrop-blur-2xl rounded-2xl p-3 text-[var(--p-primary-50)]"
+    <div appWave [syncLevel]="calculateSyncLevel(journey)" *ngIf="featuredJourney() as journey"
+      class="my-5 h-40 backdrop-blur-2xl rounded-2xl p-3 text-[var(--p-primary-50)] bg-white/10 border border-white/40"
       (click)="goToCourse(journey.course.id)">
       <p class="text-xl ">ادامه سفر {{ journey.course.title }}</p>
 
@@ -77,7 +76,7 @@
       </div>
     </div>
     <!--     
-    <div appWindow (click)="journal()" class="backdrop-blur-2xl p-3 rounded-2xl">
+    <div (click)="journal()" class="backdrop-blur-2xl p-3 rounded-2xl">
       <p class="text-xl text-[var(--p-primary-50)]">بنویس ...</p>
       <div class=" my-5 items-center justify-between gap-3 text-[var(--p-primary-50)] flex flex-row">
         <div class="w-1/3">
@@ -109,22 +108,32 @@
         </p-button>
       </div>
     </div> -->
-    <div appWindow class="my-5 backdrop-blur-2xl rounded-2xl p-3">
+    <div class="my-5 bg-white/10 border border-white/40 backdrop-blur-2xl rounded-2xl p-3">
       <p class="text-xl mb-5 text-[var(--p-primary-50)]">جدیدترین ها در برکه</p>
       <p-carousel class="m-5" [value]="newest()" [numScroll]="1" [numVisible]="3"
         [responsiveOptions]="responsiveOptions" showIndicators="false" [circular]="true" dir="rtl">
         <ng-template let-course #item>
-          <div class="border border-white/30 bg-[var(--p-primary-300)]/30 items-center backdrop-blur-2xl flex flex-col justify-center h-30 text-[var(--p-primary-50)] m-2 rounded-3xl p-2 pb-4
+          <div class="border border-white/30 bg-[var(--p-primary-600)]/30 flex flex-col items-center backdrop-blur-2xl justify-center h-30 text-[var(--p-primary-50)] m-2 rounded-3xl
           shadow-[0px_0px_5px_1px_rgba(255,255,255,0.4)]
           " (click)="goToCourse(course.id)">
-            <div class="w-12 h-12 items-center justify-center">
-              <svg viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet" class="w-full h-full"
-                style="font-size: 2rem; margin-bottom: 10px; filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.7));">
-                <g [innerHTML]="course.iconPath | safeHtml"></g>
-              </svg>
+            <div class="grid grid-cols-3 w-full items-center ">
+              <div class="flex flex-row mt-7 w-fit justify-self-start">
+                <i *ngIf="!userProfile()?.hasAccess" class="pi pi-lock"
+                  style="font-size: 1.5rem; margin-right: 0.5rem;"></i>
+              </div>
+              <div class="flex flex-col stretch justify-center items-center">
+                <div class="w-12 h-12 ">
+                  <svg viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet" class="w-full h-full"
+                    style="font-size: 2rem; margin-bottom: 10px; filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.7));">
+                    <g [innerHTML]="course.iconPath | safeHtml"></g>
+                  </svg>
+                </div>
+              </div>
             </div>
-            <div class="mb-2 text-[var(--p-primary-50)]">{{course.title}}</div>
+            <div class="mt-3 text-[var(--p-primary-50)]">{{course.title}}</div>
+
           </div>
+
         </ng-template>
       </p-carousel>
       <p class="text-xl mb-5 text-[var(--p-primary-50)]">پیشنهادی</p>
@@ -132,89 +141,125 @@
       <p-carousel class="m-5" [value]="recommendedCourses()" [numScroll]="1" [numVisible]="3"
         [responsiveOptions]="responsiveOptions" showIndicators="false" [circular]="true" dir="rtl">
         <ng-template let-course #item>
-          <div class="border border-white/30 bg-[var(--p-primary-300)]/30 items-center backdrop-blur-2xl flex flex-col justify-center h-30 text-[var(--p-primary-50)] m-2 rounded-3xl p-2 pb-4
+          <div class="border border-white/30 bg-[var(--p-primary-600)]/30 flex flex-col items-center backdrop-blur-2xl justify-center h-30 text-[var(--p-primary-50)] m-2 rounded-3xl
           shadow-[0px_0px_5px_1px_rgba(255,255,255,0.4)]
           " (click)="goToCourse(course.id)">
-            <div class="w-12 h-12 items-center justify-center">
-              <svg viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet" class="w-full h-full"
-                style="font-size: 2rem; margin-bottom: 10px; filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.7));">
-                <g [innerHTML]="course.iconPath | safeHtml"></g>
-              </svg>
+            <div class="grid grid-cols-3 w-full items-center ">
+              <div class="flex flex-row mt-7 w-fit justify-self-start">
+                <i *ngIf="!userProfile()?.hasAccess" class="pi pi-lock"
+                  style="font-size: 1.5rem; margin-right: 0.5rem;"></i>
+              </div>
+              <div class="flex flex-col stretch justify-center items-center">
+                <div class="w-12 h-12 ">
+                  <svg viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet" class="w-full h-full"
+                    style="font-size: 2rem; margin-bottom: 10px; filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.7));">
+                    <g [innerHTML]="course.iconPath | safeHtml"></g>
+                  </svg>
+                </div>
+              </div>
             </div>
-            <div class="mb-2 text-[var(--p-primary-50)]">{{course.title}}</div>
+            <div class="mt-3 text-[var(--p-primary-50)]">{{course.title}}</div>
+
           </div>
+
         </ng-template>
       </p-carousel>
       <p class="text-xl mb-5 text-[var(--p-primary-50)]">مهارت ها</p>
       <p-carousel class="m-5" [value]="skillCourses()" [numScroll]="1" [numVisible]="3"
         [responsiveOptions]="responsiveOptions" showIndicators="false" [circular]="true" dir="rtl">
         <ng-template let-course #item>
-          <div class="border border-white/30 bg-[var(--p-primary-300)]/30 items-center backdrop-blur-2xl flex flex-col justify-center h-30 text-[var(--p-primary-50)] m-2 rounded-3xl p-2 pb-4
+          <div class="border border-white/30 bg-[var(--p-primary-600)]/30 flex flex-col items-center backdrop-blur-2xl justify-center h-30 text-[var(--p-primary-50)] m-2 rounded-3xl
           shadow-[0px_0px_5px_1px_rgba(255,255,255,0.4)]
           " (click)="goToCourse(course.id)">
-            <div class="w-12 h-12 items-center justify-center">
-              <svg viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet" class="w-full h-full"
-                style="font-size: 2rem; margin-bottom: 10px; filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.7));">
-                <g [innerHTML]="course.iconPath | safeHtml"></g>
-              </svg>
+            <div class="grid grid-cols-3 w-full items-center ">
+              <div class="flex flex-row mt-7 w-fit justify-self-start">
+                <i *ngIf="!userProfile()?.hasAccess" class="pi pi-lock"
+                  style="font-size: 1.5rem; margin-right: 0.5rem;"></i>
+              </div>
+              <div class="flex flex-col stretch justify-center items-center">
+                <div class="w-12 h-12 ">
+                  <svg viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet" class="w-full h-full"
+                    style="font-size: 2rem; margin-bottom: 10px; filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.7));">
+                    <g [innerHTML]="course.iconPath | safeHtml"></g>
+                  </svg>
+                </div>
+              </div>
             </div>
-            <div class="mb-2 text-[var(--p-primary-50)]">{{course.title}}</div>
+            <div class="mt-3 text-[var(--p-primary-50)]">{{course.title}}</div>
+
           </div>
+
         </ng-template>
       </p-carousel>
       <p class="text-xl text-[var(--p-primary-50)]">عمیق</p>
       <p-carousel class="m-5" [value]="deepCourses()" [numScroll]="1" [numVisible]="3"
         [responsiveOptions]="responsiveOptions" showIndicators="false" [circular]="true" dir="rtl">
         <ng-template let-course #item>
-          <div class="border border-white/30 bg-[var(--p-primary-300)]/30 items-center backdrop-blur-2xl flex flex-col justify-center h-30 text-[var(--p-primary-50)] m-2 rounded-3xl p-2 pb-4
+          <div class="border border-white/30 bg-[var(--p-primary-600)]/30 flex flex-col items-center backdrop-blur-2xl justify-center h-30 text-[var(--p-primary-50)] m-2 rounded-3xl
           shadow-[0px_0px_5px_1px_rgba(255,255,255,0.4)]
           " (click)="goToCourse(course.id)">
-            <div class="w-12 h-12 items-center justify-center">
-              <svg viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet" class="w-full h-full"
-                style="font-size: 2rem; margin-bottom: 10px; filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.7));">
-                <g [innerHTML]="course.iconPath | safeHtml"></g>
-              </svg>
+            <div class="grid grid-cols-3 w-full items-center ">
+              <div class="flex flex-row mt-7 w-fit justify-self-start">
+                <i *ngIf="!userProfile()?.hasAccess" class="pi pi-lock"
+                  style="font-size: 1.5rem; margin-right: 0.5rem;"></i>
+              </div>
+              <div class="flex flex-col stretch justify-center items-center">
+                <div class="w-12 h-12 ">
+                  <svg viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet" class="w-full h-full"
+                    style="font-size: 2rem; margin-bottom: 10px; filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.7));">
+                    <g [innerHTML]="course.iconPath | safeHtml"></g>
+                  </svg>
+                </div>
+              </div>
             </div>
-            <div class="mb-2 text-[var(--p-primary-50)]">{{course.title}}</div>
+            <div class="mt-3 text-[var(--p-primary-50)]">{{course.title}}</div>
+
           </div>
+
         </ng-template>
       </p-carousel>
     </div>
-    <!-- <div appWindow *ngIf="courses" class="my-5 backdrop-blur-2xl rounded-2xl p-3">
+    <!-- <div *ngIf="courses" class="my-5 backdrop-blur-2xl rounded-2xl p-3">
       <div class="text-[var(--p-primary-50)] p-2 rounded-xl mb-3 bg-[var(--p-primary-500)]"> tag.title </div>
           <div *ngFor="let course of courses" class="border-2 rounded-xl h-30 ml-3 p-3 text-[var(--p-primary-50)]">
             <h3>{{ course.title }}</h3>
             <p>{{ course.tracks }}</p>
           </div>
     </div> -->
-<div appWindow class="my-5 backdrop-blur-2xl rounded-2xl p-3">
-  <p class="text-xl text-[var(--p-primary-50)]">دسته بندی ها</p>
-  
-  <p-selectbutton [(ngModel)]="selectedTags" class="mt-3" style="flex-wrap: wrap;" [options]="tags()"
-    [multiple]="true" [optionLabel]="'title'">
-  </p-selectbutton>
+    <div class="my-5 bg-white/10 border border-white/40 backdrop-blur-2xl rounded-2xl p-3">
+      <p class="text-xl text-[var(--p-primary-50)]">دسته بندی ها</p>
 
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mt-4">
-    <div *ngFor="let course of displayedCourses()" 
-      class="border border-white/30 bg-[var(--p-primary-300)]/30 items-center backdrop-blur-2xl flex flex-col justify-center h-30 text-[var(--p-primary-50)] m-2 rounded-3xl p-2 pb-4 shadow-[0px_0px_5px_1px_rgba(255,255,255,0.4)] cursor-pointer" 
-      (click)="goToCourse(course.id)">
-      
-      <div class="w-12 h-12 items-center justify-center">
-        <svg viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet" class="w-full h-full"
-          style="font-size: 2rem; margin-bottom: 10px; filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.7));">
-          <g [innerHTML]="course.iconPath | safeHtml"></g>
-        </svg>
+      <p-selectbutton [(ngModel)]="selectedTags" class="mt-3" style="flex-wrap: wrap;" [options]="tags()"
+        [multiple]="true" [optionLabel]="'title'">
+      </p-selectbutton>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mt-4 justify-center">
+        <div *ngFor="let course of displayedCourses()" class="border border-white/30 bg-[var(--p-primary-600)]/30 flex flex-col items-center backdrop-blur-2xl justify-center h-30 text-[var(--p-primary-50)] m-2 rounded-3xl
+          shadow-[0px_0px_5px_1px_rgba(255,255,255,0.4)]
+          " (click)="goToCourse(course.id)">
+          <div class="grid grid-cols-3 w-full items-center ">
+            <div class="flex flex-row mt-7 w-fit justify-self-start">
+              <i *ngIf="!userProfile()?.hasAccess" class="pi pi-lock"
+                style="font-size: 1.5rem; margin-right: 0.5rem;"></i>
+            </div>
+            <div class="flex flex-col stretch justify-center items-center">
+              <div class="w-12 h-12 ">
+                <svg viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet" class="w-full h-full"
+                  style="font-size: 2rem; margin-bottom: 10px; filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.7));">
+                  <g [innerHTML]="course.iconPath | safeHtml"></g>
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div class="mt-3 text-[var(--p-primary-50)]">{{course.title}}</div>
+
+        </div>
       </div>
-      <h3>{{ course.title }}</h3>
+      <div *ngIf="hasMore()" class="flex justify-center mt-6 mb-4">
+        <button (click)="loadMore()"
+          class="px-6 py-2 rounded-full border border-white/30 bg-white/10 text-[var(--p-primary-50)] backdrop-blur-md hover:bg-white/20 transition-all active:scale-95">
+          بیشتر ...
+        </button>
+      </div>
     </div>
   </div>
-
-  <div *ngIf="hasMore()" class="flex justify-center mt-6 mb-4">
-    <button (click)="loadMore()" 
-      class="px-6 py-2 rounded-full border border-white/30 bg-white/10 text-[var(--p-primary-50)] backdrop-blur-md hover:bg-white/20 transition-all active:scale-95">
-      بیشتر ...
-    </button>
-  </div>
-</div>
-  </div>
-</div>

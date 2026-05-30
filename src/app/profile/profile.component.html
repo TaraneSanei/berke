@@ -12,7 +12,7 @@
     <div class="grid grid-cols-1 w-full items-start lg:w-3/4 m-3 text-[var(--p-primary-50)]">
         <!-- username -->
 
-        <div appWindow [opacity]="1" class=" items-center m-2 rounded-2xl backdrop-blur-2xl">
+        <div class="bg-white/10 border border-white/40 items-center m-2 rounded-2xl backdrop-blur-2xl">
             <div class="flex flex-row p-5 text-lg gap-3 items-center" (click)="toggleExpanded('user')">
                 <div class="relative inline-block">
                     <p-avatar icon="pi pi-user" class="mr-3" size="xlarge" shape="circle" />
@@ -31,7 +31,7 @@
                     <div>
                         <div *ngIf="!isEditingUserName()" class="flex flex-row mx-6 items-center">
                             {{UserProfile()?.username? UserProfile()?.username : 'کاربر'}}
-                            <p-button icon="pi pi-pencil" variant="text" (onClick)="startEditUsername()" rounded="true"
+                            <p-button class="mx-3" icon="pi pi-pencil" variant="text" (onClick)="startEditUsername()" rounded="true"
                                 size="small"></p-button>
                         </div>
                         <div *ngIf="isEditingUserName()" class="flex flex-row items-center mx-6">
@@ -44,7 +44,7 @@
                     <div>
                         <div class="flex flex-row mx-6 items-center">
                             <p>تغییر گذرواژه</p>
-                            <p-button class="mx-3" icon="pi pi-pencil" variant="text" rounded="true" size="small"
+                            <p-button class="mx-3" severity="primary" icon="pi pi-pencil" variant="text" rounded="true" size="small"
                                 (click)="isChangingPassword.set(true)"></p-button>
                         </div>
                     </div>
@@ -63,23 +63,104 @@
             </div>
 
         </div>
-        <div appWindow [opacity]="1" class="m-2 rounded-2xl backdrop-blur-2xl">
-            <div class="items-center p-5" (click)="toggleExpanded('subscription')">
-                <div *ngIf="!expanded().includes('subscription')" class="flex flex-row gap-3 items-center">
+        <div class="m-2 bg-white/10 border border-white/40 rounded-2xl backdrop-blur-2xl">
+            <div class="items-center p-5">
+                <div class="flex flex-row gap-3 items-center" (click)="toggleExpanded('subscription')">
                     <p-avatar icon="pi pi-crown" class="mr-2" size="xlarge" shape="circle" />
                     <div class="text-xl">
                         اشتراک
                     </div>
                 </div>
-                <div *ngIf="expanded().includes('subscription')" class="flex flex-row gap-3 items-center">
-                    <p-avatar icon="pi pi-crown" class="mr-2" size="xlarge" shape="circle" />
-                    <div class="text-xl">
-                        به زودی ....
+                <div class="expand-wrapper" [class.expanded]="expanded().includes('subscription')">
+                    <div class="expand-inner">
+                        <div *ngIf="UserProfile()?.isSubscribed" class="my-5 text-xl">
+                            زمان پایان اشتراک شما: {{ UserProfile()?.subscriptionEnd! | jalaliDate:'longDate' |persianDigits}}
+                        </div>
+                        <div *ngIf="!UserProfile()?.isSubscribed && UserProfile()?.hasAccess" class="my-5 text-lg">
+                        می‌تونی {{ 6000 - (UserProfile()?.secondsListened!) | formatDuration:'mm:ss' |persianDigits}} دقیقه دیگه رایگان مدیتیشن کنی.
+                        </div>
+                        <div *ngIf="!UserProfile()?.hasAccess" class="my-5 text-lg">
+                            برای دسترسی به مدیتیشن های برکه، لطفاً یک اشتراک تهیه کن.
+                        </div>
+                        <div class="my-5 grid grid-cols-1 gap-4 md:grid-cols-3">
+                            <div *ngFor="let plan of subscriptionPlans()">
+                                <div (click)="toSubscribe(plan)"
+                                    class="border rounded-xl bg-[var(--p-primary-600)] p-3 gap-2 flex flex-col items-center">
+                                    <div class="text-xl">
+                                        {{plan.name}}
+                                    </div>
+
+                                    <div>
+                                        {{plan.price |persianDigits }} تومان
+                                    </div>
+
+                                    <div class="text-center mt-3 min-h-15 md:min-h-30 text-sm text-neutral-300">
+                                        {{plan.description}}
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div appWindow [opacity]="1" class="m-2 rounded-2xl backdrop-blur-2xl">
+        <div class="m-2 bg-white/10 border border-white/40 rounded-2xl backdrop-blur-2xl">
+            <div class="items-center p-5">
+                <div class="flex flex-row gap-3 items-center" (click)="toggleExpanded('history')">
+                    <p-avatar icon="pi pi-wallet" class="mr-2" size="xlarge" shape="circle" />
+                    <div class="text-xl">
+                        سفارشات
+                    </div>
+                </div>
+                <div class="expand-wrapper" [class.expanded]="expanded().includes('history')">
+                    <div class="expand-inner">
+                        <div class="my-5">
+                                <!-- Bind the signal by calling it: orders() -->
+                                <p-table [value]="orders()" [tableStyle]="{ 'min-width': '15rem;' }" styleClass="rounded text-center"
+                                    responsiveLayout="scroll">
+
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th>شماره سفارش</th>
+                                            <th>اشتراک</th>
+                                            <th>مبلغ</th>
+                                            <th>تاریخ</th>
+                                            <th>وضعیت</th>
+                                        </tr>
+                                    </ng-template>
+
+                                    <ng-template pTemplate="body" let-order>
+                                        <tr>
+                                            <td>{{ order.id }}</td>
+                                            <td>{{ order.plan.name }}</td>
+                                            <td>{{ order.amount | persianDigits }} تومان</td>
+                                            <td>{{ order.created_at | jalaliDate:'longDate' |persianDigits}}</td>
+                                            <td>
+                                                <!-- Example status styling -->
+                                                <span class="px-2 py-1 rounded text-sm"
+                                                    [ngClass]="{'bg-green-100 text-green-700': order.status === 'success', 'bg-red-100 text-red-700': order.status === 'failed'}">
+                                                    {{ order.status === 'paid' ? 'موفق' : 'ناموفق' }}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    </ng-template>
+
+                                    <ng-template pTemplate="emptymessage">
+                                        <tr>
+                                            <td colspan="5" class="text-center p-4 text-gray-500">
+                                                سفارشی برای نمایش وجود ندارد.
+                                            </td>
+                                        </tr>
+                                    </ng-template>
+
+                                </p-table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="m-2 rounded-2xl bg-white/10 border border-white/40 backdrop-blur-2xl">
             <div class="items-center">
                 <div (click)="toggleExpanded('settings')" class="flex flex-row p-5 gap-3 items-center">
                     <p-avatar icon="pi pi-cog" class="mr-2" size="xlarge" shape="circle" />
@@ -89,7 +170,7 @@
                 </div>
                 <div class="expand-wrapper" [class.expanded]="expanded().includes('settings')">
                     <div class="expand-inner grid grid-cols-1 gap-5 md:grid-cols-2">
-                        <div>
+                        <!-- <div>
                             <div *ngIf="!isChangingNotification()" class="flex flex-row mx-6 text-lg items-center">
                                 <p> یادآوری {{UserProfile()?.notification! |persianDigits}}</p>
                                 <p-button class="mx-3" icon="pi pi-pencil" variant="text" rounded="true" size="small"
@@ -100,7 +181,7 @@
                                 <p-button class="mx-3" icon="pi pi-save" variant="text" rounded="true" size="small"
                                     (click)="isChangingNotification.set(false)"></p-button>
                             </div>
-                        </div>
+                        </div> -->
                         <div class="mb-6">
                             <div class="flex flex-row mx-6 text-lg items-center">
                                 <p> تم {{themeName}}</p>
@@ -112,7 +193,7 @@
                 </div>
             </div>
         </div>
-        <div appWindow [opacity]="1" class="m-2 rounded-2xl backdrop-blur-2xl">
+        <div class="m-2 rounded-2xl bg-white/10 border border-white/40 backdrop-blur-2xl">
             <div class="items-center p-5" (click)="toggleExpanded('badges')">
                 <div *ngIf="!expanded().includes('badges')" class="flex flex-row gap-3 items-center">
                     <p-avatar icon="pi pi-star" class="mr-2" size="xlarge" shape="circle" />
@@ -128,7 +209,7 @@
                 </div>
             </div>
         </div>
-        <div appWindow [opacity]="1" class="m-2 rounded-2xl backdrop-blur-2xl">
+        <div class="m-2 bg-white/10 border border-white/40 rounded-2xl backdrop-blur-2xl">
             <div class="items-center">
                 <div (click)="toggleExpanded('about')" class="flex flex-row p-5 gap-3 items-center">
                     <p-avatar class="mr-2" size="xlarge" shape="circle">
@@ -148,7 +229,7 @@
                 <div class="expand-wrapper" [class.expanded]="expanded().includes('about')">
                     <div class="expand-inner grid grid-cols-1 gap-5 md:grid-cols-2">
                         <div class="flex flex-row mx-6 mb-6 text-lg items-center">
-                        طراحی شده توسط ترانه صانعی
+                            طراحی شده توسط ترانه صانعی
                         </div>
                     </div>
                 </div>
@@ -156,4 +237,4 @@
             </div>
         </div>
     </div>
-      <p-confirmdialog />
+    <p-confirmdialog />

@@ -25,7 +25,6 @@ import { FormsModule } from "@angular/forms";
 @Component({
   selector: 'app-berke',
   imports: [
-    WindowDirective,
     WaveDirective,
     ButtonModule,
     FloatLabelModule,

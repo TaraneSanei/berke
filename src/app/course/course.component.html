@@ -1,7 +1,7 @@
     <div dir="rtl" class="flex flex-col items-center justify-center">
 
-    <div appWindow *ngIf="courseData() as course"
-      class="rounded-2xl m-5 mb-2 backdrop-blur-2xl p-5 text-[var(--p-primary-50)] w-9/10 md:w-3/4">
+    <div *ngIf="courseData() as course"
+      class="rounded-2xl border border-white/40 bg-white/10 m-5 mb-2 backdrop-blur-2xl p-5 text-[var(--p-primary-50)] w-9/10 md:w-3/4">
 
       <h3 class="mb-5 text-lg">{{ course.title }}</h3>
       <div class="flex w-full flex-row items-center justify-start"
@@ -55,9 +55,14 @@
           <p>{{track.duration*1000 | date:'mm:ss': 'UTC' | persianDigits}}</p>
         </div>
         <div>
-          <p-button size="small" rounded="true" (click)="playTrack(track)" severity="secondary" variant="text">
+          <p-button *ngIf="userProfile()?.hasAccess" size="small" rounded="true" (click)="playTrack(track)" severity="secondary" variant="text">
             <span class="rounded-full border-2 w-8 h-8 inline-flex items-center justify-center">
               <i class="pi pi-play ml-0.5"></i>
+            </span>
+          </p-button>
+          <p-button *ngIf="!userProfile()?.hasAccess" size="small" rounded="true" severity="secondary" variant="text">
+            <span class="rounded-full border-2 w-8 h-8 inline-flex items-center justify-center">
+              <i class="pi pi-lock"></i>
             </span>
           </p-button>
         </div>

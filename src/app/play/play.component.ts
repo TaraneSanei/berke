@@ -12,17 +12,16 @@ import { BerkeService } from '../shared/services/berke.service';
 import { AppState } from '../state/app.state';
 import { AddMeditationSession, LoadMeditationSession, UpdateMeditationSession } from '../state/meditationsSessions/meditationSessions.actions';
 import { selectMeditationSessions, selectmeditationSessionsStatus } from '../state/meditationsSessions/meditationSessions.selector';
-import { WindowDirective } from "../shared/directives/window.directive";
 import { WaveDirective } from "../shared/directives/wave.directive";
 import { EmotionIconComponent } from '../shared/components/emotion-icon/emotion-icon.component';
-import { Observable, of, Subject, Subscription } from 'rxjs';
+import { firstValueFrom, Observable, of, Subject, Subscription } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 
 
 @Component({
     selector: 'app-play',
     standalone: true,
     imports: [
-        WindowDirective,
         WaveDirective,
         CommonModule,
         DialogModule,
@@ -42,6 +41,7 @@ export class PlayComponent implements OnInit, OnDestroy {
     private route = inject(ActivatedRoute);
     private dataService = inject(DataService);
     private store = inject(Store<AppState>);
+    private http = inject(HttpClient);
     emotions = this.berkeService.emotions
     audio = signal<HTMLAudioElement | null>(null)
     trackData = signal<Track | null>(null)
@@ -59,8 +59,9 @@ export class PlayComponent implements OnInit, OnDestroy {
     isPlaying = signal(false)
     initialCheckCompleted = signal<boolean>(false);
     endSignal$ = new Subject<boolean>();
-
+    private currentBlobUrl: string | null = null;
     readonly CIRCUMFERENCE: number = 2 * Math.PI * 36;
+    isPreparingAudio = signal(false);
     circumference = this.CIRCUMFERENCE;
 
 
@@ -76,7 +77,7 @@ export class PlayComponent implements OnInit, OnDestroy {
         this.berkeService.loadEmotions();
         this.meditationSessionsStatus = this.store.selectSignal(selectmeditationSessionsStatus)
         effect(() => {
-            console.log('this.recentsession():', this.recentSession())
+            console.log('this.recentSession():', this.recentSession())
         })
 
         effect(() => {
@@ -119,25 +120,25 @@ export class PlayComponent implements OnInit, OnDestroy {
         });
 
         effect(() => {
-  const sessions = this.meditationSessions();
+            const sessions = this.meditationSessions();
 
-  const current = this.currentSession();
-  if (!current) return;
+            const current = this.currentSession();
+            if (!current) return;
 
-  // If the current session has no ID yet, check if the backend returned one
-  if (!current.id) {
-    const match = sessions.find(s => 
-      s.track?.id === current.track?.id &&
-      new Date(s.dateTime).getTime() === new Date(current.dateTime).getTime()
-    );
+            // If the current session has no ID yet, check if the backend returned one
+            if (!current.id) {
+                const match = sessions.find(s =>
+                    s.track?.id === current.track?.id &&
+                    new Date(s.dateTime).getTime() === new Date(current.dateTime).getTime()
+                );
 
-    if (match) {
-      // Update currentSession with the backend version (now with ID)
-      this.currentSession.set(match);
-      console.log("currentSession updated with backend ID:", match);
-    }
-  }
-});
+                if (match) {
+                    // Update currentSession with the backend version (now with ID)
+                    this.currentSession.set(match);
+                    console.log("currentSession updated with backend ID:", match);
+                }
+            }
+        });
 
     }
 
@@ -158,10 +159,10 @@ export class PlayComponent implements OnInit, OnDestroy {
         this.endSignal$.complete();
     }
 
-    updateMeditationSession(){
+    updateMeditationSession() {
         const session = this.currentSession();
         if (!session) return;
-        const updated: MeditationSession = {...session, finalEmotion: this.finalEmotion, duration: Math.floor(this.currentTime())}
+        const updated: MeditationSession = { ...session, finalEmotion: this.finalEmotion, duration: Math.floor(this.currentTime()) }
         console.log(updated)
         this.store.dispatch(UpdateMeditationSession({ session: updated }))
     }
@@ -172,9 +173,9 @@ export class PlayComponent implements OnInit, OnDestroy {
         return this.currentTime() / track.duration || 0;
     })
 
-    
-    progressOffset = computed(() => {    
-    return this.CIRCUMFERENCE * (1 - this.syncLevel());
+
+    progressOffset = computed(() => {
+        return this.CIRCUMFERENCE * (1 - this.syncLevel());
     })
 
     sessionResolutionStatus = computed(() => {
@@ -220,22 +221,21 @@ export class PlayComponent implements OnInit, OnDestroy {
         this.initialEmotionDialog.set(true)
         this.resumeDialog.set(false)
 
-
     }
-    startMeditationSession() {
+    async startMeditationSession() {
         console.log(this.currentSession())
         const session = this.currentSession()
         if (!session) return;
-        const updated: MeditationSession = {...session, initialEmotion: this.initialEmotion, finalEmotion: this.finalEmotion}
+        const updated: MeditationSession = { ...session, initialEmotion: this.initialEmotion, finalEmotion: this.finalEmotion }
         this.currentSession.set(updated);
         this.store.dispatch(AddMeditationSession({ session: this.currentSession()! }))
         this.initialEmotionDialog.set(false)
-        this.createAndSetAudioSource(0)
-        this.togglePlayPause()
 
+        await this.createAndSetAudioSource(0); // Await the blob creation
+        this.togglePlayPause()
     }
 
-    resumeMeditationSession() {
+    async resumeMeditationSession() {
         const recentSession = this.recentSession()
         if (!recentSession) {
             console.error("currentsession doesn't exist")
@@ -243,15 +243,19 @@ export class PlayComponent implements OnInit, OnDestroy {
         }
         this.currentSession.set(recentSession);
         console.log('Resuming session found.');
-        console.log(this.createAndSetAudioSource(recentSession.duration));
+
         this.currentTime.set(recentSession.duration)
-        this.createAndSetAudioSource(recentSession.duration);
+        if (this.isPreparingAudio()) return;
+        this.isPreparingAudio.set(true);
+
+        await this.createAndSetAudioSource(recentSession.duration);
         this.togglePlayPause()
+
         this.initialEmotionDialog.set(false);
         this.resumeDialog.set(false)
     }
 
-    seek(duration: number){
+    seek(duration: number) {
         console.log('Seeked to:', this.currentTime);
 
         const audio = this.audio();
@@ -260,11 +264,10 @@ export class PlayComponent implements OnInit, OnDestroy {
         this.currentTime.set(audio.currentTime);
     }
 
-    backToJourneys(){
+    backToJourneys() {
         this.router.navigate(['/journeys']);
     }
-    
-    createAndSetAudioSource(resumeTime: number): HTMLAudioElement | null {
+    async createAndSetAudioSource(resumeTime: number): Promise<HTMLAudioElement | null> {
         const track = this.trackData();
         if (!track) {
             console.error("Track data missing or audio already created.");
@@ -275,13 +278,29 @@ export class PlayComponent implements OnInit, OnDestroy {
         audio.preload = 'auto';
         this.addAudioListeners(audio);
 
-        audio.src = track.audioUrl;
-        audio.currentTime = resumeTime;
-        audio.load();
+        try {
+            const { audio_url } = await firstValueFrom(this.dataService.getTrackUrl(track.id));
+            // 2. Fetch the audio as a Blob (bypasses Angular Auth Interceptors)
+            const blob = await firstValueFrom(
+                this.http.get(audio_url, { responseType: 'blob' })
+            );
+            
 
-        this.audio.set(audio);
-        console.log('2:', this.audio())
-        return audio;
+            this.currentBlobUrl = URL.createObjectURL(blob);
+
+            audio.src = this.currentBlobUrl;
+            audio.currentTime = resumeTime;
+            audio.load();
+            this.audio.set(audio);
+            console.log('Audio ready via Blob URL:', this.currentBlobUrl);
+            return audio;
+
+        } catch (err) {
+            console.error("Failed to load audio source:", err);
+            return null;
+        } finally {
+      this.isPreparingAudio.set(false);
+    }
     }
 
 
@@ -301,14 +320,14 @@ export class PlayComponent implements OnInit, OnDestroy {
 
     private handlePlaying = () => {
         const audio = this.audio();
-        if(!audio) return;
+        if (!audio) return;
         audio.play()
         this.isPlaying.set(true)
     };
 
     private handlePause = () => {
         const audio = this.audio();
-        if(!audio) return;
+        if (!audio) return;
         audio.pause()
         this.isPlaying.set(false)
     };
@@ -337,22 +356,19 @@ export class PlayComponent implements OnInit, OnDestroy {
     }
 
 
-    togglePlayPause(): void {
+    async togglePlayPause(): Promise<void> {
         let audio = this.audio();
         const session = this.currentSession();
-
         if (!session) {
-            console.warn("Cannot toggle play: Audio element is missing or currently loading.");
+            console.warn("Cannot toggle play: Session is missing or currently loading.");
             return;
         }
 
         if (!audio) {
-            audio = this.createAndSetAudioSource(session.duration);
+            audio = await this.createAndSetAudioSource(session.duration); // Await the blob creation
         }
 
         if (!audio) return; // Exit if creation failed
-
-        // 3. Perform Play/Pause
         if (this.isPlaying()) {
             audio.pause();
             this.isPlaying.set(false)
@@ -363,8 +379,6 @@ export class PlayComponent implements OnInit, OnDestroy {
             this.isPlaying.set(true)
         }
     }
-
-
     removeEmotion(item: Emotion, selected: Emotion[]) {
         const idx = selected.findIndex(s => s.emotion === item.emotion);
         if (idx > -1) {
@@ -391,6 +405,12 @@ export class PlayComponent implements OnInit, OnDestroy {
             this.saveSessionUpdate(audio.currentTime);
             this.removeAudioListeners(audio);
             this.audio.set(null);
+        }
+
+        // Clean up the Blob URL from memory
+        if (this.currentBlobUrl) {
+            URL.revokeObjectURL(this.currentBlobUrl);
+            this.currentBlobUrl = null;
         }
     }
 

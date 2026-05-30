@@ -3,7 +3,7 @@ import { environment } from '../../environments/environment';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { CookieService } from 'ngx-cookie-service';
-import { User } from '../models/data.models';
+import { SubscriptionPlan, User } from '../models/data.models';
 import { catchError, Observable, of, tap } from 'rxjs';
 import { jwtDecode } from 'jwt-decode';
 
@@ -20,13 +20,13 @@ export class AuthService {
     return this.http.post<any>(this.apiUrl + "register/", { 'phoneNumber': phoneNumber, 'password': password });
   }
 
-  requestOTP() {
+  requestOTP(phoneNumber: string): Observable<any> {
     console.log('request for otp')
-    return this.http.get<any>(this.apiUrl + 'otp/send/')
+    return this.http.post<any>(this.apiUrl + 'otp/send/', { phone_number: phoneNumber })
   }
 
-  verifyOTP(otp: number) {
-    return this.http.post<any>(this.apiUrl + 'otp/verify/', { otp })
+  verifyOTP(phoneNumber:string, otp: number) {
+    return this.http.post<any>(this.apiUrl + 'otp/verify/', { phone_number: phoneNumber, otp: otp })
   }
 
   login(phoneNumber: string, password: string): Observable<any> {
@@ -109,4 +109,5 @@ export class AuthService {
   changePassword(oldPassword: string, newPassword: string): Observable<any> {
     return this.http.post<any>(this.apiUrl + 'password/change/', { old_password: oldPassword, new_password: newPassword })
   }
+
 }

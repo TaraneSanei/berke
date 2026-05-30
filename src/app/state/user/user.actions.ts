@@ -17,19 +17,6 @@ export const loginFailure = createAction(
     props<{ error: any }>()
 );
 
-export const signup = createAction(
-    '[User] Signup',
-    props<{ phoneNumber: string; password: string }>()
-);
-
-export const signupSuccess = createAction(
-    '[User] Signup Success');
-
-export const signupFailure = createAction(
-    '[User] Signup Failure',
-    props<{ error: any }>()
-);
-
 
 export const getProfile = createAction(
     '[User] Get User');
