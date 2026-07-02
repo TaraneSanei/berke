@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, effect, inject, OnInit, signal } from '@angular/core';
 import { TextareaModule } from 'primeng/textarea';
-import { WindowDirective } from "../shared/directives/window.directive";
 import { CalendarSummary, Emotion, Journal, MeditationSession } from '../models/data.models';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import * as jalali from 'jalaali-js';

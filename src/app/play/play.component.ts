@@ -1,6 +1,6 @@
-import { Component, computed, effect, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import { Component, computed, effect, HostListener, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, NavigationStart, Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { FormsModule } from '@angular/forms';
 import { DialogModule } from 'primeng/dialog';
@@ -14,9 +14,9 @@ import { AddMeditationSession, LoadMeditationSession, UpdateMeditationSession } 
 import { selectMeditationSessions, selectmeditationSessionsStatus } from '../state/meditationsSessions/meditationSessions.selector';
 import { WaveDirective } from "../shared/directives/wave.directive";
 import { EmotionIconComponent } from '../shared/components/emotion-icon/emotion-icon.component';
-import { firstValueFrom, Observable, of, Subject, Subscription } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
-
+import { firstValueFrom, Subject } from 'rxjs';
+import Hls from 'hls.js';
+import { AuthService } from '../auth/auth.service';
 
 @Component({
     selector: 'app-play',
@@ -35,136 +35,153 @@ import { HttpClient } from '@angular/common/http';
 })
 export class PlayComponent implements OnInit, OnDestroy {
 
-    private routerSub!: Subscription;
     private router = inject(Router);
     private berkeService = inject(BerkeService);
     private route = inject(ActivatedRoute);
     private dataService = inject(DataService);
     private store = inject(Store<AppState>);
-    private http = inject(HttpClient);
-    emotions = this.berkeService.emotions
-    audio = signal<HTMLAudioElement | null>(null)
-    trackData = signal<Track | null>(null)
-    meditationSessions = signal<MeditationSession[]>([])
+    private authService = inject(AuthService);
+    
+    emotions = this.berkeService.emotions;
+    audio = signal<HTMLAudioElement | null>(null);
+    private hlsInstance: Hls | null = null; 
+    private heartbeatInterval: any; 
+
+    trackData = signal<Track | null>(null);
+    meditationSessions = signal<MeditationSession[]>([]);
     meditationSessionsStatus: any;
     currentSession = signal<MeditationSession | null>(null);
     recentSession = signal<MeditationSession | null>(null);
+
     currentTime = signal<number>(0);
     duration = signal<number>(0);
+
     initialEmotionDialog = signal(false);
-    finalEmotionDialog = signal(false)
-    resumeDialog = signal(false)
-    initialEmotion: Emotion[] = []
-    finalEmotion: Emotion[] = []
-    isPlaying = signal(false)
+    finalEmotionDialog = signal(false);
+    resumeDialog = signal(false);
+
+    initialEmotion: Emotion[] = [];
+    finalEmotion: Emotion[] = [];
+
+    isPlaying = signal(false);
     initialCheckCompleted = signal<boolean>(false);
     endSignal$ = new Subject<boolean>();
-    private currentBlobUrl: string | null = null;
+
     readonly CIRCUMFERENCE: number = 2 * Math.PI * 36;
     isPreparingAudio = signal(false);
     circumference = this.CIRCUMFERENCE;
 
-
     constructor() {
         const id = Number(this.route.snapshot.paramMap.get('trackId'));
         this.dataService.getTrack(id).subscribe({
-            next: (track) => {
-                this.trackData.set(track);
-                console.log(track)
-            },
+            next: (track) => { this.trackData.set(track); },
             error: (err) => { console.error('Failed to load track metadata:', err); }
         });
+
         this.berkeService.loadEmotions();
-        this.meditationSessionsStatus = this.store.selectSignal(selectmeditationSessionsStatus)
-        effect(() => {
-            console.log('this.recentSession():', this.recentSession())
-        })
+        this.meditationSessionsStatus = this.store.selectSignal(selectmeditationSessionsStatus);
 
-        effect(() => {
-            console.log('this.currentSession():', this.currentSession())
-        })
-
-        effect(() => {
-            console.log('this.currentTime():', this.currentTime())
-        })
         effect(() => {
             const meditationSessionsData = this.store.selectSignal(selectMeditationSessions);
             this.meditationSessions.set(meditationSessionsData());
             this.checkForRecentSession();
-
-            console.log('Meditation Sessions updated:', this.meditationSessions());
         });
 
         effect(() => {
             this.store.dispatch(LoadMeditationSession({ date: new Date().toISOString().split('T')[0] }));
         });
 
-
         effect(() => {
             const resolution = this.sessionResolutionStatus();
-            if (resolution === 'LOADING' || this.initialCheckCompleted()) {
-                return;
-            }
+            if (resolution === 'LOADING' || this.initialCheckCompleted()) return;
 
             if (resolution.type === 'RESUME') {
                 this.recentSession.set(resolution.session ? resolution.session : null);
                 this.resumeDialog.set(true);
                 this.initialEmotionDialog.set(false);
-
             } else if (resolution.type === 'NEW') {
                 this.newMeditationSession();
             }
-
             this.initialCheckCompleted.set(true);
-
         });
 
         effect(() => {
             const sessions = this.meditationSessions();
-
             const current = this.currentSession();
             if (!current) return;
 
-            // If the current session has no ID yet, check if the backend returned one
             if (!current.id) {
                 const match = sessions.find(s =>
                     s.track?.id === current.track?.id &&
                     new Date(s.dateTime).getTime() === new Date(current.dateTime).getTime()
                 );
-
                 if (match) {
-                    // Update currentSession with the backend version (now with ID)
                     this.currentSession.set(match);
-                    console.log("currentSession updated with backend ID:", match);
                 }
             }
         });
-
     }
 
     ngOnInit(): void {
+        // Dummy state trap removed entirely. Free the user!
     }
 
+    @HostListener('window:beforeunload')
+    saveOnClose() {
+        this.saveSessionUpdate(this.currentTime());
+    }
 
-    endSession(): Observable<boolean> {
-        this.handlePause()
-        this.updateMeditationSession()
-        this.finalEmotionDialog.set(true)
-        return this.endSignal$.asObservable();
+    @HostListener('document:visibilitychange')
+    onVisibilityChange() {
+        if (document.visibilityState === 'hidden') {
+            this.saveSessionUpdate(this.currentTime());
+        }
+    }
+
+    // --- HEARTBEAT LOGIC ---
+    private startHeartbeat() {
+        if (this.heartbeatInterval) return;
+        this.heartbeatInterval = setInterval(() => {
+            this.saveSessionUpdate(this.currentTime());
+        }, 20000);
+    }
+
+    private stopHeartbeat() {
+        if (this.heartbeatInterval) {
+            clearInterval(this.heartbeatInterval);
+            this.heartbeatInterval = null;
+        }
+    }
+
+    // --- SESSION MANAGEMENT ---
+
+    endSession() {
+        // Triggered by the explicit "End Meditation" button
+        this.handlePause();
+        this.finalEmotionDialog.set(true);
     }
 
     endMeditationSession() {
+        // Triggered after they select their final emotion and click save
         this.updateMeditationSession();
+        this.finalEmotionDialog.set(false);
         this.endSignal$.next(true);
         this.endSignal$.complete();
+        this.backToJourneys();
     }
 
     updateMeditationSession() {
         const session = this.currentSession();
         if (!session) return;
         const updated: MeditationSession = { ...session, finalEmotion: this.finalEmotion, duration: Math.floor(this.currentTime()) }
-        console.log(updated)
-        this.store.dispatch(UpdateMeditationSession({ session: updated }))
+        this.store.dispatch(UpdateMeditationSession({ session: updated }));
+    }
+
+    saveSessionUpdate(time: number) {
+        const session = this.currentSession();
+        if (!session || !session.id) return;
+        const updated: MeditationSession = { ...session, duration: Math.floor(time) };
+        this.store.dispatch(UpdateMeditationSession({ session: updated }));
     }
 
     syncLevel = computed(() => {
@@ -172,7 +189,6 @@ export class PlayComponent implements OnInit, OnDestroy {
         if (!track) return 0;
         return this.currentTime() / track.duration || 0;
     })
-
 
     progressOffset = computed(() => {
         return this.CIRCUMFERENCE * (1 - this.syncLevel());
@@ -193,7 +209,6 @@ export class PlayComponent implements OnInit, OnDestroy {
 
     checkForRecentSession() {
         const sessions = this.meditationSessions();
-        console.log('Meditation Sessions:', sessions);
         const track = this.trackData();
         const cutoffTime = 30 * 60 * 1000;
         const now = new Date().getTime();
@@ -206,7 +221,6 @@ export class PlayComponent implements OnInit, OnDestroy {
             const isSameTrack = session.track?.id === track!.id;
             return (isSameTrack && isRecent && isUserUnfinished && isUnfinished)
         }) || null
-
     }
 
     newMeditationSession() {
@@ -220,10 +234,9 @@ export class PlayComponent implements OnInit, OnDestroy {
         });
         this.initialEmotionDialog.set(true)
         this.resumeDialog.set(false)
-
     }
+
     async startMeditationSession() {
-        console.log(this.currentSession())
         const session = this.currentSession()
         if (!session) return;
         const updated: MeditationSession = { ...session, initialEmotion: this.initialEmotion, finalEmotion: this.finalEmotion }
@@ -231,19 +244,15 @@ export class PlayComponent implements OnInit, OnDestroy {
         this.store.dispatch(AddMeditationSession({ session: this.currentSession()! }))
         this.initialEmotionDialog.set(false)
 
-        await this.createAndSetAudioSource(0); // Await the blob creation
+        await this.createAndSetAudioSource(0);
         this.togglePlayPause()
     }
 
     async resumeMeditationSession() {
         const recentSession = this.recentSession()
-        if (!recentSession) {
-            console.error("currentsession doesn't exist")
-            return;
-        }
+        if (!recentSession) return;
+        
         this.currentSession.set(recentSession);
-        console.log('Resuming session found.');
-
         this.currentTime.set(recentSession.duration)
         if (this.isPreparingAudio()) return;
         this.isPreparingAudio.set(true);
@@ -256,8 +265,6 @@ export class PlayComponent implements OnInit, OnDestroy {
     }
 
     seek(duration: number) {
-        console.log('Seeked to:', this.currentTime);
-
         const audio = this.audio();
         if (!audio) return;
         audio.currentTime = audio.currentTime + duration;
@@ -267,78 +274,100 @@ export class PlayComponent implements OnInit, OnDestroy {
     backToJourneys() {
         this.router.navigate(['/journeys']);
     }
+
     async createAndSetAudioSource(resumeTime: number): Promise<HTMLAudioElement | null> {
         const track = this.trackData();
-        if (!track) {
-            console.error("Track data missing or audio already created.");
-            return null;
-        }
+        if (!track) return null;
 
-        const audio = new Audio();
-        audio.preload = 'auto';
-        this.addAudioListeners(audio);
+        const audioEl = new Audio();
+        audioEl.preload = 'auto';
+        this.addAudioListeners(audioEl);
 
         try {
             const { audio_url } = await firstValueFrom(this.dataService.getTrackUrl(track.id));
-            // 2. Fetch the audio as a Blob (bypasses Angular Auth Interceptors)
-            const blob = await firstValueFrom(
-                this.http.get(audio_url, { responseType: 'blob' })
-            );
-            
+            if (Hls.isSupported()) {
+                const token = this.authService.getToken(); 
 
-            this.currentBlobUrl = URL.createObjectURL(blob);
+                this.hlsInstance = new Hls({ 
+                    startPosition: resumeTime,
+                    xhrSetup: (xhr, url) => {
+                        if (token && !url.includes('files.berke-app.ir') && !url.includes('storage.c2.liara.space')) {
+                            xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+                        }
+                    }
+                });
+                
+                this.hlsInstance.loadSource(audio_url);
+                this.hlsInstance.attachMedia(audioEl);
+                
+                this.hlsInstance.on(Hls.Events.MANIFEST_PARSED, () => {
+                    this.audio.set(audioEl);
+                });
 
-            audio.src = this.currentBlobUrl;
-            audio.currentTime = resumeTime;
-            audio.load();
-            this.audio.set(audio);
-            console.log('Audio ready via Blob URL:', this.currentBlobUrl);
-            return audio;
+            } else if (audioEl.canPlayType('application/vnd.apple.mpegurl')) {
+                audioEl.src = audio_url;
+                audioEl.addEventListener('loadedmetadata', () => {
+                    audioEl.currentTime = resumeTime;
+                    this.audio.set(audioEl);
+                });
+            }
+
+            return audioEl;
 
         } catch (err) {
-            console.error("Failed to load audio source:", err);
+            console.error("Failed to load HLS audio source:", err);
             return null;
         } finally {
-      this.isPreparingAudio.set(false);
+            this.isPreparingAudio.set(false);
+        }
     }
-    }
-
 
     private handleLoadedMetadata = () => {
         const audio = this.audio();
-        if (audio) {
-            this.duration.set(audio.duration);
-        }
+        if (audio) this.duration.set(audio.duration);
     };
 
     private handleTimeUpdate = () => {
         const audio = this.audio();
-        if (audio) {
-            this.currentTime.set(audio.currentTime);
-        }
+        if (audio) this.currentTime.set(audio.currentTime);
     };
 
     private handlePlaying = () => {
-        const audio = this.audio();
-        if (!audio) return;
-        audio.play()
-        this.isPlaying.set(true)
+        this.isPlaying.set(true);
+        this.startHeartbeat(); 
     };
 
     private handlePause = () => {
         const audio = this.audio();
-        if (!audio) return;
-        audio.pause()
-        this.isPlaying.set(false)
+        if (audio) audio.pause();
+        this.isPlaying.set(false);
+        this.stopHeartbeat(); 
+        this.saveSessionUpdate(this.currentTime()); 
     };
 
     private handleEnded = () => {
-        this.backToJourneys()
+        // Triggered when track finishes naturally
+        this.handlePause();
+        this.finalEmotionDialog.set(true); 
     };
 
-    private handleCanPlayThrough = () => {
-        // Audio is now ready to play
-    };
+    async togglePlayPause(): Promise<void> {
+        let audio = this.audio();
+        const session = this.currentSession();
+        if (!session) return;
+
+        if (!audio) {
+            audio = await this.createAndSetAudioSource(session.duration);
+        }
+
+        if (!audio) return;
+
+        if (this.isPlaying()) {
+            this.handlePause();
+        } else {
+            audio.play().catch(e => console.warn('Playback failed:', e));
+        }
+    }
 
     private handleError = (e: Event) => {
         console.error('Audio playback error:', e);
@@ -351,34 +380,9 @@ export class PlayComponent implements OnInit, OnDestroy {
         audio.addEventListener('ended', this.handleEnded);
         audio.addEventListener('playing', this.handlePlaying);
         audio.addEventListener('pause', this.handlePause);
-        audio.addEventListener('canplaythrough', this.handleCanPlayThrough);
         audio.addEventListener('error', this.handleError);
     }
 
-
-    async togglePlayPause(): Promise<void> {
-        let audio = this.audio();
-        const session = this.currentSession();
-        if (!session) {
-            console.warn("Cannot toggle play: Session is missing or currently loading.");
-            return;
-        }
-
-        if (!audio) {
-            audio = await this.createAndSetAudioSource(session.duration); // Await the blob creation
-        }
-
-        if (!audio) return; // Exit if creation failed
-        if (this.isPlaying()) {
-            audio.pause();
-            this.isPlaying.set(false)
-        } else {
-            audio.play().catch(e => {
-                console.warn('Playback failed, user action may be restricted:', e);
-            });
-            this.isPlaying.set(true)
-        }
-    }
     removeEmotion(item: Emotion, selected: Emotion[]) {
         const idx = selected.findIndex(s => s.emotion === item.emotion);
         if (idx > -1) {
@@ -386,36 +390,30 @@ export class PlayComponent implements OnInit, OnDestroy {
         }
     }
 
-
-
     private removeAudioListeners(audio: HTMLAudioElement): void {
         audio.removeEventListener('loadedmetadata', this.handleLoadedMetadata);
         audio.removeEventListener('timeupdate', this.handleTimeUpdate);
         audio.removeEventListener('ended', this.handleEnded);
         audio.removeEventListener('playing', this.handlePlaying);
         audio.removeEventListener('pause', this.handlePause);
-        audio.removeEventListener('canplaythrough', this.handleCanPlayThrough);
         audio.removeEventListener('error', this.handleError);
     }
 
     ngOnDestroy() {
+        this.stopHeartbeat();
         const audio = this.audio();
+        
         if (audio) {
             audio.pause();
+            // Saves progress silently as they navigate away
             this.saveSessionUpdate(audio.currentTime);
             this.removeAudioListeners(audio);
             this.audio.set(null);
         }
 
-        // Clean up the Blob URL from memory
-        if (this.currentBlobUrl) {
-            URL.revokeObjectURL(this.currentBlobUrl);
-            this.currentBlobUrl = null;
+        if (this.hlsInstance) {
+            this.hlsInstance.destroy();
+            this.hlsInstance = null;
         }
     }
-
-    saveSessionUpdate(currentTime: number) {
-
-    }
-
 }

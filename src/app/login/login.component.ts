@@ -1,5 +1,4 @@
 import { Component, computed, effect, inject, signal } from '@angular/core';
-import { WindowDirective } from "../shared/directives/window.directive";
 import { StepperModule } from 'primeng/stepper';
 import { CommonModule } from '@angular/common';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -22,8 +21,6 @@ import { requestOtp, verifyOtp } from '../state/otp/otp.actions';
 import { PersianDigitsPipe } from '../shared/pipes/persian-digits.pipe'
 import { PersianDigitsDirective } from '../shared/directives/persian-digits.directive';
 import { SupportService } from '../shared/services/support.service';
-import { Dialog } from 'primeng/dialog';
-import { ManagePasswordComponent } from '../shared/components/manage-password/manage-password.component';
 
 @Component({
   selector: 'app-login',
@@ -74,14 +71,7 @@ export class LoginComponent {
         return valid ? null : { invalidPhone: true };
       }]],
       password: ['', [Validators.required, Validators.minLength(8)]],
-      otp: ['', [Validators.required,
-      (control: AbstractControl) => {
-        if (!control.value) return null;
-        const normalized = this.berkeService.toEnglishDigits(control.value);
-        const valid = /^\d{6}$/.test(normalized); // only digits
-        return valid ? null : { invalidOtp: true };
-      }
-      ]]
+      otp: ['', [Validators.required,]]
     });
 
     this.user = this.store.selectSignal(selectUser);
@@ -112,8 +102,6 @@ export class LoginComponent {
         this.loginForm.get('otp')?.enable()
       }
     })
-    this.setupErrorToast()
-
   }
 
   //form control getters
@@ -156,9 +144,12 @@ export class LoginComponent {
 
   verifyOTP() {
     const otp = this.loginForm.get('otp')?.value;
+    console.log("otp value", otp)
     const normalizedOtp = this.berkeService.toEnglishDigits(otp);
+    console.log("normalized otp", normalizedOtp)
+
     const normalizedPhone = this.berkeService.toEnglishDigits(this.phoneNumber.value).toString()
-    this.store.dispatch(verifyOtp({phoneNumber: normalizedPhone,  otp: Number(normalizedOtp) }));
+    this.store.dispatch(verifyOtp({phoneNumber: normalizedPhone,  otp: normalizedOtp }));
   }
 
   //helper functions to show persian numerals
@@ -170,19 +161,7 @@ export class LoginComponent {
     console.log(this.otp.value)
   }
 
-    private setupErrorToast() {
-    effect(() => {
-      const error = this.errorMessage();
-      if (error) {
-        this.messageService.add({
-          severity: 'info',
-          summary: 'خطا',
-          detail: this.berkeService.getErrorMessage(error),
-          life: 3000
-        });
-      }
-    });
-  }
+
 
     onStart() {
     if(this.userExists()){

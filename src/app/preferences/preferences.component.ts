@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { WindowDirective } from '../shared/directives/window.directive';
 import { ButtonModule } from "primeng/button";
 import { StepperModule } from 'primeng/stepper';
 import { InputTextModule } from 'primeng/inputtext';
@@ -76,7 +75,7 @@ export class PreferencesComponent {
   }
 
   setNotifications(){
-    this.notificationservice.requestPermission()
+    this.notificationservice.requestPermissions()
   }
 
   toPersianDigits(value: string): string {

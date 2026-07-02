@@ -1,6 +1,6 @@
 import { createReducer, on } from "@ngrx/store";
 import { User } from "../../models/data.models";
-import { login, loginSuccess, loginFailure, getProfile, getProfileSuccess, getProfileFailure, updateProfile, updateProfileSuccess, updateProfileFailure, logout, setPreferences, setPreferencesSuccess, setPreferencesFailure, changePassword, changePasswordFailure, changePasswordSuccess } from "./user.actions";
+import { login, loginSuccess, loginFailure, getProfile, getProfileSuccess, getProfileFailure, updateProfile, updateProfileSuccess, updateProfileFailure, logout, setPreferences, setPreferencesSuccess, setPreferencesFailure, setPasswordWithOtp, setPasswordWithOtpFailure, setPasswordWithOtpSuccess } from "./user.actions";
 
 
 
@@ -80,19 +80,19 @@ export const UserReducer = createReducer(
         status: 'error' as 'error',
         error: error
     })),
-    on(changePassword, (state) => ({
+   on(setPasswordWithOtp, (state) => ({
         ...state,
-        status: 'loading' as 'loading',
+        status: 'loading' as const,
         error: ''
     })),
-    on(changePasswordSuccess, (state) => ({
+    on(setPasswordWithOtpSuccess, (state) => ({
         ...state,
-        status: 'success' as 'success',
+        status: 'success' as const,
         error: ''
     })),
-    on(changePasswordFailure, (state, { error }) => ({
+    on(setPasswordWithOtpFailure, (state, { error }) => ({
         ...state,
-        status: 'error' as 'error',
+        status: 'error' as const,
         error: error
     })),
     on(logout, (state) => ({

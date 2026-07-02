@@ -1,5 +1,5 @@
 import { createReducer, on } from "@ngrx/store";
-import { requestOtp, requestOtpFailure, requestOtpSuccess, startOtpTimer, stopOtpTimer, tickOtpTimer, verifyOtp, verifyOtpFailure, verifyOtpSuccess } from "./otp.actions";
+import { requestOtp, requestOtpFailure, requestOtpSuccess, requestPasswordOtp, requestPasswordOtpFailure, requestPasswordOtpSuccess, startOtpTimer, stopOtpTimer, tickOtpTimer, verifyOtp, verifyOtpFailure, verifyOtpSuccess } from "./otp.actions";
 
 
 
@@ -64,5 +64,19 @@ export const OtpReducer = createReducer(
     on(stopOtpTimer, (state) => ({
         ...state,
         otpTimer: null
+    })),
+        on(requestPasswordOtp, (state) => ({
+        ...state,
+    })),
+    on(requestPasswordOtpSuccess, (state) => ({
+        ...state,
+        error: '',
+        status: 'sent' as const,
+        otpTimer: 120,
+    })),
+    on(requestPasswordOtpFailure, (state, { error }) => ({
+        ...state,
+        status: 'notSent' as const,
+        error: error,
     }))
 )

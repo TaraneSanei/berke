@@ -4,7 +4,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { usePreset } from '@primeng/themes';
 import { aurora, morning, forest, mountain, sunrise, sunset, neutral } from '../../../mypresets';
 import { environment } from '../../../environments/environment';
-import { Course, Emotion, SubscriptionPlan, Tag } from '../../models/data.models';
+import { Announcement, Course, Emotion, SubscriptionPlan, Tag } from '../../models/data.models';
 import { catchError, EMPTY, map, Observable, of, tap } from 'rxjs';
 import * as jalali from 'jalaali-js';
 import localforage from 'localforage';
@@ -56,17 +56,17 @@ private _userTheme = signal<string>('sunrise'); // Default to sunrise immediatel
   private journeysError = this.store.selectSignal(selectJourneysError)
   private meditationSessionsError = this.store.selectSignal(selectMeditationSessionsError)
 
-  public activeError = computed(() =>{
-    const rawError = this.userError() ||
-     this.journalError() || 
-     this.historyError() || 
-     this.journeysError() || 
-     this.meditationSessionsError() ||
-     this._errorMessage() ||
-     null
-     if (!rawError) return null;
-     return this.getErrorMessage(rawError);
-  })
+  // public activeError = computed(() =>{
+  //   const rawError = this.userError() ||
+  //    this.journalError() || 
+  //    this.historyError() || 
+  //    this.journeysError() || 
+  //    this.meditationSessionsError() ||
+  //    this._errorMessage() ||
+  //    null
+  //    if (!rawError) return null;
+  //    return this.getErrorMessage(rawError);
+  // })
   
   constructor() {
 
@@ -153,6 +153,14 @@ private _userTheme = signal<string>('sunrise'); // Default to sunrise immediatel
         }),
         catchError(err => this.handleError(err, 'subscription'))
       ).subscribe();
+  }
+
+  loadAnnouncements(): Observable<Announcement[]> {
+    return this.http.get<Announcement[]>(this.apiUrl + 'announcements')
+  }
+
+  dismissAnnouncement(id:string){
+    return this.http.post<any>(this.apiUrl + 'announcements/dismiss/'+ id, {})
   }
 
   verify(Authority: string): Observable<boolean> {

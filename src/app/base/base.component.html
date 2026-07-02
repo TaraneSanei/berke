@@ -4,10 +4,10 @@
         <aside class="absolute right-0" [style.top.px]="scrollTop"
             style="height: 100%; overflow: visible; z-index: 70;">
             <div (click)="openSupport()"
-                class="sticky top-1/2 -translate-y-1/2 z-[70] group cursor-pointer flex items-center">
+                class="sticky top-1/2 -translate-y-1/2 z-70 group cursor-pointer flex items-center">
 
                 <div class="flex items-center h-40 
-              bg-[var(--p-accent-900)]/50 backdrop-blur-3xl border-y border-l border-[var(--p-accent-50)]/40 
+              bg-(--p-accent-900)/50 backdrop-blur-3xl border-y border-l border-(--p-accent-50)/40 
               rounded-xl transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)]
               translate-x-[calc(100%-1rem)] group-hover:translate-x-0
               hover:bg-[var(--p-accent-900)]/60 hover:border-[var(--p-accent-600)]/50
@@ -108,5 +108,5 @@
         </p-button>
     </div>
 </div>
-<p-toast position="center" [style]="{'z-index': '10000'}" [baseZIndex]="10000">
-</p-toast>
+<!-- <p-toast position="center" [style]="{'z-index': '10000'}" [baseZIndex]="10000">
+</p-toast> -->

@@ -11,6 +11,7 @@ import { jwtDecode } from 'jwt-decode';
   providedIn: 'root'
 })
 export class AuthService {
+
   private tokenKey = 'authToken';
   private refreshTokenKey = 'refreshToken';
   private apiUrl = environment.apiUrl + 'user/'
@@ -25,7 +26,7 @@ export class AuthService {
     return this.http.post<any>(this.apiUrl + 'otp/send/', { phone_number: phoneNumber })
   }
 
-  verifyOTP(phoneNumber:string, otp: number) {
+  verifyOTP(phoneNumber:string, otp: string) {
     return this.http.post<any>(this.apiUrl + 'otp/verify/', { phone_number: phoneNumber, otp: otp })
   }
 
@@ -106,8 +107,13 @@ export class AuthService {
     return this.http.post<any>(this.apiUrl + 'preferences/', preferences)
   }
 
-  changePassword(oldPassword: string, newPassword: string): Observable<any> {
-    return this.http.post<any>(this.apiUrl + 'password/change/', { old_password: oldPassword, new_password: newPassword })
+  requestPasswordOTP(): Observable<any> {
+    return this.http.post<any>(this.apiUrl + 'user/request-password-otp/', {});
   }
-
+  setPasswordWithOTP(otp: string, newPassword: string): Observable<any> {
+    return this.http.post<any>(this.apiUrl + 'user/set-password/', {
+      otp: otp,
+      new_password: newPassword
+    });
+  }
 }

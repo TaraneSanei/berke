@@ -25,6 +25,10 @@ import { meditationSessionsReducer } from './state/meditationsSessions/meditatio
 import { calendarReducer } from './state/history/history.reducer';
 import { CalendarEffects } from './state/history/history.effects';
 import { BerkeService } from './shared/services/berke.service';
+import { errorInterceptor } from './shared/interceptors/error.interceptor';
+import { MessageService } from 'primeng/api';
+import { AnnouncementReducer } from './state/announcement/announcement.reducer';
+import { AnnouncementEffects } from './state/announcement/announcement.effects';
 
 
 
@@ -49,11 +53,13 @@ export const appConfig: ApplicationConfig = {
         provideAnimationsAsync(),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
+    MessageService,
     //cookie service
     CookieService,
     provideHttpClient(
       withInterceptors([
         authInterceptor,
+        errorInterceptor,
         loadingInterceptor
       ])
     ),
@@ -65,7 +71,8 @@ export const appConfig: ApplicationConfig = {
       journeys: JourneysReducer,
       journal: JournalReducer,
       meditationSessions: meditationSessionsReducer,
-      calendar: calendarReducer
+      calendar: calendarReducer,
+      announcements: AnnouncementReducer
 
     }),
     provideEffects([
@@ -74,7 +81,8 @@ export const appConfig: ApplicationConfig = {
       JourneysEffects,
       JournalEffects,
       MeditationSessionsEffects,
-      CalendarEffects
+      CalendarEffects,
+      AnnouncementEffects
     ]),
     provideStoreDevtools({
       maxAge: 25,

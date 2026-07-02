@@ -59,18 +59,17 @@ export const setPreferencesFailure = createAction(
     '[User] Set Preferences Failure',
     props<{ error: any }>()
 );
-
-export const changePassword = createAction(
-    '[User] Change Password',
-    props<{ oldPassword: string; newPassword: string }>()
-)
-
-export const changePasswordSuccess = createAction(
-    '[User] Change Password Success'
+export const setPasswordWithOtp = createAction(
+    '[User] Set Password With OTP',
+    props<{ otp: string; newPassword: string }>()
 );
 
-export const changePasswordFailure = createAction(
-    '[User] Change Password Failure',
+export const setPasswordWithOtpSuccess = createAction(
+    '[User] Set Password With OTP Success'
+);
+
+export const setPasswordWithOtpFailure = createAction(
+    '[User] Set Password With OTP Failure',
     props<{ error: any }>()
 );
 

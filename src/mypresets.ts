@@ -32,33 +32,11 @@ export const sunrise = definePreset(
     Nora,
     {
         semantic: {
+            color1: '#8B2595',
+            color2: '#F87789',
+            color3: '#46146D',
+            color4: '#FFFFFF',
             primary: {
-                50: '{purple.50}',
-                100: '{purple.100}',
-                200: '{purple.200}',
-                300: '{purple.300}',
-                400: '{purple.400}',
-                500: '{purple.500}',
-                600: '{purple.600}',
-                700: '{purple.700}',
-                800: '{purple.800}',
-                900: '{purple.900}',
-                950: '{purple.950}'
-            },
-            secondary: {
-                50: '{pink.50}',
-                100: '{pink.100}',
-                200: '{pink.200}',
-                300: '{pink.300}',
-                400: '{pink.400}',
-                500: '{pink.500}',
-                600: '{pink.600}',
-                700: '{pink.700}',
-                800: '{pink.800}',
-                900: '{pink.900}',
-                950: '{pink.950}'
-            },
-            accent: {
                 50: '{fuchsia.50}',
                 100: '{fuchsia.100}',
                 200: '{fuchsia.200}',
@@ -70,6 +48,32 @@ export const sunrise = definePreset(
                 800: '{fuchsia.800}',
                 900: '{fuchsia.900}',
                 950: '{fuchsia.950}'
+            },
+            secondary: {
+                50: '{rose.50}',
+                100: '{rose.100}',
+                200: '{rose.200}',
+                300: '{rose.300}',
+                400: '{rose.400}',
+                500: '{rose.500}',
+                600: '{rose.600}',
+                700: '{rose.700}',
+                800: '{rose.800}',
+                900: '{rose.900}',
+                950: '{rose.950}'
+            },
+            accent: {
+                50: '{purple.50}',
+                100: '{purple.100}',
+                200: '{purple.200}',
+                300: '{purple.300}',
+                400: '{purple.400}',
+                500: '{purple.500}',
+                600: '{purple.600}',
+                700: '{purple.700}',
+                800: '{purple.800}',
+                900: '{purple.900}',
+                950: '{purple.950}'
             },
             neutral: {
                 50: '{zinc.50}',
@@ -94,6 +98,20 @@ export const sunrise = definePreset(
                 steppanel: {
                     background: 'transparent',
                     color: 'var(--p-neutral-50)',
+                }
+            },
+            datatable: {
+                overflow: 'hidden',
+                header:{
+                    cell:{
+                        borderRadius: '16px !important',
+                        background: 'rgba(255, 255, 255, 0.4) !important'
+                    }
+                },
+                row: {
+                background: 'rgba(255, 255, 255, 0.2)',
+                color:  'var(--p-neutral-50)',
+
                 }
             },
 
@@ -136,7 +154,7 @@ export const sunrise = definePreset(
         extend: {
             css: {
                 ':root': {
-                    '--app-background': 'linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), linear-gradient(var(--p-secondary-700), var(--p-primary-800), var(--p-primary-900))',
+                    '--app-background': 'linear-gradient(var(--p-secondary-400), var(--p-primary-800), var(--p-purple-950))',
                     
                 }
             }
@@ -148,6 +166,10 @@ export const sunset = definePreset(
     Nora,
     {
         semantic: {
+            color1: '#8E4398',
+            color2: '#FA9648',
+            color3: '#662C9D',
+            color4: '#E9E3E6',
             primary: {
                 50: '{purple.50}',
                 100: '{purple.100}',
@@ -214,6 +236,20 @@ export const sunset = definePreset(
                 activeColor: 'var(--p-neutral-50)',
                 invalidColor: 'var(--p-red-400)'
             },
+                        datatable: {
+                overflow: 'hidden',
+                header:{
+                    cell:{
+                        borderRadius: '16px !important',
+                        background: 'rgba(255, 255, 255, 0.4) !important'
+                    }
+                },
+                row: {
+                background: 'rgba(255, 255, 255, 0.2)',
+                color:  'var(--p-neutral-50)',
+
+                }
+            },
             inputtext: {
                 borderColor: 'var(--p-primary-50)',
                 hoverBorderColor: 'var(--p-primary-100)'
@@ -262,6 +298,10 @@ export const forest = definePreset(
     Nora,
     {
         semantic: {
+            color1: '#476959',
+            color2: '#3D89A1',
+            color3: '#1E313F',
+            color4: '#C3D898',
             primary: {
                 50: '{teal.50}',
                 100: '{teal.100}',
@@ -331,6 +371,20 @@ export const forest = definePreset(
                 borderColor: 'var(--p-primary-50)',
                 hoverBorderColor: 'var(--p-primary-100)'
             },
+                        datatable: {
+                overflow: 'hidden',
+                header:{
+                    cell:{
+                        borderRadius: '16px !important',
+                        background: 'rgba(255, 255, 255, 0.4) !important'
+                    }
+                },
+                row: {
+                background: 'rgba(255, 255, 255, 0.2)',
+                color:  'var(--p-neutral-50)',
+
+                }
+            },
             button: {
                 root: {
                     primary: {
@@ -373,6 +427,10 @@ export const aurora = definePreset(
     Nora,
     {
         semantic: {
+            color1: '#439FAB',
+            color2: '#BF659E',
+            color3: '#2C3D57',
+            color4: '#C1B8C8',
             primary: {
                 50: '{cyan.50}',
                 100: '{cyan.100}',
@@ -437,6 +495,20 @@ export const aurora = definePreset(
                 focusColor: 'var(--p-neutral-50)',
                 activeColor: 'var(--p-neutral-50)',
                 invalidColor: 'var(--p-red-500)'
+            },
+                        datatable: {
+                overflow: 'hidden',
+                header:{
+                    cell:{
+                        borderRadius: '16px !important',
+                        background: 'rgba(255, 255, 255, 0.4) !important'
+                    }
+                },
+                row: {
+                background: 'rgba(255, 255, 255, 0.2)',
+                color:  'var(--p-neutral-50)',
+
+                }
             },
             inputtext: {
                 borderColor: 'var(--p-primary-50)',
@@ -548,6 +620,20 @@ export const mountain = definePreset(
                 focusColor: 'var(--p-neutral-50)',
                 activeColor: 'var(--p-neutral-50)',
                 invalidColor: 'var(--p-red-500)'
+            },
+                        datatable: {
+                overflow: 'hidden',
+                header:{
+                    cell:{
+                        borderRadius: '16px !important',
+                        background: 'rgba(255, 255, 255, 0.4) !important'
+                    }
+                },
+                row: {
+                background: 'rgba(255, 255, 255, 0.2)',
+                color:  'var(--p-neutral-50)',
+
+                }
             },
             inputtext: {
                 borderColor: 'var(--p-primary-50)',
@@ -668,6 +754,20 @@ export const morning = definePreset(
                 focusColor: 'var(--p-neutral-50)',
                 activeColor: 'var(--p-neutral-50)',
                 invalidColor: 'var(--p-red-600)'
+            },
+                        datatable: {
+                overflow: 'hidden',
+                header:{
+                    cell:{
+                        borderRadius: '16px !important',
+                        background: 'rgba(255, 255, 255, 0.4) !important'
+                    }
+                },
+                row: {
+                background: 'rgba(255, 255, 255, 0.2)',
+                color:  'var(--p-neutral-50)',
+
+                }
             },
             inputtext: {
                 borderColor: 'var(--p-primary-50)',

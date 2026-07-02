@@ -5,6 +5,7 @@ import { JournalState } from "./journal/journal.reducer";
 import { MeditationSessionsState } from "./meditationsSessions/meditationSessions.reducer";
 import { CalendarState } from "./history/history.reducer";
 import { JourneysState } from "./journeys/journeys.reducer";
+import { AnnouncementsState } from "./announcement/announcement.reducer";
 
 export interface AppState {
   user: UserState;
@@ -14,4 +15,5 @@ export interface AppState {
   journal: JournalState;
   meditationSessions: MeditationSessionsState;
   calendar: CalendarState;
+  announcements: AnnouncementsState
 }

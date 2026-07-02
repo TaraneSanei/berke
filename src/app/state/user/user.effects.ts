@@ -2,9 +2,10 @@ import { Injectable, inject } from "@angular/core";
 import { AuthService } from "../../auth/auth.service";
 import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { mergeMap, catchError, of, map, tap, from } from "rxjs";
-import { login, getProfile, loginFailure, loginSuccess, getProfileFailure, getProfileSuccess, setPreferences, setPreferencesFailure, setPreferencesSuccess, logout, updateProfile, updateProfileSuccess, updateProfileFailure, changePassword, changePasswordSuccess, changePasswordFailure } from "./user.actions";
+import { login, getProfile, loginFailure, loginSuccess, getProfileFailure, getProfileSuccess, setPreferences, setPreferencesFailure, setPreferencesSuccess, logout, updateProfile, updateProfileSuccess, updateProfileFailure, setPasswordWithOtp, setPasswordWithOtpFailure, setPasswordWithOtpSuccess } from "./user.actions";
 import { BerkeService } from "../../shared/services/berke.service";
 import { Router } from "@angular/router";
+import { stopOtpTimer } from "../otp/otp.actions";
 
 
 
@@ -90,14 +91,18 @@ export class UserEffects {
     ))))
   
 
-    changePassword$ = createEffect(() => 
+  setPasswordWithOtp$ = createEffect(() => 
     this.actions$.pipe(
-      ofType(changePassword),
+      ofType(setPasswordWithOtp),
       mergeMap((action) =>
-      from(this.authService.changePassword(action.oldPassword, action.newPassword)).pipe(
-        map(() => changePasswordSuccess()),
-        catchError((response) => of(changePasswordFailure({ error: response.error })))
-      ))))
+        from(this.authService.setPasswordWithOTP(action.otp, action.newPassword)).pipe(
+          mergeMap(() => [
+            setPasswordWithOtpSuccess(),
+            stopOtpTimer() // Stops and clears the timer on successful change
+          ]),
+          catchError((response) => of(setPasswordWithOtpFailure({ error: response.error })))
+        ))));
+
 
 
   logout$ = createEffect(

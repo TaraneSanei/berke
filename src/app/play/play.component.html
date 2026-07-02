@@ -1,8 +1,8 @@
-<div appWave [syncLevel]="syncLevel()" class="overflow-hidden absolute inset-1 top-0 left-0 right-0 bottom-0  w-full h-full">
+<div appWave [syncLevel]="syncLevel()" class="overflow-hidden absolute inset-1 top-0 left-0 right-0 bottom-0 w-full h-full">
   <div class="justify-center h-1/2 items-center text-xl flex w-full text-[var(--p-primary-100)]">
     <p></p>
   </div>
-  <!-- dialog for resumption of previous session -->
+
   <p-dialog closable="false" header="ادامه جلسه مدیتیشن قبلی؟" [modal]="true" [(visible)]="resumeDialog"
     styleClass="flex flex-row lg:w-1/4 md:w-1/3 w-3/4">
     <div class="flex flex-col items-center gap-2">
@@ -12,105 +12,96 @@
       </p-button>
     </div>
   </p-dialog>
-  <!-- dialog for initial emotion -->
-  <p-dialog closable="false" header="حس و حالت چیه؟" [modal]="true"
-    [(visible)]="initialEmotionDialog" styleClass="flex flex-row lg:w-1/3 md:w-1/2 w-3/4 h-[20rem]">
-    <p-multiselect appendTo="body" inputId="emotions" fluid="true" [options]="emotions()" optionLabel="emotion"
+
+  <p-dialog closable="false" header="حس و حالت چیه؟" [modal]="true" [(visible)]="initialEmotionDialog" 
+    styleClass="flex flex-row lg:w-1/3 md:w-1/2 w-3/4 h-[20rem]">
+    <p-multiselect appendTo="body" inputId="initial-emotions" fluid="true" [options]="emotions()" optionLabel="emotion"
       display="chip" [(ngModel)]="initialEmotion" [maxSelectedLabels]="1">
+      
       <ng-template let-emotion #item>
         <span class="w-full flex-row inline-flex items-center gap-1 justify-between rounded-2xl"
           [style.background]="'var(--p-primary-300)'" [style.color]="'var(--p-primary-700)'">
           <p class="m-1.5">{{ emotion.emotion }}</p>
-          <app-emotion-icon class="w-5 h-5 mx-2 inline-block align-middle" [emotion]="emotion.emotion">
-          </app-emotion-icon>
+          <app-emotion-icon class="w-5 h-5 mx-2 inline-block align-middle" [emotion]="emotion.emotion"></app-emotion-icon>
         </span>
       </ng-template>
+
       <ng-template pTemplate="selectedItems" let-selected>
         <div class="w-full flex-wrap gap-1 flex">
-          <div
-            class="rounded-2xl px-2 p-1 ml-2 text-[var(--p-primary-600)] bg-[var(--p-accent-100)] flex-row inline-flex items-center justify-center"
-            *ngFor="let e of initialEmotion">
-            <div>
-
-              <app-emotion-icon class="w-5 text-[var(--p-primary-500)] h-5 inline-block align-middle"
-                [emotion]="e.emotion">
-              </app-emotion-icon>
-              {{ e.emotion }}
+          @for (e of initialEmotion; track e.emotion) {
+            <div class="rounded-2xl px-2 p-1 ml-2 text-[var(--p-primary-600)] bg-[var(--p-accent-100)] flex-row inline-flex items-center justify-center">
+              <div>
+                <app-emotion-icon class="w-5 text-[var(--p-primary-500)] h-5 inline-block align-middle" [emotion]="e.emotion"></app-emotion-icon>
+                {{ e.emotion }}
+              </div>
+              <button type="button" (click)="removeEmotion(e, initialEmotion)" class="hover:text-[var(--p-primary-200)] m-1" aria-label="Remove emotion">
+                <span class="flex items-center justify-center">
+                  <i class="pi pi-times-circle"></i>
+                </span>
+              </button>
             </div>
-            <button type="button" (click)="removeEmotion(e, initialEmotion)"
-              class="hover:text-[var(--p-primary-200)] m-1" aria-label="Remove emotion">
-              <span class="flex items-center justify-center">
-                <i class="pi pi-times-circle"></i>
-              </span>
-            </button>
-          </div>
+          }
         </div>
       </ng-template>
-      <ng-template #empty>
-        <p>
-          پیدا نکردیم!
-        </p>
-      </ng-template>
 
+      <ng-template #empty>
+        <p>پیدا نکردیم!</p>
+      </ng-template>
     </p-multiselect>
 
     <div class="absolute left-5 right-5 bottom-5">
-      <p-button (onClick)="startMeditationSession()" fluid="true" styleClass="" icon="pi pi-play" label="شروع مدیتیشن"
+      <p-button (onClick)="startMeditationSession()" fluid="true" icon="pi pi-play" label="شروع مدیتیشن"
         rounded="true" severity="primary">
       </p-button>
     </div>
   </p-dialog>
-  <!-- dialog for final emotion tracking -->
-  <p-dialog closable="false" header="بعد از مدیتیشن چه حسی داری؟" [modal]="true"
-    [(visible)]="finalEmotionDialog" styleClass="flex flex-row lg:w-1/3 md:w-1/2 w-3/4 h-[20rem]">
-    <p-multiselect appendTo="body" inputId="emotions" fluid="true" [options]="emotions()" optionLabel="emotion"
+
+  <p-dialog closable="false" header="بعد از مدیتیشن چه حسی داری؟" [modal]="true" [(visible)]="finalEmotionDialog" 
+    styleClass="flex flex-row lg:w-1/3 md:w-1/2 w-3/4 h-[20rem]">
+    <p-multiselect appendTo="body" inputId="final-emotions" fluid="true" [options]="emotions()" optionLabel="emotion"
       display="chip" [(ngModel)]="finalEmotion" [maxSelectedLabels]="1">
+      
       <ng-template let-emotion #item>
         <span class="w-full flex-row inline-flex items-center gap-1 justify-between rounded-2xl"
           [style.background]="'var(--p-primary-300)'" [style.color]="'var(--p-primary-700)'">
           <p class="m-1.5">{{ emotion.emotion }}</p>
-          <app-emotion-icon class="w-5 h-5 mx-2 inline-block align-middle" [emotion]="emotion.emotion">
-          </app-emotion-icon>
+          <app-emotion-icon class="w-5 h-5 mx-2 inline-block align-middle" [emotion]="emotion.emotion"></app-emotion-icon>
         </span>
       </ng-template>
+
       <ng-template pTemplate="selectedItems" let-selected>
         <div class="w-full flex-wrap gap-1 flex">
-          <div
-            class="rounded-2xl px-2 p-1 ml-2 text-[var(--p-primary-600)] bg-[var(--p-accent-100)] flex-row inline-flex items-center justify-center"
-            *ngFor="let e of finalEmotion">
-            <div>
-
-              <app-emotion-icon class="w-5 text-[var(--p-primary-500)] h-5 inline-block align-middle"
-                [emotion]="e.emotion">
-              </app-emotion-icon>
-              {{ e.emotion }}
+          @for (e of finalEmotion; track e.emotion) {
+            <div class="rounded-2xl px-2 p-1 ml-2 text-[var(--p-primary-600)] bg-[var(--p-accent-100)] flex-row inline-flex items-center justify-center">
+              <div>
+                <app-emotion-icon class="w-5 text-[var(--p-primary-500)] h-5 inline-block align-middle" [emotion]="e.emotion"></app-emotion-icon>
+                {{ e.emotion }}
+              </div>
+              <button type="button" (click)="removeEmotion(e, finalEmotion)" class="hover:text-[var(--p-primary-200)] m-1" aria-label="Remove emotion">
+                <span class="flex items-center justify-center">
+                  <i class="pi pi-times-circle"></i>
+                </span>
+              </button>
             </div>
-            <button type="button" (click)="removeEmotion(e, finalEmotion)"
-              class="hover:text-[var(--p-primary-200)] m-1" aria-label="Remove emotion">
-              <span class="flex items-center justify-center">
-                <i class="pi pi-times-circle"></i>
-              </span>
-            </button>
-          </div>
+          }
         </div>
       </ng-template>
-      <ng-template #empty>
-        <p>
-          پیدا نکردیم!
-        </p>
-      </ng-template>
 
+      <ng-template #empty>
+        <p>پیدا نکردیم!</p>
+      </ng-template>
     </p-multiselect>
 
     <div class="absolute left-5 right-5 bottom-5">
-      <p-button (onClick)="endMeditationSession()" fluid="true" styleClass="" icon="pi pi-save" label="ذخیره"
+      <p-button (onClick)="endMeditationSession()" fluid="true" icon="pi pi-save" label="ذخیره"
         rounded="true" severity="primary">
       </p-button>
     </div>
   </p-dialog>
-  <div class="absolute inset-0 m-auto w-64 flex justify-between items-center">
+
+  <div class="absolute inset-0 m-auto w-64 flex justify-between items-center z-10">
     
-    <div class="w-15 h-15 flex justify-center items-center">
+    <div class="w-15 h-15 flex justify-center items-center cursor-pointer active:scale-95 transition-transform">
       <button (click)="seek(+10)" class="z-1000">
         <i class="pi pi-forward border-2 rounded-full p-3 border-white text-white"></i>
       </button>
@@ -118,29 +109,44 @@
 
     <div class="rounded-full w-22 h-22 flex items-center justify-center relative">
       <svg class="w-full h-full transform -rotate-90">
-        <circle class="text-gray-300" stroke="currentColor" stroke-width="9" fill="transparent" r="36" cx="44" cy="44">
-        </circle>
-        <circle class="text-blue-500 transition-all duration-200" stroke="currentColor" stroke-width="9"
+        <circle class="text-gray-300 opacity-30" stroke="currentColor" stroke-width="9" fill="transparent" r="36" cx="44" cy="44"></circle>
+        <circle class="text-white transition-all duration-200" stroke="currentColor" stroke-width="9"
           fill="transparent" r="36" cx="44" cy="44"
           [attr.stroke-dasharray]="circumference" 
-      
-      [attr.stroke-dashoffset]="progressOffset()"></circle>
+          [attr.stroke-dashoffset]="progressOffset()">
+        </circle>
       </svg>
-      <button (click)="togglePlayPause()"
-        class="absolute z-1000 inset-0 m-auto bg-white rounded-full w-16 h-16 flex items-center justify-center">
-        <ng-container *ngIf="!isPlaying() else pauseIcon">
-          <i class="pi pi-play"></i>
-        </ng-container>
-        <ng-template #pauseIcon>
-          <i class="pi pi-pause"></i>
-        </ng-template>
+      <button (click)="togglePlayPause()" [disabled]="isPreparingAudio()"
+        class="absolute z-1000 inset-0 m-auto bg-white rounded-full w-16 h-16 flex items-center justify-center cursor-pointer active:scale-95 transition-transform">
+        
+        @if (isPreparingAudio()) {
+          <i class="pi pi-spinner pi-spin text-[var(--p-primary-500)] text-xl"></i>
+        } @else if (!isPlaying()) {
+          <i class="pi pi-play text-[var(--p-primary-500)] text-xl ml-1"></i>
+        } @else {
+          <i class="pi pi-pause text-[var(--p-primary-500)] text-xl"></i>
+        }
+        
       </button>
     </div>
     
-    <div class="w-15 h-15 flex justify-center items-center">
+    <div class="w-15 h-15 flex justify-center items-center cursor-pointer active:scale-95 transition-transform">
       <button (click)="seek(-10)" class="z-1000">
         <i class="pi pi-backward border-2 rounded-full p-3 border-white text-white"></i>
       </button>
     </div>
-</div>
+  </div>
+
+  <div class="absolute top-2/3 left-0 right-0 flex justify-center z-10">
+    <p-button 
+      (onClick)="endSession()" 
+      label="پایان مدیتیشن" 
+      icon="pi pi-stop-circle" 
+      rounded="true" 
+      severity="secondary" 
+      variant="outlined"
+      styleClass="backdrop-blur-md bg-white/20 text-white border-white/50 hover:bg-white/30 transition-all px-6 py-2">
+    </p-button>
+  </div>
+
 </div>

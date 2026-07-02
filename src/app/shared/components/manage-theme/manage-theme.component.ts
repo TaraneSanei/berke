@@ -15,7 +15,7 @@ export class ManageThemeComponent {
   private berkeService = inject(BerkeService);
     selectedTheme: string | undefined;
   themes = [
-    { label: 'طلوع', value: 'sunrise', background: 'linear-gradient(var(--p-pink-700), var(--p-purple-900), var(--p-purple-950))' },
+    { label: 'طلوع', value: 'sunrise', background: 'linear-gradient(var(--p-rose-400), var(--p-fuchsia-800), var(--p-purple-950))' },
     { label: 'غروب', value: 'sunset', background: 'linear-gradient(var(--p-purple-950), var(--p-purple-800), var(--p-orange-400))' },
     { label: 'صبح', value: 'morning', background: 'linear-gradient(var(--p-sky-600), var(--p-blue-300))' },
     { label: 'جنگل', value: 'forest', background: 'url("/assets/bg-images/forest.webp")' },

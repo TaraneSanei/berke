@@ -3,7 +3,7 @@ import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { Store } from "@ngrx/store";
 import { AuthService } from "../../auth/auth.service";
 import { mergeMap, from, catchError, of, interval, map, switchMap, takeWhile, withLatestFrom } from "rxjs";
-import { requestOtp, requestOtpSuccess, startOtpTimer, requestOtpFailure, tickOtpTimer, verifyOtp, verifyOtpFailure, verifyOtpSuccess } from "./otp.actions";
+import { requestOtp, requestOtpSuccess, startOtpTimer, requestOtpFailure, tickOtpTimer, verifyOtp, verifyOtpFailure, verifyOtpSuccess, requestPasswordOtp, requestPasswordOtpFailure, requestPasswordOtpSuccess } from "./otp.actions";
 import { selectOtpTimer } from "./otp.selector";
 import { getProfile, loginSuccess } from "../user/user.actions";
 
@@ -48,4 +48,18 @@ export class OTPEffects {
           ]),
           catchError((error) => of(verifyOtpFailure({ error: error })))
         ))))
+
+
+      requestPasswordOtp$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(requestPasswordOtp),
+      mergeMap(() =>
+        from(this.authService.requestPasswordOTP()).pipe(
+          mergeMap(() => [
+            requestPasswordOtpSuccess(),
+            startOtpTimer(),
+          ]),
+          catchError((error) => of(requestPasswordOtpFailure({ error: error })))
+        ))));
+        
   }

@@ -12,6 +12,7 @@ export interface User {
     createdAt?: Date;
     notification?: string;
     hasAccess?: boolean;
+    hasPassword: boolean
 }
 
 export interface Course {
@@ -92,4 +93,14 @@ export interface Order {
     amount: number;
     status: string;
     date: Date;
+}
+
+export interface Announcement {
+    id: string;
+    title: string;
+    message: string;
+    bannerSvg: string;
+    linkText: string;
+    link: string;
+    dismissed: boolean
 }

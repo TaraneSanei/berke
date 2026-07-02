@@ -1,8 +1,7 @@
-import { Component, effect, inject, OnInit, signal } from '@angular/core';
+import { Component, DestroyRef, effect, inject, OnInit, signal } from '@angular/core';
 import { BerkeService } from '../shared/services/berke.service';
 import { CommonModule } from '@angular/common';
-import { WindowDirective } from "../shared/directives/window.directive";
-import { Order, SubscriptionPlan, User } from '../models/data.models';
+import { Announcement, Order, SubscriptionPlan, User } from '../models/data.models';
 import { Store } from '@ngrx/store';
 import { AppState } from '../state/app.state';
 import { selectUser } from '../state/user/user.selector';
@@ -13,7 +12,7 @@ import { AvatarGroupModule } from 'primeng/avatargroup';
 import { BadgeModule } from 'primeng/badge';
 import { OverlayBadgeModule } from 'primeng/overlaybadge';
 import { InputTextModule } from 'primeng/inputtext';
-import { changePassword, getProfile, logout, updateProfile } from '../state/user/user.actions';
+import { getProfile, logout, setPasswordWithOtpSuccess, updateProfile } from '../state/user/user.actions';
 import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { PasswordModule } from 'primeng/password';
 import { JalaliDatePipe } from '../shared/pipes/jalali-date.pipe';
@@ -27,6 +26,11 @@ import { Router } from '@angular/router';
 import { DataService } from '../shared/services/data.service';
 import { TableModule } from 'primeng/table';
 import { FormatDurationPipe } from '../shared/pipes/format-duration.pipe';
+import { requestPasswordOtp } from '../state/otp/otp.actions';
+import { Actions, ofType } from '@ngrx/effects';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { LoadAnnouncements } from '../state/announcement/announcement.actions';
+import { selectAnnouncements } from '../state/announcement/announcement.selector';
 
 @Component({
   selector: 'app-profile',
@@ -61,13 +65,14 @@ export class ProfileComponent implements OnInit {
   private berkeService = inject(BerkeService);
   private router = inject(Router)
   private dataService = inject(DataService)
-  expanded = signal<('user' | 'settings' | 'subscription' | 'badges' | 'about' | 'history')[]>([])
+  expanded = signal<('user' | 'settings' | 'subscription' | 'badges' | 'about' | 'history' | 'announcements')[]>([])
   isEditingUserName = signal<boolean>(false);
   isChangingPassword = signal<boolean>(false);
   isChangingTheme = signal<boolean>(false);
   isChangingNotification = signal<boolean>(false);
   UserProfile = signal<User | null>(null)
   orders = signal<Order[]>([])
+  announcements = signal<Announcement[]>([])
   selectedTheme = this.berkeService.userTheme
   subscriptionPlans = this.berkeService.subscriptionPlans
   themeName: string;
@@ -86,17 +91,34 @@ export class ProfileComponent implements OnInit {
     isSubscribed: false,
     secondsListened: 0,
     theme: '',
+    hasPassword: false
   }
+
+  private actions$ = inject(Actions);
+  private destroyRef = inject(DestroyRef); // For auto-unsubscribing (Angular 16+)
+
 
   constructor(private store: Store<AppState>, private fb: FormBuilder) {
     this.store.dispatch(getProfile())
     this.berkeService.loadSubscriptionPlans()
     this.themeName = this.themes.find(theme => theme.value === (this.selectedTheme()))?.label || 'طلوع';
     this.loadOrderHistory();
+    this.store.dispatch(LoadAnnouncements())
 
     effect(() => {
       const profileData = this.store.selectSignal(selectUser)
       this.UserProfile.set(profileData())
+    })
+
+    effect(() => {
+      const announcementData = this.store.selectSignal(selectAnnouncements)
+      this.announcements.set(announcementData())
+    })
+
+    effect(() => {
+      if(this.isChangingPassword()){
+        this.store.dispatch(requestPasswordOtp())
+      } 
     })
 
     effect(() => {
@@ -108,6 +130,12 @@ export class ProfileComponent implements OnInit {
 
 
   ngOnInit() {
+      this.actions$.pipe(
+      ofType(setPasswordWithOtpSuccess),
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(() => {
+      this.isChangingPassword.set(false)
+    });
   }
 
   updateTheme() {
@@ -118,14 +146,15 @@ export class ProfileComponent implements OnInit {
         authenticated: this.UserProfile() ? this.UserProfile()?.authenticated! : false,
         isSubscribed: this.UserProfile() ? this.UserProfile()?.isSubscribed! : false,
         secondsListened: this.UserProfile() ? this.UserProfile()?.secondsListened! : 0,
-        theme: this.selectedTheme()!
+        theme: this.selectedTheme()!,
+        hasPassword: this.UserProfile() ? this.UserProfile()?.hasPassword! : false
       }
       console.log('attempting to change the profile data to: ',this.editableUserProfile)
       this.store.dispatch(updateProfile({ user: { ...this.editableUserProfile } }));
     }
   }
 
-  toggleExpanded(panel: 'user' | 'settings' | 'subscription' | 'badges' | 'about' | 'history') {
+  toggleExpanded(panel: 'user' | 'settings' | 'subscription' | 'badges' | 'about' | 'history' | 'announcements') {
     if (this.expanded().includes(panel)) {
       this.expanded.set(this.expanded().filter(p => p !== panel));
     } else {
@@ -141,7 +170,8 @@ export class ProfileComponent implements OnInit {
       authenticated: this.UserProfile() ? this.UserProfile()?.authenticated! : false,
       isSubscribed: this.UserProfile() ? this.UserProfile()?.isSubscribed! : false,
       secondsListened: this.UserProfile() ? this.UserProfile()?.secondsListened! : 0,
-      theme: this.UserProfile() ? this.UserProfile()?.theme! : ''
+      theme: this.UserProfile() ? this.UserProfile()?.theme! : '',
+      hasPassword: this.UserProfile() ? this.UserProfile()?.hasPassword! : false
     }
     this.isEditingUserName.set(!this.isEditingUserName());
 

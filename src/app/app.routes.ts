@@ -9,7 +9,6 @@ import { JourneysComponent } from './journeys/journeys.component';
 import { JournalComponent } from './journal/journal.component';
 import { authGuard } from './auth/auth.guard';
 import { PlayComponent } from './play/play.component';
-import { meditationGuard } from './shared/guards/meditation.guard';
 import { CourseComponent } from './course/course.component';
 import { VerifyComponent } from './verify/verify.component';
 

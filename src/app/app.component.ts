@@ -1,19 +1,19 @@
-import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { AfterViewInit, Component, Inject, inject, NgZone, OnDestroy, OnInit, PLATFORM_ID } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, Inject, inject, NgZone, OnDestroy, OnInit} from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { AppState } from './state/app.state';
 import { Store } from '@ngrx/store';
 import { selectLoading } from './state/UI/ui.selectors';
-import { BerkeService } from './shared/services/berke.service';
-import { selectUser } from './state/user/user.selector';
-import { getProfile } from './state/user/user.actions';
 import { SupportService } from './shared/services/support.service';
+import { Toast, ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-root',
   imports: [
     RouterOutlet,
-    CommonModule
+    CommonModule,
+    ToastModule
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
@@ -23,6 +23,7 @@ export class AppComponent implements OnInit {
 
   title = 'berke';
   loading$ :any;
+  private messageService = inject(MessageService)
   private store = inject(Store<AppState>)
   private supportService = inject(SupportService)
   constructor() {
@@ -32,6 +33,7 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     this.supportService.hide()
   }
+
 
 
   openSupport (){

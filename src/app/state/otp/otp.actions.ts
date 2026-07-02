@@ -18,7 +18,7 @@ export const requestOtpFailure = createAction(
 
 export const verifyOtp = createAction(
     '[User] Verify OTP',
-    props<{phoneNumber:string; otp: number }>()
+    props<{phoneNumber:string; otp: string }>()
 )
 
 export const verifyOtpSuccess = createAction(
@@ -35,3 +35,16 @@ export const startOtpTimer = createAction('[OTP] Start Timer');
 export const tickOtpTimer = createAction('[OTP] Tick Timer');
 
 export const stopOtpTimer = createAction('[OTP] Stop Timer');
+
+export const requestPasswordOtp = createAction(
+    '[User] Request Password OTP'
+);
+
+export const requestPasswordOtpSuccess = createAction(
+    '[User] Request Password OTP Success'
+);
+
+export const requestPasswordOtpFailure = createAction(
+    '[User] Request Password OTP Failure',
+    props<{ error: any }>()
+);

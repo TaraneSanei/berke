@@ -76,8 +76,8 @@ export class DataService {
 
   getTrackUrl(trackId: number){
     return this.http.get<{ audio_url: string }>(this.apiUrl + 'meditation/tracks/' + trackId + '/audio-url/')
-
   }
+  
   makeJourneys(
     sessions: JourneysSession[],
   ): Observable<Journey[]> {

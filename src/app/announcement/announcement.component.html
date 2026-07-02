@@ -1,0 +1,37 @@
+<p-dialog 
+      [visible]="visible()" 
+      (visibleChange)="dismiss()" 
+      [modal]="true" 
+      [dismissableMask]="true" 
+      [showHeader]="false"
+      [style]="{ width: '50vw' }" 
+      transitionOptions="600ms cubic-bezier(0.25, 0.8, 0.25, 1)">
+      
+      <div class="relative w-full aspect-video rounded-xl overflow-hidden shadow-2xl flex items-center justify-center" dir="rtl">
+        
+        <div class="absolute inset-0 z-0" [innerHTML]="announcement()?.bannerSvg! | safeHtml"></div>
+        
+        <p-button 
+            icon="pi pi-times" 
+            variant="text"
+            rounded="true"
+            (onClick)="dismiss()"
+            styleClass="absolute top-3 right-3 z-20 text-white/70 hover:text-white bg-black/20 hover:bg-black/40 transition-all w-8 h-8 p-0">
+        </p-button>
+
+        <div class="relative z-10 flex flex-col items-center text-center p-6 text-[var(--p-primary-50)]">
+           <h2 class="text-2xl font-bold mb-4">{{ announcement()?.title }}</h2>
+
+           @if (announcement()?.link) {
+               <p-button
+                  [label]="announcement()?.linkText || 'مشاهده'" 
+                  size="small" 
+                  rounded="true" 
+                  variant="outlined" 
+                  (onClick)="onAction()">
+               </p-button>
+           }
+        </div>
+        
+      </div>
+</p-dialog>
