@@ -12,7 +12,8 @@
     <div class="grid grid-cols-1 w-full items-start lg:w-3/4 m-3 text-(--p-primary-50)">
         <!-- username -->
 
-        <div class="bg-white/10 border border-white/40 items-center m-2 rounded-2xl backdrop-blur-2xl">
+        <div
+            class="border border-white/80 shadow-[inset_0px_0px_40px_8px_rgba(255,255,255,0.15)] bg-[#646464]/30 items-center m-2 rounded-2xl backdrop-blur-2xl">
             <div class="flex flex-row p-5 text-lg gap-3 items-center" (click)="toggleExpanded('user')">
                 <div class="relative inline-block">
                     <p-avatar icon="pi pi-user" class="mr-3" size="xlarge" shape="circle" />
@@ -31,21 +32,22 @@
                     <div>
                         <div *ngIf="!isEditingUserName()" class="flex flex-row mx-6 items-center">
                             {{UserProfile()?.username? UserProfile()?.username : 'کاربر'}}
-                            <p-button class="mx-3" icon="pi pi-pencil" variant="text" (onClick)="startEditUsername()"
-                                rounded="true" size="small"></p-button>
+                            <p-button class="mx-3" icon="pi pi-pencil" variant="outlined" severity="secondary"
+                                (onClick)="startEditUsername()" rounded="true" size="small"></p-button>
                         </div>
                         <div *ngIf="isEditingUserName()" class="flex flex-row items-center mx-6">
                             <input pInputText [(ngModel)]="editableUserProfile.username" />
-                            <p-button class="mx-3" icon="pi pi-save" (onClick)="editUsername()" variant="text"
-                                rounded="true" size="small"></p-button>
+                            <p-button class="mx-3" icon="pi pi-save" (onClick)="editUsername()" variant="outlined"
+                                severity="secondary" rounded="true" size="small"></p-button>
                         </div>
                     </div>
                     <!-- this is the password div -->
                     <div>
                         <div class="flex flex-row mx-6 items-center">
                             <p>تغییر گذرواژه</p>
-                            <p-button class="mx-3" severity="primary" icon="pi pi-pencil" variant="text" rounded="true"
-                                size="small" (click)="isChangingPassword.set(true)"></p-button>
+                            <p-button class="mx-3" severity="primary" icon="pi pi-pencil" variant="outlined"
+                                severity="secondary" rounded="true" size="small"
+                                (click)="isChangingPassword.set(true)"></p-button>
                         </div>
                     </div>
 
@@ -53,17 +55,18 @@
                         تاریخ عضویت:
                         {{UserProfile()?.createdAt! | jalaliDate:'longDate' |persianDigits}}
                     </div>
-                    <div class="mx-6 text-lg mb-6">
-                        <p-button class="flex w-20" (onClick)="logout($event)" rounded="true" severity="danger"
-                            variant="text">
-                            <span class="flex flex-row items-center gap-2">خروج <i class="pi pi-sign-out"></i></span>
+                    <div class="mx-6 flex flex-row justify-center lg:justify-start text-lg mb-6">
+                        <p-button class="flex w-1/2" (onClick)="logout($event)" rounded="true" severity="secondary"
+                            variant="outlined">
+                            <span class="flex flex-row items-center gap-2"><i class="pi pi-sign-out"></i> خروج</span>
                         </p-button>
                     </div>
                 </div>
             </div>
 
         </div>
-        <div class="m-2 bg-white/10 border border-white/40 rounded-2xl backdrop-blur-2xl">
+        <div
+            class="m-2 border border-white/80 shadow-[inset_0px_0px_40px_8px_rgba(255,255,255,0.15)] bg-[#646464]/30 rounded-2xl backdrop-blur-2xl">
             <div class="items-center p-5">
                 <div class="flex flex-row gap-3 items-center" (click)="toggleExpanded('subscription')">
                     <p-avatar icon="pi pi-crown" class="mr-2" size="xlarge" shape="circle" />
@@ -86,10 +89,14 @@
                         <div *ngIf="!UserProfile()?.hasAccess" class="my-5 text-lg">
                             برای دسترسی به مدیتیشن های برکه، لطفاً یک اشتراک تهیه کن.
                         </div>
-                        <div class="my-5 grid grid-cols-1 gap-4 md:grid-cols-3">
+                        <div class="my-5 grid grid-cols-1 gap-4 m-2 md:grid-cols-3">
                             <div *ngFor="let plan of subscriptionPlans()">
-                                <div (click)="toSubscribe(plan)"
-                                    class="border-2 border-white/60 rounded-xl bg-white/20 p-3 gap-2 flex flex-col items-center">
+                                <div (click)="toSubscribe(plan)" class="group cursor-pointer border-2 border-white/50 shadow-[inset_0px_0px_40px_8px_rgba(255,255,255,0.08)]
+               rounded-xl bg-(--p-primary-600)/20 p-3 gap-2 flex flex-col items-center
+               transition-all duration-300 ease-out
+               hover:border-white/80 hover:bg-(--p-primary-600)/30
+               hover:shadow-[inset_0px_0px_50px_10px_rgba(255,255,255,0.15)]
+               hover: hover:scale-[1.02]">
                                     <div class="text-xl">
                                         {{plan.name}}
                                     </div>
@@ -97,10 +104,10 @@
                                     <div>
                                         {{plan.price |persianDigits }} تومان
                                     </div>
-
-                                    <div class="text-center mt-3 min-h-15 md:min-h-30 text-sm text-neutral-300">
-                                        {{plan.description}}
-                                    </div>
+        <div class="text-center mt-3 min-h-15 md:min-h-30 text-sm text-neutral-300
+                    transition-colors duration-300 group-hover:text-neutral-100">
+            {{plan.description}}
+        </div>
 
                                 </div>
                             </div>
@@ -110,7 +117,8 @@
             </div>
         </div>
 
-        <div class="m-2 bg-white/10 border border-white/40 rounded-2xl backdrop-blur-2xl">
+        <div
+            class="m-2 border border-white/80 shadow-[inset_0px_0px_40px_8px_rgba(255,255,255,0.15)] bg-[#646464]/30 rounded-2xl backdrop-blur-2xl">
             <div class="items-center p-5">
                 <div class="flex flex-row gap-3 items-center" (click)="toggleExpanded('history')">
                     <p-avatar icon="pi pi-wallet" class="mr-2" size="xlarge" shape="circle" />
@@ -143,9 +151,8 @@
                                         <td>{{ order.created_at | jalaliDate:'longDate' |persianDigits}}</td>
                                         <td>
                                             <!-- Example status styling -->
-                                            <span class="px-2 py-1 rounded text-sm"
-                                                [ngClass]="{'bg-green-100 text-green-700': order.status === 'success', 'bg-red-100 text-red-700': order.status === 'failed'}">
-                                                {{ order.status === 'paid' ? 'موفق' : 'ناموفق' }}
+                                            <span class="px-2 py-1 rounded text-sm"> {{ order.status === 'paid' ? 'موفق'
+                                                : 'ناموفق' }}
                                             </span>
                                         </td>
                                     </tr>
@@ -165,7 +172,8 @@
                 </div>
             </div>
         </div>
-                <div class="m-2 bg-white/10 border border-white/40 rounded-2xl backdrop-blur-2xl">
+        <div
+            class="m-2 border border-white/80 shadow-[inset_0px_0px_40px_8px_rgba(255,255,255,0.15)] bg-[#646464]/30 rounded-2xl backdrop-blur-2xl">
             <div class="items-center p-5">
                 <div class="flex flex-row gap-3 items-center" (click)="toggleExpanded('announcements')">
                     <p-avatar icon="pi pi-envelope" class="mr-2" size="xlarge" shape="circle" />
@@ -175,7 +183,8 @@
                 </div>
                 <div class="expand-wrapper" [class.expanded]="expanded().includes('announcements')">
                     <div class="expand-inner">
-                        <div class="my-5 bg-(--p-primary-100)/50 text-(--p-neutral-800) p-3 rounded-xl " *ngFor="let announcement of announcements()">
+                        <div class="my-5 bg-(--p-primary-100)/50 text-(--p-neutral-800) p-3 rounded-xl "
+                            *ngFor="let announcement of announcements()">
                             <div>
                                 <p class="font-bold mb-2">{{ announcement.title }}</p>
                                 <p class="text-sm">{{ announcement.message }}</p>
@@ -186,7 +195,8 @@
                 </div>
             </div>
         </div>
-        <div class="m-2 rounded-2xl bg-white/10 border border-white/40 backdrop-blur-2xl">
+        <div
+            class="m-2 rounded-2xl border border-white/80 shadow-[inset_0px_0px_40px_8px_rgba(255,255,255,0.15)] bg-[#646464]/30 backdrop-blur-2xl">
             <div class="items-center">
                 <div (click)="toggleExpanded('settings')" class="flex flex-row p-5 gap-3 items-center">
                     <p-avatar icon="pi pi-cog" class="mr-2" size="xlarge" shape="circle" />
@@ -199,19 +209,19 @@
                         <div>
                             <div *ngIf="!isChangingNotification()" class="flex flex-row mx-6 text-lg items-center">
                                 <p> یادآوری {{UserProfile()?.notification! |persianDigits}}</p>
-                                <p-button class="mx-3" icon="pi pi-pencil" variant="text" rounded="true" size="small"
+                                <p-button class="mx-3" icon="pi pi-pencil" severity="secondary" variant="outlined" rounded="true" size="small"
                                     (click)="isChangingNotification.set(true)"></p-button>
                             </div>
                             <div *ngIf="isChangingNotification()" class="flex flex-row mx-6 text-lg items-center">
                                 <p> یادآوری {{UserProfile()?.notification! |persianDigits}}</p>
-                                <p-button class="mx-3" icon="pi pi-save" variant="text" rounded="true" size="small"
+                                <p-button class="mx-3" icon="pi pi-save" severity="secondary" variant="outlined" rounded="true" size="small"
                                     (click)="isChangingNotification.set(false)"></p-button>
                             </div>
                         </div>
                         <div class="mb-6">
                             <div class="flex flex-row mx-6 text-lg items-center">
                                 <p> تم {{themeName}}</p>
-                                <p-button class="mx-3" icon="pi pi-pencil" variant="text" rounded="true" size="small"
+                                <p-button class="mx-3" icon="pi pi-pencil" severity="secondary" variant="outlined" rounded="true" size="small"
                                     (click)="isChangingTheme.set(true)"></p-button>
                             </div>
                         </div>
@@ -219,7 +229,8 @@
                 </div>
             </div>
         </div>
-        <div class="m-2 rounded-2xl bg-white/10 border border-white/40 backdrop-blur-2xl">
+        <div
+            class="m-2 rounded-2xl border border-white/80 shadow-[inset_0px_0px_40px_8px_rgba(255,255,255,0.15)] bg-[#646464]/30 backdrop-blur-2xl">
             <div class="items-center p-5" (click)="toggleExpanded('badges')">
                 <div *ngIf="!expanded().includes('badges')" class="flex flex-row gap-3 items-center">
                     <p-avatar icon="pi pi-star" class="mr-2" size="xlarge" shape="circle" />
@@ -235,7 +246,8 @@
                 </div>
             </div>
         </div>
-        <div class="m-2 bg-white/10 border border-white/40 rounded-2xl backdrop-blur-2xl">
+        <div
+            class="m-2 border border-white/80 shadow-[inset_0px_0px_40px_8px_rgba(255,255,255,0.15)] bg-[#646464]/30 rounded-2xl backdrop-blur-2xl">
             <div class="items-center">
                 <div (click)="toggleExpanded('about')" class="flex flex-row p-5 gap-3 items-center">
                     <p-avatar class="mr-2" size="xlarge" shape="circle">

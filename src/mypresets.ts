@@ -43,7 +43,7 @@ export const sunrise = definePreset(
                 300: '{fuchsia.300}',
                 400: '{fuchsia.400}',
                 500: '{fuchsia.500}',
-                600: '{fuchsia.600}',
+                600: '#af3f92',
                 700: '{fuchsia.700}',
                 800: '{fuchsia.800}',
                 900: '{fuchsia.900}',
@@ -127,8 +127,8 @@ export const sunrise = definePreset(
             button: {
                 root: {
                     primary: {
-                        background: 'var(--p-accent-200) !important',
-                        color: 'var(--p-primary-600) !important',
+                        background: 'var(--p-primary-600) !important',
+                        color: 'var(--p-primary-50) !important',
                         hoverColor: 'var(--p-primary-700) !important',  // color on hover
                         hoverBackground: 'var(--p-accent-100) !important',
                         border: 'var(--p-accent-200) !important'
@@ -137,7 +137,7 @@ export const sunrise = definePreset(
                 text: {
                     secondary: {
                         color: 'var(--p-primary-100) !important',      // text color
-                        hoverColor: 'var(--p-primary-700) !important',  // color on hover
+                        hoverColor: 'var(--p-primary-600) !important',  // color on hover
                         hoverBackground: 'var(--p-primary-50) !important',  // color on hover
 
                     }
@@ -154,7 +154,7 @@ export const sunrise = definePreset(
         extend: {
             css: {
                 ':root': {
-                    '--app-background': 'linear-gradient(var(--p-secondary-400), var(--p-primary-800), var(--p-purple-950))',
+                    '--app-background': 'linear-gradient(#4b66db,#8351cc, #ae40bd, #d88962)'
                     
                 }
             }
@@ -171,17 +171,18 @@ export const sunset = definePreset(
             color3: '#662C9D',
             color4: '#E9E3E6',
             primary: {
-                50: '{purple.50}',
-                100: '{purple.100}',
-                200: '{purple.200}',
-                300: '{purple.300}',
-                400: '{purple.400}',
-                500: '{purple.500}',
-                600: '{purple.600}',
-                700: '{purple.700}',
-                800: '{purple.800}',
-                900: '{purple.900}',
-                950: '{purple.950}'
+                50: '{amber.50}',
+                100: '{amber.100}',
+                200: '{amber.200}',
+                300: '{amber.300}',
+                400: '{amber.400}',
+                500: '{amber.500}',
+                600: 'rgb(190,107,99)',
+                700: '{amber.700}',
+                800: '{amber.800}',
+                900: '{amber.900}',
+                950: '{amber.950}'
+
             },
             secondary: {
                 50: '{amber.50}',
@@ -257,8 +258,8 @@ export const sunset = definePreset(
             button: {
                 root: {
                     primary: {
-                        background: 'var(--p-primary-800) !important',
-                        hoverBackground: 'var(--p-primary-900) !important',  // color on hover
+                        background: 'var(--p-primary-600) !important',
+                        hoverBackground: 'var(--p-primary-600/80) !important',  // color on hover
 
                     }
                 },
@@ -279,6 +280,12 @@ export const sunset = definePreset(
                         hoverColor: 'var(--p-primary-700) !important',  // color on hover
                         hoverBackground: 'var(--p-primary-50) !important',  // color on hover
                         borderColor: 'var(--p-primary-100) !important',  // border color
+                    },
+                    primary : {
+                        color: 'var(--p-primary-50) !important',
+                        hoverColor: 'var(--p-primary-600) !important',
+                        borderColor: 'var(--p-primary-50) !important',  // border color
+                        hoverBackground: 'rgba(187,77,0,0.3) !important'
                     }
                 }
             },
@@ -309,7 +316,7 @@ export const forest = definePreset(
                 300: '{teal.300}',
                 400: '{teal.400}',
                 500: '{teal.500}',
-                600: '{teal.600}',
+                600: '#2c7744',
                 700: '{teal.700}',
                 800: '{teal.800}',
                 900: '{teal.900}',
@@ -534,6 +541,12 @@ export const aurora = definePreset(
                         hoverColor: 'var(--p-primary-700) !important',  // color on hover
                         hoverBackground: 'var(--p-primary-50) !important',  // color on hover
                         borderColor: 'var(--p-primary-100) !important',  // border color
+                    },
+                    primary : {
+                        color: 'var(--p-primary-50) !important',
+                        hoverColor: 'var(--p-primary-600) !important',
+                        borderColor: 'var(--p-primary-50) !important',  // border color
+                        hoverBackground: 'var(--p-primary-600) !important'
                     }
                 }
             },
@@ -560,7 +573,7 @@ export const mountain = definePreset(
                 300: '{stone.300}',
                 400: '{stone.400}',
                 500: '{stone.500}',
-                600: '{stone.500}',
+                600: '#98754e',
                 700: '{stone.700}',
                 800: '{stone.800}',
                 900: '{stone.900}',
@@ -665,10 +678,16 @@ export const mountain = definePreset(
                 },
                 outlined: {
                     secondary: {
-                        color: 'var(--p-primary-200) !important',      // text color
+                        color: 'var(--p-primary-100) !important',      // text color
                         hoverColor: 'var(--p-primary-700) !important',  // color on hover
-                        hoverBackground: 'var(--p-primary-100) !important',  // color on hover
+                        hoverBackground: 'var(--p-primary-50) !important',  // color on hover
                         borderColor: 'var(--p-primary-100) !important',  // border color
+                    },
+                    primary : {
+                        color: 'var(--p-primary-50) !important',
+                        hoverColor: 'var(--p-primary-600) !important',
+                        borderColor: 'var(--p-primary-50) !important',  // border color
+                        hoverBackground: 'var(--p-primary-600) !important'
                     }
                 }
             },
@@ -696,7 +715,7 @@ export const morning = definePreset(
                 300: '{cyan.300}',
                 400: '{cyan.400}',
                 500: '{cyan.500}',
-                600: '{cyan.600}',
+                600: '#1447e6',
                 700: '{cyan.700}',
                 800: '{cyan.800}',
                 900: '{cyan.900}',
@@ -750,7 +769,6 @@ export const morning = definePreset(
                 }
             },
             floatlabel: {
-                color: 'var(--p-primary-600)',
                 focusColor: 'var(--p-neutral-50)',
                 activeColor: 'var(--p-neutral-50)',
                 invalidColor: 'var(--p-red-600)'
@@ -794,17 +812,27 @@ export const morning = definePreset(
                 },
                 outlined: {
                     secondary: {
-                        color: 'var(--p-primary-700) !important',      // text color
+                        color: 'var(--p-primary-100) !important',      // text color
+                        hoverColor: 'var(--p-primary-700) !important',  // color on hover
                         hoverBackground: 'var(--p-primary-50) !important',  // color on hover
-                        borderColor: 'var(--p-primary-700) !important',  // border color
+                        borderColor: 'var(--p-primary-100) !important',  // border color
+                    },
+                    primary : {
+                        color: 'var(--p-primary-50) !important',
+                        hoverColor: 'var(--p-primary-600) !important',
+                        borderColor: 'var(--p-primary-50) !important',  // border color
+                        hoverBackground: 'var(--p-primary-600) !important'
                     }
                 }
             },
+            selectButton: {
+                borderColor: 'white'
+            }
         },
         extend: {
             css: {
                 ':root': {
-                    '--app-background': 'linear-gradient(var(--p-cyan-500),var(--p-sky-400), var(--p-blue-400))',
+                    '--app-background': 'linear-gradient(#00b4db, #0083b0)',
                 }
             }
         }

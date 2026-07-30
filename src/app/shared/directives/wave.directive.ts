@@ -49,7 +49,6 @@ export class WaveDirective implements OnInit, OnDestroy, OnChanges, AfterViewIni
     this.resizeCanvas();
   }
 
-  // 2. Handle Input Changes
 ngOnChanges(changes: SimpleChanges): void {
     if (changes['syncLevel']) {
       if (!this.animationFrameId) {

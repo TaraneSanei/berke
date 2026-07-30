@@ -2,7 +2,7 @@
   <div class="w-full lg:w-3/4 m-5 flex flex-col items-center">
 
     @if (courseData(); as course) {
-      <div class="w-full mb-5 rounded-2xl border border-white/40 bg-white/10 backdrop-blur-2xl text-[var(--p-primary-50)] relative overflow-hidden">
+      <div class="w-full mb-5 rounded-2xl  border border-white/80 shadow-[inset_0px_0px_40px_8px_rgba(255,255,255,0.15)] bg-[#646464]/30       backdrop-blur-2xl text-[var(--p-primary-50)] relative overflow-hidden">
                 <div class="absolute inset-0 z-0 pointer-events-none opacity-40">
             <div appWave [syncLevel]="syncLevel()" class="w-full h-full"></div>
         </div>
@@ -25,7 +25,7 @@
               
               <!-- Track Number / Boat Icon -->
               <span class="rounded-full z-10 text-[var(--p-primary-50)] border-2 w-9 h-8 inline-flex items-center justify-center shrink-0"
-                    [ngClass]="{'bg-[var(--p-primary-600)]': listenedTo().includes(track.id)}">
+                    [ngClass]="{'bg-(--p-primary-600)/50': listenedTo().includes(track.id)}">
                 
                 @if (track.id !== getNextTrackId()) {
                   <p>{{ track.dayNumber | persianDigits }}</p>

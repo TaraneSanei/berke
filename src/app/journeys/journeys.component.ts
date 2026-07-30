@@ -83,7 +83,6 @@ export class JourneysComponent {
     const total = sortedTracks.length;
     const boatTrackId = this.getNextTrackId(journey);
 
-    // If 7 sessions or under, just show all of them normally
     if (total <= 7) {
       return sortedTracks.map((track, i) => ({
         type: 'track',
@@ -94,13 +93,11 @@ export class JourneysComponent {
       }));
     }
 
-    // Determine the active window around the boat icon
     let currentIndex = boatTrackId ? sortedTracks.findIndex(t => t.id === boatTrackId) : total - 1;
     if (currentIndex === -1) currentIndex = total - 1;
 
     const result: DisplayItem[] = [];
 
-    // 1. Always show the first session
     result.push({
       type: 'track',
       track: sortedTracks[0],
@@ -109,12 +106,10 @@ export class JourneysComponent {
       isLastItem: false
     });
 
-    // 2. Add left spacer if we are far from the start
     if (currentIndex > 2) {
       result.push({ type: 'spacer', isLastItem: false });
     }
 
-    // 3. Add the window: Prev, Current (Boat), Next
     const startWindow = Math.max(1, currentIndex - 1);
     const endWindow = Math.min(total - 2, currentIndex + 1);
 
@@ -128,18 +123,16 @@ export class JourneysComponent {
       });
     }
 
-    // 4. Add right spacer if we are far from the end
     if (currentIndex < total - 3) {
       result.push({ type: 'spacer', isLastItem: false });
     }
 
-    // 5. Always show the last session
     result.push({
       type: 'track',
       track: sortedTracks[total - 1],
       isListened: journey.listenedto.includes(sortedTracks[total - 1].id),
       isBoat: sortedTracks[total - 1].id === boatTrackId,
-      isLastItem: true // Signals the HTML not to draw a connecting line after this
+      isLastItem: true
     });
 
     return result;

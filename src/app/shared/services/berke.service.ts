@@ -4,7 +4,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { usePreset } from '@primeng/themes';
 import { aurora, morning, forest, mountain, sunrise, sunset, neutral } from '../../../mypresets';
 import { environment } from '../../../environments/environment';
-import { Announcement, Course, Emotion, SubscriptionPlan, Tag } from '../../models/data.models';
+import { Announcement, Course, Emotion, NewOrderResult, SubscriptionPlan, Tag, VerifyResult } from '../../models/data.models';
 import { catchError, EMPTY, map, Observable, of, tap } from 'rxjs';
 import * as jalali from 'jalaali-js';
 import localforage from 'localforage';
@@ -49,24 +49,7 @@ private _userTheme = signal<string>('sunrise'); // Default to sunrise immediatel
     name: "Berke_App",
     storeName: "metadata"
   });
-// global error handling
-  private userError = this.store.selectSignal(selectUserError)
-  private journalError = this.store.selectSignal(selectJournalError)
-  private historyError = this.store.selectSignal(selectCalendarError)
-  private journeysError = this.store.selectSignal(selectJourneysError)
-  private meditationSessionsError = this.store.selectSignal(selectMeditationSessionsError)
 
-  // public activeError = computed(() =>{
-  //   const rawError = this.userError() ||
-  //    this.journalError() || 
-  //    this.historyError() || 
-  //    this.journeysError() || 
-  //    this.meditationSessionsError() ||
-  //    this._errorMessage() ||
-  //    null
-  //    if (!rawError) return null;
-  //    return this.getErrorMessage(rawError);
-  // })
   
   constructor() {
 
@@ -162,27 +145,31 @@ private _userTheme = signal<string>('sunrise'); // Default to sunrise immediatel
   dismissAnnouncement(id:string){
     return this.http.post<any>(this.apiUrl + 'announcements/dismiss/'+ id, {})
   }
+verify(authority: string): Observable<VerifyResult> {
+  return this.http.post<VerifyResult>(
+    `${this.apiUrl}subscription/verify/`,
+    { Authority: authority }
+  );
+}
 
-  verify(Authority: string): Observable<boolean> {
-    return this.http.post<any>(`${this.apiUrl}subscription/verify`, { Authority }, { observe: 'response' })
-      .pipe(
-        map(response => {
-          return true;
-        }),
-        catchError(error => {
-          return of(false);
-        })
-      );
-  }
 
-  
-  order(plan: SubscriptionPlan){
-    const order ={
-      subPlan: plan,
-      amount : plan.price,
-    }
-    return this.http.post<any>(this.apiUrl + 'subscription/new-order/' , order)
+verifyDiscountCode(code: string, planId: number): Observable<any> {
+  return this.http.post<any>(
+    `${this.apiUrl}subscription/discount/`,
+    { code: code.trim().toUpperCase(), plan_id: planId }
+  );
+}
+
+order(plan: SubscriptionPlan, discountCode?: string): Observable<NewOrderResult> {
+  const payload: any = { subPlan: { id: plan.id } };
+  if (discountCode) {
+    payload.discount_code = discountCode.trim().toUpperCase();
   }
+  return this.http.post<NewOrderResult>(
+    `${this.apiUrl}subscription/new-order/`,
+    payload
+  );
+}
 
   async loadRecommendationMap() {
     const cached = await this.metaStore.getItem<Record<string, number[]>>('recommendation_map');

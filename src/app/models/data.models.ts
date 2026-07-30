@@ -95,6 +95,20 @@ export interface Order {
     date: Date;
 }
 
+
+export interface NewOrderResult {
+  paymentUrl: string;
+  orderId: string;
+  finalAmount: number;
+}
+
+export interface VerifyResult {
+  message: string;
+  refId: string;
+  orderId: string;
+}
+
+
 export interface Announcement {
     id: string;
     title: string;

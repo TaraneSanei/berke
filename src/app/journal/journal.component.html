@@ -1,14 +1,16 @@
 <div dir="rtl" class="flex justify-center">
 
-  <div class="w-full lg:w-3/4 m-5">
+  <div class="w-full lg:w-3/4 h-full der m-5">
     <!-- jalali calendar -->
-    <div class="p-5 border border-white/40 bg-white/10 mb-5 backdrop-blur-2xl rounded-2xl text-[var(--p-primary-50)]">
+    <div
+      class="p-5 border border-white/80 shadow-[inset_0px_0px_40px_8px_rgba(255,255,255,0.15)] bg-[#646464]/30 mb-5 backdrop-blur-2xl rounded-2xl text-[var(--p-primary-50)]">
       <app-jalali-calendar [year]="calendarView().jy" [month]="calendarView().jm" [monthSummaryMap]="monthSummaryMap()"
         (monthChanged)="onMonthChange($event)" (dateSelected)="selectedDate.set($event.gregorian)">
       </app-jalali-calendar>
     </div>
     <!-- new journal note div -->
-    <div class="p-5 border border-white/40 bg-white/10 backdrop-blur-xl rounded-2xl">
+    <div
+      class="p-5 border border-white/80 shadow-[inset_0px_0px_40px_8px_rgba(255,255,255,0.15)] bg-[#646464]/30 backdrop-blur-xl rounded-2xl">
       <div class=" my-5 items-center justify-between gap-3 text-[var(--p-primary-50)] flex flex-row">
         <div class="w-1/3">
           <p-floatlabel>
@@ -25,11 +27,13 @@
         </div>
         <div class="w-2/3 lg:w-1/3">
           <p-floatlabel>
-            <p-multiselect inputId="emotions" fluid="true" [options]="emotions()" optionLabel="emotion" display="chip"
-              [(ngModel)]="newJournal.emotionalStatus" [maxSelectedLabels]="5">
+            <p-multiselect #emotionSelect inputId="emotions" fluid="true" [options]="emotions()" optionLabel="emotion"
+              display="chip" [(ngModel)]="newJournal.emotionalStatus" [maxSelectedLabels]="5"
+              panelStyleClass="emotion-panel" (onChange)="emotionSelect.hide()">
               <ng-template let-emotion #item>
-                <span class="w-full flex-row inline-flex items-center gap-1 justify-between rounded-2xl"
-                  [style.background]="'var(--p-primary-700)'" [style.color]="'var(--p-primary-50)'">
+                <span
+                  class="w-full flex-row inline-flex border-[var(--p-primary-600)] items-center border gap-1 justify-between rounded-2xl"
+                  [style.background]="'var(--p-primary-50)'" [style.color]="'grey'" [style.opacity]="'80%'">
                   <p class="m-1.5">{{ emotion.emotion }}</p>
                   <app-emotion-icon class="w-5 h-5 mx-2 inline-block align-middle" [emotion]="emotion.emotion">
                   </app-emotion-icon>
@@ -38,11 +42,12 @@
               <ng-template pTemplate="selectedItems" let-selected>
                 <div class="w-full flex flex-col gap-1">
                   <div *ngFor="let s of selected"
-                    class="flex flex-1 items-center justify-between rounded-xl px-3 py-1 text-[var(--p-primary-50)] bg-[var(--p-primary-600)]">
+                    class="flex flex-1 items-center justify-between rounded-xl px-3 py-1 text-[var(--p-primary-600)] bg-[var(--p-primary-50)]">
                     <!-- Emotion + Icon -->
                     <div class="flex items-center gap-1">
-                      <span>{{ s.emotion }}</span>
-                      <app-emotion-icon class="w-5 h-5" [emotion]="s.emotion"></app-emotion-icon>
+                      <app-emotion-icon class="w-5 h-5 inline-block align-middle"
+                        [emotion]="s.emotion"></app-emotion-icon>
+                      {{ s.emotion }}
                     </div>
                     <!-- Remove icon -->
                     <button type="button" class="hover:text-[var(--p-primary-200)]" (click)="removeEmotion(s, selected)"
@@ -66,18 +71,19 @@
         </div>
       </div>
 
-      <textarea rows="5" [(ngModel)]="newJournal.note" type="text" placeholder="چی در ذهنت میگذره؟" fluid="true" pTextarea
-        [autoResize]="true">
+      <textarea rows="5" [(ngModel)]="newJournal.note" type="text" placeholder="چی در ذهنت میگذره؟" fluid="true"
+        pTextarea [autoResize]="true">
             </textarea>
       <div class="my-3">
-        <p-button (onClick)="saveJournal()" rounded="true" severity="primary">
+        <p-button (onClick)="saveJournal()" rounded="true" severity="secondary" variant="outlined">
           <span>ذخیره <i class="pi pi-save"></i></span>
         </p-button>
       </div>
     </div>
 
     <!-- previous journal notes -->
-    <div class="backdrop-blur-2xl border border-white/40 bg-white/10 p-5 text-[var(--p-primary-50)] rounded-2xl mt-5"
+    <div
+      class="backdrop-blur-2xl border border-white/80 shadow-[inset_0px_0px_40px_8px_rgba(255,255,255,0.15)] bg-[#646464]/30 p-5 pb-2 text-[var(--p-primary-50)] rounded-2xl mt-5"
       *ngFor="let entry of combinedEntries()">
       <ng-container [ngSwitch]="entry.type">
         <div *ngSwitchCase="'journal'">
@@ -88,12 +94,12 @@
             <div>
             </div>
             <div
-              class="rounded-2xl px-2 p-1 ml-2 text-[var(--p-primary-600)] bg-[var(--p-accent-100)] flex-row inline-flex items-center justify-center"
+              class="rounded-2xl px-2 p-1 ml-2 text-[var(--p-primary-600)] bg-[var(--p-primary-50)] flex-row inline-flex items-center justify-center"
               *ngFor="let e of entry.emotionalStatus">
               <div>
                 {{ e.emotion }}
 
-                <app-emotion-icon class="w-5 text-[var(--p-primary-500)] h-5 inline-block align-middle"
+                <app-emotion-icon class="w-5 text-[var(--p-primary-600)] h-5 inline-block align-middle"
                   [emotion]="e.emotion">
                 </app-emotion-icon>
               </div>
@@ -128,8 +134,10 @@
               </div>
               <div class="w-2/3 lg:w-1/3">
                 <p-floatlabel>
-                  <p-multiselect inputId="emotions" fluid="true" [options]="emotions()" optionLabel="emotion"
-                    display="chip" [(ngModel)]="editableJournal.emotionalStatus" [maxSelectedLabels]="5">
+                  <p-multiselect #editEmotionSelect inputId="emotions" fluid="true" [options]="emotions()" optionLabel="emotion"
+                    display="chip" [(ngModel)]="editableJournal.emotionalStatus" [maxSelectedLabels]="5"
+                     panelStyleClass="emotion-panel"
+                    (onChange)="editEmotionSelect.hide()">>
                     <ng-template let-emotion #item>
                       <span class="w-full flex-row inline-flex items-center gap-1 justify-between rounded-2xl"
                         [style.background]="'var(--p-primary-700)'" [style.color]="'var(--p-primary-50)'">
@@ -141,14 +149,14 @@
                     <ng-template pTemplate="selectedItems" let-selected>
                       <div class="w-full flex flex-col gap-1">
                         <div *ngFor="let s of selected"
-                          class="flex flex-1 items-center justify-between rounded-xl px-3 py-1 text-[var(--p-primary-50)] bg-[var(--p-primary-600)]">
+                          class="flex flex-1 items-center justify-between rounded-xl px-3 py-1 text-(--p-primary-50) bg-(--p-primary-600)">
                           <!-- Emotion + Icon -->
                           <div class="flex items-center gap-1">
                             <span>{{ s.emotion }}</span>
                             <app-emotion-icon class="w-5 h-5" [emotion]="s.emotion"></app-emotion-icon>
                           </div>
                           <!-- Remove icon -->
-                          <button type="button" class="hover:text-[var(--p-primary-200)]"
+                          <button type="button" class="hover:text-(--p-primary-200)"
                             (click)="removeEmotion(s, selected)" aria-label="Remove emotion">
                             <span class="flex items-center justify-center">
                               <i class="pi pi-times-circle"></i>
@@ -184,12 +192,12 @@
         </div>
         <div *ngSwitchCase="'meditation'" (click)="toggleExpanded(entry)">
           <div *ngIf="expanded()?.type === 'meditation' && expanded()?.id === entry.id">
-            <div class="flex justify-between flex-row pb-3 items-center border-b-2 border-[var(--p-primary-600)]">
+            <div class="flex justify-between flex-row pb-3 items-center border-b-2 border-(--p-primary-600)">
               <p>ساعت {{ entry.dateTime | date: 'hh:mm' | persianDigits}} </p>
               <p class="text-lg">{{ entry.duration*1000 |date:'mm:ss': 'UTC' | persianDigits }} دقیقه مدیتیشن</p>
               <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</p>
             </div>
-            <div class="flex justify-self-center m-5 flex-row justify-between sm:w-2/3 w-full">
+            <div class="flex justify-self-center mt-2 flex-row justify-between sm:w-2/3 w-full">
               <div *ngIf="entry.initialEmotion && entry.initialEmotion.length > 0">
                 <div class="flex flex-col m-2 w-full justify-center items-center"
                   *ngFor="let e of entry.initialEmotion">

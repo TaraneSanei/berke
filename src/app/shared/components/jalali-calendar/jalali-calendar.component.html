@@ -4,7 +4,7 @@
       icon="pi pi-chevron-right"></p-button>
     <div class="text-center">
       <div class="font-semibold text-lg">{{ monthNames[month - 1] }} <span
-          class="text-sm text-[var(--p-primary-200)]">{{ year | persianDigits }}</span></div>
+          class="text-sm text-(--p-primary-200)">{{ year | persianDigits }}</span></div>
     </div>
     <p-button (click)="nextMonth()" severity="secondary" rounded="true" variant="text" size="small"
       icon="pi pi-chevron-left"></p-button>
@@ -12,19 +12,19 @@
 
   <!-- weekday header -->
   <div class="grid border grid-cols-7 border-white/50 text-center font-medium">
-    <div *ngFor="let wd of weekDays" class="py-1 border-white/50 border border-b-0">{{ wd }}</div>
+    <div *ngFor="let wd of weekDays" class="py-1 border-white/50 bg-white/40 border border-b-0">{{ wd }}</div>
   </div>
 
   <!-- days grid -->
-  <div class="grid shadow-inner grid-rows-5 border border-white/50 grid-cols-7">
+  <div class="grid shadow-inner grid-rows-5 border border-white/50 bg-white/20 grid-cols-7">
 
     <button class="border border-white/50" *ngFor="let day of days; trackBy: trackByDay" (click)="selectDate(day)"
-      [attr.aria-current]="isToday(day) ? 'date' : null" [class.bg-[var(--p-accent-100)]]="isSelected(day)"
-      [class.text-[var(--p-primary-500)]]="isSelected(day)">
+      [attr.aria-current]="isToday(day) ? 'date' : null" [style.background-color]="isSelected(day) ? 'color-mix(in srgb, var(--p-primary-100) 80%, transparent)' : ''"
+      [class.text-[var(--p-primary-600)]]="isSelected(day)">
       <div>
         <span class="flex flex-row items-center justify-center" *ngIf="getSummaryForDay(day) as summary">
           <div *ngFor="let _ of [].constructor((Math.min(summary.meditations, 2)))" class="flex ml-0.5">
-            <span class="w-3.5 h-3.5 text-[var(--p-primary-100)] opacity-70 "
+            <span class="w-3.5 h-3.5 text-(--p-primary-100) opacity-70 "
               [class.text-[var(--p-primary-600)]]="isSelected(day)"
               style="filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.7));">
               <svg class="w-3.5 h-3.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 90">
@@ -49,7 +49,7 @@
       <div>
         <span class="flex flex-row gap-1 items-center justify-center" *ngIf="getSummaryForDay(day) as summary">
           <div *ngFor="let _ of [].constructor((Math.min(summary.journals, 3)))" class="flex mb-1">
-            <span class="w-1.5 h-1.5 bg-[var(--p-primary-100)] opacity-70 rounded-full"
+            <span class="w-1.5 h-1.5 bg-(--p-primary-100) opacity-70 rounded-full"
               [class.bg-[var(--p-primary-600)]]="isSelected(day)"
               style="filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.7));">
             </span>

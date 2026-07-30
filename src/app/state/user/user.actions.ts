@@ -9,7 +9,7 @@ export const login = createAction(
 
 export const loginSuccess = createAction(
     '[User] Login Success',
-    props<{ token: string; refreshToken: string }>()
+    props<{ token: string }>()
 );
 
 export const loginFailure = createAction(
@@ -74,3 +74,8 @@ export const setPasswordWithOtpFailure = createAction(
 );
 
 export const logout = createAction('[User] Logout');
+export const logoutSuccess = createAction('[User] Logout Success');
+export const logoutFailure = createAction(
+  '[User] Logout Failure',
+  props<{ error: any }>()
+);

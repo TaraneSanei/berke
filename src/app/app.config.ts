@@ -29,28 +29,16 @@ import { errorInterceptor } from './shared/interceptors/error.interceptor';
 import { MessageService } from 'primeng/api';
 import { AnnouncementReducer } from './state/announcement/announcement.reducer';
 import { AnnouncementEffects } from './state/announcement/announcement.effects';
+import { clearStateMetaReducer } from './state/meta-reducers/clear-state.reducer';
+import { orderReducer } from './state/order/order.reducer';
+import { OrderEffects } from './state/order/order.effects';
 
-
-
-const chosenThemeKey = (localStorage?.getItem('user-theme') || 'neutral') as 'sunrise' | 'sunset' | 'forest' | 'aurora' | 'mountain' | 'morning' | 'neutral';
-
-const presetMap = {
-  'sunrise' : sunrise,
-  'sunset' : sunset,
-  'forest' : forest,
-  'aurora' : aurora,
-  'mountain' : mountain,
-  'morning' : morning,
-  'neutral' : neutral
-};
-
-const chosenPreset = presetMap[chosenThemeKey] ?? neutral;
 
 
 export const appConfig: ApplicationConfig = {
-  providers : [
+  providers: [
     //Angular configurations
-        provideAnimationsAsync(),
+    provideAnimationsAsync(),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     MessageService,
@@ -58,8 +46,8 @@ export const appConfig: ApplicationConfig = {
     CookieService,
     provideHttpClient(
       withInterceptors([
-        authInterceptor,
         errorInterceptor,
+        authInterceptor,
         loadingInterceptor
       ])
     ),
@@ -72,8 +60,11 @@ export const appConfig: ApplicationConfig = {
       journal: JournalReducer,
       meditationSessions: meditationSessionsReducer,
       calendar: calendarReducer,
-      announcements: AnnouncementReducer
+      announcements: AnnouncementReducer,
+      order: orderReducer
 
+    }, {
+      metaReducers: [clearStateMetaReducer]
     }),
     provideEffects([
       UserEffects,
@@ -82,17 +73,19 @@ export const appConfig: ApplicationConfig = {
       JournalEffects,
       MeditationSessionsEffects,
       CalendarEffects,
-      AnnouncementEffects
+      AnnouncementEffects,
+      OrderEffects
     ]),
     provideStoreDevtools({
       maxAge: 25,
       logOnly: !isDevMode()
     }),
     //PrimeNG
-    provideAnimationsAsync(),
     providePrimeNG({
       theme: {
-        preset: neutral
+        preset: neutral, options: {
+          darkModeSelector: false
+        }
       }
     }),
     provideAppInitializer(() => {

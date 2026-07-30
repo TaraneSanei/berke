@@ -28,9 +28,11 @@ import { TableModule } from 'primeng/table';
 import { FormatDurationPipe } from '../shared/pipes/format-duration.pipe';
 import { requestPasswordOtp } from '../state/otp/otp.actions';
 import { Actions, ofType } from '@ngrx/effects';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { LoadAnnouncements } from '../state/announcement/announcement.actions';
 import { selectAnnouncements } from '../state/announcement/announcement.selector';
+import { loadOrders } from '../state/order/order.actions';
+import { selectOrders } from '../state/order/order.selector';
 
 @Component({
   selector: 'app-profile',
@@ -65,14 +67,16 @@ export class ProfileComponent implements OnInit {
   private berkeService = inject(BerkeService);
   private router = inject(Router)
   private dataService = inject(DataService)
+  private store = inject(Store<AppState>);
   expanded = signal<('user' | 'settings' | 'subscription' | 'badges' | 'about' | 'history' | 'announcements')[]>([])
   isEditingUserName = signal<boolean>(false);
   isChangingPassword = signal<boolean>(false);
   isChangingTheme = signal<boolean>(false);
   isChangingNotification = signal<boolean>(false);
   UserProfile = signal<User | null>(null)
-  orders = signal<Order[]>([])
-  announcements = signal<Announcement[]>([])
+  orders = toSignal(this.store.select(selectOrders), {
+    initialValue: [] as Order[],
+  });  announcements = signal<Announcement[]>([])
   selectedTheme = this.berkeService.userTheme
   subscriptionPlans = this.berkeService.subscriptionPlans
   themeName: string;
@@ -98,11 +102,11 @@ export class ProfileComponent implements OnInit {
   private destroyRef = inject(DestroyRef); // For auto-unsubscribing (Angular 16+)
 
 
-  constructor(private store: Store<AppState>, private fb: FormBuilder) {
+  constructor() {
     this.store.dispatch(getProfile())
     this.berkeService.loadSubscriptionPlans()
     this.themeName = this.themes.find(theme => theme.value === (this.selectedTheme()))?.label || 'طلوع';
-    this.loadOrderHistory();
+    this.store.dispatch(loadOrders());
     this.store.dispatch(LoadAnnouncements())
 
     effect(() => {
@@ -197,8 +201,7 @@ export class ProfileComponent implements OnInit {
           rejectLabel: 'نه',
           rejectButtonProps: {
             label: 'به برکه برگرد',
-            severity: 'primary',
-            outlined: true,
+            severity: 'secondary',
             rounded: true
           },
           acceptButtonProps: {
@@ -215,15 +218,4 @@ export class ProfileComponent implements OnInit {
         });
   }
 
-  loadOrderHistory (){
-    this.dataService.getOrderHistory().subscribe({
-    next: (data: Order[]) => {
-      this.orders.set(data);
-      console.log(this.orders())
-    },
-    error: (err) => {
-        console.error('Failed to load order history:', err);
-      }
-  })
-  }
 }

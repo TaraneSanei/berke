@@ -6,6 +6,7 @@ import { MeditationSessionsState } from "./meditationsSessions/meditationSession
 import { CalendarState } from "./history/history.reducer";
 import { JourneysState } from "./journeys/journeys.reducer";
 import { AnnouncementsState } from "./announcement/announcement.reducer";
+import { OrderState } from "./order/order.reducer";
 
 export interface AppState {
   user: UserState;
@@ -15,5 +16,6 @@ export interface AppState {
   journal: JournalState;
   meditationSessions: MeditationSessionsState;
   calendar: CalendarState;
-  announcements: AnnouncementsState
+  announcements: AnnouncementsState;
+  order: OrderState
 }

@@ -28,7 +28,7 @@ export class JalaliCalendarComponent implements OnInit {
   @Output() monthChanged = new EventEmitter<{ year: number; month: number }>();
   days: JalaliDay[] = [];
 Math = Math;
-  weekDays = ['ش', 'ی', 'د', 'س', 'چ', 'پ', 'ج']; // Saturday..Friday (sh, ya, do, se, ch, pa, j)
+  weekDays = ['ش', 'ی', 'د', 'س', 'چ', 'پ', 'ج'];
   monthNames = [
     'فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور',
     'مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند'

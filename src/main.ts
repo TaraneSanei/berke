@@ -6,7 +6,7 @@ bootstrapApplication(AppComponent, appConfig)
   .then(() => {
     const splash = document.getElementById('app-loader');
     if (splash) {
-      splash.style.opacity = '0'; // fade out (if you add CSS)
+      splash.style.opacity = '0';
       setTimeout(() => splash.remove(), 300); // fully remove after transition
     }
   })

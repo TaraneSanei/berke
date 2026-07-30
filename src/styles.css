@@ -1,7 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
 
 @import "tailwindcss";
-
+@import "tailwindcss";
 html {
   direction: rtl;
   background-image: var(--p--root---app-background);
@@ -53,13 +53,4 @@ z-index: -99999 !important;
 scale: 0 !important;
 }
 
-:root {
-  color-scheme: light;
-}
 
-input, 
-textarea, 
-select, 
-button {
-  color-scheme: light !important;
-}

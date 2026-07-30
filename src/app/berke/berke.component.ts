@@ -116,8 +116,9 @@ export class BerkeComponent {
 
 
     this.responsiveOptions = [
+      { breakpoint: '1600px', numVisible: 2, numScroll: 1 },
       { breakpoint: '1400px', numVisible: 2, numScroll: 1 },
-      { breakpoint: '1199px', numVisible: 3, numScroll: 1 },
+      { breakpoint: '1199px', numVisible: 2, numScroll: 1 },
       { breakpoint: '767px', numVisible: 2, numScroll: 1 },
       { breakpoint: '575px', numVisible: 1, numScroll: 1 }
     ]
@@ -130,7 +131,7 @@ export class BerkeComponent {
 
   handleAnnouncementAction() {
     this.dismissAnnouncement();
-    // Route to the course or feature
+    this.router.navigate([this.topAnnouncement().link]);
   }
 
   dismissAnnouncement() {
@@ -178,13 +179,10 @@ export class BerkeComponent {
       }));
     }
 
-    // Determine the active window around the boat icon
     let currentIndex = boatTrackId ? sortedTracks.findIndex(t => t.id === boatTrackId) : total - 1;
     if (currentIndex === -1) currentIndex = total - 1;
 
     const result: DisplayItem[] = [];
-
-    // 1. Always show the first session
     result.push({
       type: 'track',
       track: sortedTracks[0],
@@ -193,12 +191,10 @@ export class BerkeComponent {
       isLastItem: false
     });
 
-    // 2. Add left spacer if we are far from the start
     if (currentIndex > 2) {
       result.push({ type: 'spacer', isLastItem: false });
     }
 
-    // 3. Add the window: Prev, Current (Boat), Next
     const startWindow = Math.max(1, currentIndex - 1);
     const endWindow = Math.min(total - 2, currentIndex + 1);
 
@@ -212,12 +208,10 @@ export class BerkeComponent {
       });
     }
 
-    // 4. Add right spacer if we are far from the end
     if (currentIndex < total - 3) {
       result.push({ type: 'spacer', isLastItem: false });
     }
 
-    // 5. Always show the last session
     result.push({
       type: 'track',
       track: sortedTracks[total - 1],

@@ -25,9 +25,9 @@
   </div>
 } -->
 
-  <div class="w-full lg:w-3/4 m-5 mt-2">
+  <div class="w-full lg:w-3/4 m-5 mt-0">
     <div
-      class="flex flex-row my-5 backdrop-blur-2xl rounded-2xl justify-center text-(--p-primary-50) border border-white/40 bg-white/10 p-3">
+      class="flex flex-row my-5 backdrop-blur-2xl rounded-2xl justify-center text-(--p-primary-50) border border-white/80 shadow-[inset_0px_0px_40px_8px_rgba(255,255,255,0.15)] bg-[#646464]/30 p-3">
       <div class="flex flex-col items-center gap-5" *ngIf="getTimeOfDay() === 'morning'">
         <span class="w-30 h-30" [innerHTML]="timeIcons['morning']"
           style="filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.7));"></span>
@@ -57,7 +57,7 @@
 </app-announcement>
 
 <div appWave [syncLevel]="calculateSyncLevel(journey)" *ngIf="featuredJourney() as journey"
-      class="my-5 h-40 backdrop-blur-2xl rounded-2xl p-3 text-[var(--p-primary-50)] bg-white/10 border border-white/40"
+      class="my-5 h-40 backdrop-blur-2xl rounded-2xl p-3 text-[var(--p-primary-50)] border border-white/80 shadow-[inset_0px_0px_40px_8px_rgba(255,255,255,0.15)] bg-[#646464]/30"
       (click)="goToCourse(journey.course.id)">
       <p class="text-xl ">ادامه سفر {{ journey.course.title }}</p>
 <div class="mt-5 mb-5 flex justify-center items-center flex-row">
@@ -149,12 +149,12 @@
         </p-button>
       </div>
     </div> -->
-    <div class="my-5 bg-white/10 border border-white/40 backdrop-blur-2xl rounded-2xl p-3">
+    <div class="my-5 border border-white/80 shadow-[inset_0px_0px_40px_8px_rgba(255,255,255,0.15)] bg-[#646464]/30 backdrop-blur-2xl rounded-2xl p-3">
       <p class="text-xl mb-5 text-[var(--p-primary-50)]">جدیدترین ها در برکه</p>
       <p-carousel class="m-5" [value]="newest()" [numScroll]="1" [numVisible]="3"
         [responsiveOptions]="responsiveOptions" showIndicators="false" [circular]="true" dir="rtl">
         <ng-template let-course #item>
-          <div class="border border-white/30 bg-[var(--p-primary-600)]/30 flex flex-col items-center backdrop-blur-2xl justify-center h-30 text-[var(--p-primary-50)] m-2 rounded-3xl
+          <div class="border border-white/30 bg-[var(--p-primary-600)]/20 flex flex-col items-center backdrop-blur-2xl justify-center h-30 text-[var(--p-primary-50)] m-2 rounded-3xl
           shadow-[0px_0px_5px_1px_rgba(255,255,255,0.4)]
           " (click)="goToCourse(course.id)">
             <div class="grid grid-cols-3 w-full items-center ">
@@ -182,8 +182,7 @@
       <p-carousel class="m-5" [value]="recommendedCourses()" [numScroll]="1" [numVisible]="3"
         [responsiveOptions]="responsiveOptions" showIndicators="false" [circular]="true" dir="rtl">
         <ng-template let-course #item>
-          <div class="border border-white/30 bg-[var(--p-primary-600)]/30 flex flex-col items-center backdrop-blur-2xl justify-center h-30 text-[var(--p-primary-50)] m-2 rounded-3xl
-          shadow-[0px_0px_5px_1px_rgba(255,255,255,0.4)]
+          <div class="border border-white/50 bg-[var(--p-primary-600)]/20 flex flex-col items-center backdrop-blur-2xl justify-center h-30 text-[var(--p-primary-50)] m-2 rounded-3xl
           " (click)="goToCourse(course.id)">
             <div class="grid grid-cols-3 w-full items-center ">
               <div class="flex flex-row mt-7 w-fit justify-self-start">
@@ -209,8 +208,7 @@
       <p-carousel class="m-5" [value]="skillCourses()" [numScroll]="1" [numVisible]="3"
         [responsiveOptions]="responsiveOptions" showIndicators="false" [circular]="true" dir="rtl">
         <ng-template let-course #item>
-          <div class="border border-white/30 bg-[var(--p-primary-600)]/30 flex flex-col items-center backdrop-blur-2xl justify-center h-30 text-[var(--p-primary-50)] m-2 rounded-3xl
-          shadow-[0px_0px_5px_1px_rgba(255,255,255,0.4)]
+          <div class="border border-white/50 bg-[var(--p-primary-600)]/20 flex flex-col items-center backdrop-blur-2xl justify-center h-30 text-[var(--p-primary-50)] m-2 rounded-3xl
           " (click)="goToCourse(course.id)">
             <div class="grid grid-cols-3 w-full items-center ">
               <div class="flex flex-row mt-7 w-fit justify-self-start">
@@ -236,8 +234,7 @@
       <p-carousel class="m-5" [value]="deepCourses()" [numScroll]="1" [numVisible]="3"
         [responsiveOptions]="responsiveOptions" showIndicators="false" [circular]="true" dir="rtl">
         <ng-template let-course #item>
-          <div class="border border-white/30 bg-[var(--p-primary-600)]/30 flex flex-col items-center backdrop-blur-2xl justify-center h-30 text-[var(--p-primary-50)] m-2 rounded-3xl
-          shadow-[0px_0px_5px_1px_rgba(255,255,255,0.4)]
+          <div class="border border-white/50 bg-[var(--p-primary-600)]/20 flex flex-col items-center backdrop-blur-2xl justify-center h-30 text-[var(--p-primary-50)] m-2 rounded-3xl
           " (click)="goToCourse(course.id)">
             <div class="grid grid-cols-3 w-full items-center ">
               <div class="flex flex-row mt-7 w-fit justify-self-start">
@@ -267,7 +264,7 @@
             <p>{{ course.tracks }}</p>
           </div>
     </div> -->
-    <div class="my-5 bg-white/10 border border-white/40 backdrop-blur-2xl rounded-2xl p-3">
+    <div class="my-5 border border-white/80 shadow-[inset_0px_0px_40px_8px_rgba(255,255,255,0.15)] bg-[#646464]/30 backdrop-blur-2xl rounded-2xl p-3">
       <p class="text-xl text-[var(--p-primary-50)]">دسته بندی ها</p>
 
       <p-selectbutton [(ngModel)]="selectedTags" class="mt-3" style="flex-wrap: wrap;" [options]="tags()"
@@ -275,8 +272,7 @@
       </p-selectbutton>
 
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mt-4 justify-center">
-        <div *ngFor="let course of displayedCourses()" class="border border-white/30 bg-[var(--p-primary-600)]/30 flex flex-col items-center backdrop-blur-2xl justify-center h-30 text-[var(--p-primary-50)] m-2 rounded-3xl
-          shadow-[0px_0px_5px_1px_rgba(255,255,255,0.4)]
+        <div *ngFor="let course of displayedCourses()" class="border border-white/50 bg-[var(--p-primary-600)]/20 flex flex-col items-center backdrop-blur-2xl justify-center h-30 text-[var(--p-primary-50)] m-2 rounded-3xl
           " (click)="goToCourse(course.id)">
           <div class="grid grid-cols-3 w-full items-center ">
             <div class="flex flex-row mt-7 w-fit justify-self-start">

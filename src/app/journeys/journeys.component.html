@@ -5,7 +5,7 @@
       <div class="w-full mb-5">
 
         <div (click)="toggleExpanded(journey)"
-             class="rounded-2xl border border-white/40 bg-white/10 backdrop-blur-2xl text-[var(--p-primary-50)] transition-all duration-700 ease-in-out cursor-pointer overflow-hidden relative">
+             class="rounded-2xl border border-white/80 shadow-[inset_0px_0px_40px_8px_rgba(255,255,255,0.15)] bg-[#646464]/30 backdrop-blur-2xl text-(--p-primary-50) transition-all duration-700 ease-in-out cursor-pointer overflow-hidden relative">
 
           <div class="grid transition-all duration-700 ease-in-out"
                [class.grid-rows-[1fr]]="expanded() !== journey.course.id"
@@ -23,8 +23,8 @@
                          [ngClass]="{'w-full': !item.isLastItem}">
 
                       @if (item.type === 'track') {
-                        <span class="rounded-full m-1 text-[var(--p-primary-50)] border-2 w-8 h-8 inline-flex items-center justify-center shrink-0"
-                              [ngClass]="{'bg-[var(--p-primary-600)]': item.isListened}">
+                        <span class="rounded-full m-1 text-(--p-primary-50) border-2 w-8 h-8 inline-flex items-center justify-center shrink-0"
+                              [ngClass]="{'bg-(--p-primary-600)': item.isListened}">
                           
                           @if (!item.isBoat) {
                             <p>{{ item.track.dayNumber | persianDigits }}</p>
@@ -64,11 +64,11 @@
                           }
                         </span>
                       } @else {
-                        <span class="text-[var(--p-primary-50)] mx-2 text-xl tracking-widest shrink-0">...</span>
+                        <span class="text-(--p-primary-50) mx-2 text-md tracking-widest shrink-0">...</span>
                       }
 
                       @if (!item.isLastItem) {
-                        <div class="h-0.5 flex grow bg-[var(--p-primary-100)] mx-1"></div>
+                        <div class="h-0.5 flex grow bg-(--p-primary-100) mx-1"></div>
                       }
                     </div>
                   }
@@ -101,12 +101,12 @@
                   <p class="text-lg">{{ journey.course.title }}</p>
                 </div>
 
-                <p class="mb-5 text-[var(--p-primary-300)] text-center">{{ journey.course.description }}</p>
+                <p class="mb-5 text-(--p-primary-300) text-center">{{ journey.course.description }}</p>
 
                 @for (track of journey.course.tracks; track track.id) {
                   <div class="flex w-full flex-row items-center justify-start my-2">
-                    <span class="rounded-full z-10 text-[var(--p-primary-50)] border-2 w-9 h-8 inline-flex items-center justify-center shrink-0"
-                          [ngClass]="{'bg-[var(--p-primary-600)]': journey.listenedto.includes(track.id)}">
+                    <span class="rounded-full z-10 text-(--p-primary-50) border-2 w-9 h-8 inline-flex items-center justify-center shrink-0"
+                          [ngClass]="{'bg-(--p-primary-600)': journey.listenedto.includes(track.id)}">
                       
                       @if (track.id !== getNextTrackId(journey)) {
                         <p>{{ track.dayNumber | persianDigits }}</p>

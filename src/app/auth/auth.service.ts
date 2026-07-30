@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { CookieService } from 'ngx-cookie-service';
 import { SubscriptionPlan, User } from '../models/data.models';
-import { catchError, Observable, of, tap } from 'rxjs';
+import { catchError, Observable, of, tap, throwError } from 'rxjs';
 import { jwtDecode } from 'jwt-decode';
 
 @Injectable({
@@ -12,13 +12,15 @@ import { jwtDecode } from 'jwt-decode';
 })
 export class AuthService {
 
+  private accessToken: string | null = null;
+
   private tokenKey = 'authToken';
   private refreshTokenKey = 'refreshToken';
   private apiUrl = environment.apiUrl + 'user/'
 
   constructor(private http: HttpClient, private router: Router, private cookieService: CookieService) { }
   signup(phoneNumber: string, password: string): Observable<any> {
-    return this.http.post<any>(this.apiUrl + "register/", { 'phoneNumber': phoneNumber, 'password': password });
+    return this.http.post<any>(this.apiUrl + "register/", { 'phoneNumber': phoneNumber, 'password': password }, { withCredentials: true });
   }
 
   requestOTP(phoneNumber: string): Observable<any> {
@@ -26,71 +28,40 @@ export class AuthService {
     return this.http.post<any>(this.apiUrl + 'otp/send/', { phone_number: phoneNumber })
   }
 
-  verifyOTP(phoneNumber:string, otp: string) {
-    return this.http.post<any>(this.apiUrl + 'otp/verify/', { phone_number: phoneNumber, otp: otp })
+  verifyOTP(phoneNumber: string, otp: string) {
+    return this.http.post<any>(this.apiUrl + 'otp/verify/', { phone_number: phoneNumber, otp: otp }, { withCredentials: true })
   }
 
   login(phoneNumber: string, password: string): Observable<any> {
-    return this.http.post<any>(this.apiUrl + 'token/', { 'phone_number': phoneNumber, password })
+    return this.http.post<any>(this.apiUrl + 'token/', { 'phone_number': phoneNumber, password }, { withCredentials: true })
   }
 
   setToken(token: string): void {
-    localStorage.setItem(this.tokenKey, token);
+    this.accessToken = token;
   }
 
   getToken(): string | null {
-    return localStorage.getItem(this.tokenKey);
+    return this.accessToken;
   }
 
-  setRefreshToken(token: string): void {
-    this.cookieService.set(this.refreshTokenKey, token, 1);
-  }
 
-  getRefreshToken(): string | null {
-    return this.cookieService.get(this.refreshTokenKey)
-  }
+  logout(): Observable<any> {
+    return this.http.post<any>(this.apiUrl + 'logout/', {}, { withCredentials: true })
 
-  logout(): void {
-    this.removeToken();
-    this.removeRefreshToken();
   }
 
   removeToken(): void {
-    localStorage.removeItem(this.tokenKey);
-  }
-
-  removeRefreshToken(): void {
-    this.cookieService.delete(this.refreshTokenKey);
-  }
-
-
-  isLoggedIn(): boolean {
-    const token = this.getToken();
-    if (token && !this.isTokenExpired(token)) {
-      return true;
-    } else {
-      this.logout();
-      return false;
-    }
-  }
-
-  isTokenExpired(token: string): boolean {
-    const decoded: any = jwtDecode(token);
-    const expiryTime = decoded.exp * 1000;
-    return Date.now() >= expiryTime;
+    this.accessToken = null
   }
 
   refreshAccessToken(): Observable<any> {
-    const refreshToken = this.getRefreshToken();
-    return this.http.post<any>(this.apiUrl + 'token/refresh/', { refresh: refreshToken }, { withCredentials: true }).pipe(
+    return this.http.post<any>(this.apiUrl + 'token/refresh/', {}, { withCredentials: true }).pipe(
       tap(response => {
         console.log('refresh token sent to update the access token')
         this.setToken(response.access);
-        this.setRefreshToken(response.refresh)
       }),
       catchError(error => {
-        this.logout();
-        return of({ 'error': error })
+        return throwError(() => error)
       })
     );
   }

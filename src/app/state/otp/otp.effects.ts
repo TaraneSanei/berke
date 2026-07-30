@@ -42,9 +42,8 @@ export class OTPEffects {
       switchMap((action) =>
         from(this.authService.verifyOTP(action.phoneNumber, action.otp)).pipe(
           mergeMap((response) => [
-            loginSuccess({ token: response.access, refreshToken: response.refresh }),
+            loginSuccess({ token: response.access}),
             verifyOtpSuccess(),
-            getProfile()
           ]),
           catchError((error) => of(verifyOtpFailure({ error: error })))
         ))))

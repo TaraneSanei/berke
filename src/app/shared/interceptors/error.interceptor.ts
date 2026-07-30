@@ -3,7 +3,6 @@ import { inject } from '@angular/core';
 import { MessageService } from 'primeng/api';
 import { catchError, throwError } from 'rxjs';
 
-//The English-to-Farsi Error Dictionary
 const errorTranslations: Record<string, string> = {
   "Track not found": "فایل صوتی پیدا نشد.",
   "user doesn't have access": "شما اشتراک فعال برای دسترسی به این محتوا را ندارید.",
@@ -12,7 +11,6 @@ const errorTranslations: Record<string, string> = {
   "No active account found with the given credentials": "حساب کاربری با این مشخصات یافت نشد.",
   "Not found.": "اطلاعات درخواست شده یافت نشد.",
   "User not found": "کاربری با این شماره یافت نشد.",
-  // Add more backend strings here as you encounter them
 };
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
@@ -50,6 +48,12 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
           if (error.status === 403) errorMessage = 'شما دسترسی لازم برای این کار را ندارید.';
         }
       }
+      if (error.status === 401) {
+  const isRefreshCall = req.url.includes('token/');
+  if (!isRefreshCall) {
+    return throwError(() => error);
+  }
+}
 
       messageService.add({
         severity: 'error',

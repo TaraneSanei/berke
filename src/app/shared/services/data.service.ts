@@ -1,7 +1,7 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
-import { catchError, EMPTY, forkJoin, from, map, Observable, of, switchMap, tap } from 'rxjs';
+import { catchError, concat, EMPTY, forkJoin, from, map, Observable, of, switchMap, tap, throwError } from 'rxjs';
 import { CalendarSummary, Course, Emotion, Journal, Journey, JourneysSession, MeditationSession, Order, Track } from '../../models/data.models';
 import localforage from 'localforage';
 
@@ -14,6 +14,11 @@ export class DataService {
   private readonly COURSE_CACHE_KEY_PREFIX = 'course_details_';
   private apiUrl = environment.apiUrl
   private cache = new Map<string, Course>();
+
+private courseKeys(courseId: string) {
+  const body = this.COURSE_CACHE_KEY_PREFIX + courseId;
+  return { body, lm: `${body}_lm` };
+}
 
   getCoursesCache(): Map<string, Course> {
     return this.cache;
@@ -28,42 +33,104 @@ export class DataService {
 
 
   getCourse(courseId: string): Observable<Course> {
-    if (this.cache.has(courseId)) {
-      return of(this.cache.get(courseId)!);
-    }
-    const cacheKey = this.COURSE_CACHE_KEY_PREFIX + courseId;
-    return from(localforage.getItem<Course>(cacheKey)).pipe(
-      switchMap(cachedCourse => {
-        if (cachedCourse) {
-          console.log(`[Cache] Found course ${courseId} in IndexedDB.`);
-          this.cache.set(courseId, cachedCourse);
-          return of(cachedCourse);
-        }
-        console.log(`[Cache] Course ${courseId} not found. Fetching from API.`);
-        return this.http.get<Course>(this.apiUrl + 'meditation/courses/' + courseId).pipe(
-          tap(course => {
-            this.cache.set(courseId, course)
-          }), tap(course => {
-            this.cacheCourse(course);
+  const { body: bodyKey, lm: lmKey } = this.courseKeys(courseId);
+  const memCached = this.cache.get(courseId) ?? null;
+
+  const read$ = from(Promise.all([
+    memCached ? Promise.resolve(memCached) : localforage.getItem<Course>(bodyKey),
+    localforage.getItem<string>(lmKey),
+  ]));
+
+  return read$.pipe(
+    switchMap(([cached, lastModified]) => {
+      if (cached) this.cache.set(courseId, cached);
+
+      // only revalidate when BOTH the body and its timestamp survived
+      const headers = (cached && lastModified)
+        ? new HttpHeaders().set('If-Modified-Since', lastModified)
+        : undefined;
+
+      const fresh$ = this.http
+        .get<Course>(`${this.apiUrl}meditation/courses/${courseId}`, {
+          observe: 'response',
+          headers,
+        })
+        .pipe(
+          switchMap(res => {
+            if (res.status === 200 && res.body) {
+              const course = res.body;
+              this.cache.set(courseId, course);
+              return from(this.cacheCourse(course, res.headers.get('Last-Modified')))
+                .pipe(map(() => course));
+            }
+            return cached ? of(cached) : EMPTY;
           }),
           catchError(err => {
-            console.error(`Error fetching or caching course ${courseId}:`, err);
-            return EMPTY;
+            if (err?.status === 304) {
+              return EMPTY; 
+            }
+            console.error(`Error fetching course ${courseId}:`, err);
+            return cached ? EMPTY : throwError(() => err);
           })
         );
-      })
-    )
-  }
 
-  private async cacheCourse(course: Course): Promise<void> {
-    const cacheKey = this.COURSE_CACHE_KEY_PREFIX + course.id;
-    try {
-      await localforage.setItem(cacheKey, course);
-      console.log(`[Cache] Saved course ${course.id} to IndexedDB.`);
-    } catch (err) {
-      console.error(`Error saving course ${course.id} to localforage:`, err);
+      return cached ? concat(of(cached), fresh$) : fresh$;
+    })
+  );
+}
+
+private async cacheCourse(course: Course, lastModified: string | null): Promise<void> {
+  const { body: bodyKey, lm: lmKey } = this.courseKeys(String(course.id));
+  try {
+    await localforage.setItem(bodyKey, course);
+    if (lastModified) {
+      await localforage.setItem(lmKey, lastModified);
+    } else {
+      await localforage.removeItem(lmKey); // don't keep a stale timestamp
     }
+  } catch (err) {
+    console.error(`Error saving course ${course.id} to localforage:`, err);
   }
+}
+
+
+  // getCourse(courseId: string): Observable<Course> {
+  //   if (this.cache.has(courseId)) {
+  //     return of(this.cache.get(courseId)!);
+  //   }
+  //   const cacheKey = this.COURSE_CACHE_KEY_PREFIX + courseId;
+  //   return from(localforage.getItem<Course>(cacheKey)).pipe(
+  //     switchMap(cachedCourse => {
+  //       if (cachedCourse) {
+  //         console.log(`[Cache] Found course ${courseId} in IndexedDB.`);
+  //         this.cache.set(courseId, cachedCourse);
+  //         return of(cachedCourse);
+  //       }
+  //       console.log(`[Cache] Course ${courseId} not found. Fetching from API.`);
+  //       return this.http.get<Course>(this.apiUrl + 'meditation/courses/' + courseId).pipe(
+  //         tap(course => {
+  //           this.cache.set(courseId, course)
+  //         }), tap(course => {
+  //           this.cacheCourse(course);
+  //         }),
+  //         catchError(err => {
+  //           console.error(`Error fetching or caching course ${courseId}:`, err);
+  //           return EMPTY;
+  //         })
+  //       );
+  //     })
+  //   )
+  // }
+
+  // private async cacheCourse(course: Course): Promise<void> {
+  //   const cacheKey = this.COURSE_CACHE_KEY_PREFIX + course.id;
+  //   try {
+  //     await localforage.setItem(cacheKey, course);
+  //     console.log(`[Cache] Saved course ${course.id} to IndexedDB.`);
+  //   } catch (err) {
+  //     console.error(`Error saving course ${course.id} to localforage:`, err);
+  //   }
+  // }
 
   getTrack(trackId: number): Observable<Track> {
     for (const course of this.getCoursesCache().values()) {
